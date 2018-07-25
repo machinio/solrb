@@ -1,7 +1,6 @@
 module Solr
   class Request
-    # TODO Rename this
-    class RSolrAdapter
+    class EdismaxAdapter
       SOLR_INFINITY = '*'.freeze # for cases like [100000 TO *]
       include Solr::SchemaHelper
 

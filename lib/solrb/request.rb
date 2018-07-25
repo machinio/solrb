@@ -12,13 +12,13 @@ module Solr
     # Runs this Solr::Request against Solr and
     # returns [Solr::Response]
     def run(page:, page_size:)
-      rsolr_params = Solr::Request::RSolrAdapter.new(self).to_h
+      rsolr_params = Solr::Request::EdismaxAdapter.new(self).to_h
       # TODO: Check if ActiveSupport::Notifications.instrument is available
       rsolr_response = ActiveSupport::Notifications.instrument('query.solr_request', rsolr_params: rsolr_params) do
         # We should use POST method to avoid GET HTTP 413 error (request entity too large)
         RSolr.current.paginate(page, page_size, 'select', data: rsolr_params, method: :post)
       end
-      Solr::Response::RSolrAdapter.new(request: self, rsolr_response: rsolr_response).to_response
+      Solr::Response::EdismaxAdapter.new(request: self, rsolr_response: rsolr_response).to_response
     end
 
     def grouping
