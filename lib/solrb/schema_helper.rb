@@ -1,14 +1,14 @@
 module Solr
   module SchemaHelper
     def solarize_field(field)
-      solr_field = Solr::Schema::FILTER_FIELD_MAP[field]
+      solr_field = Solrb.configuration.filter_field_map[field]
       # TODO looks very specific
       return "#{solr_field}_#{I18n.locale}" if solr_field.to_s.ends_with?('_text')
       solr_field
     end
 
     def desolarize_field(solr_field)
-      Solr::Schema::INVERSE_FILTER_FIELD_MAP[solr_field]
+      Solrb.configuration.inverse_filter_field_map[solr_field]
     end
   end
 end
