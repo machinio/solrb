@@ -37,4 +37,20 @@ require 'solrb/request/field_with_boost'
 require 'solrb/request/or_filter'
 
 module Solrb
+  class Configuration
+    attr_accessor :filter_field_map
+
+    def initialize
+      @filter_field_map = {}
+    end
+  end
+
+  class << self
+    attr_accessor :configuration
+  end
+
+  def self.configure
+    self.configuration ||= Configuration.new
+    yield configuration
+  end
 end
