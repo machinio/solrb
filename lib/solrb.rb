@@ -38,10 +38,13 @@ require 'solrb/request/or_filter'
 
 module Solrb
   class Configuration
-    attr_accessor :filter_field_map
+    attr_accessor :filter_field_map, :solr_read_timeout, :solr_open_timeout, :solr_url
 
     def initialize
       @filter_field_map = {}
+      @solr_read_timeout = 8
+      @solr_open_timeout = 2
+      @solr_url = ENV['SOLR_URL']
     end
   end
 
@@ -52,5 +55,6 @@ module Solrb
   def self.configure
     self.configuration ||= Configuration.new
     yield configuration
+    configuration.filter_field_map = configuration.filter_field_map.with_indifferent_access
   end
 end
