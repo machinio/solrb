@@ -51,7 +51,7 @@ module Solr
         if date_or_time?(value)
           value.strftime('%Y-%m-%dT%H:%M:%SZ')
         else
-          %("#{RSolr.solr_escape(value.to_s)}")
+          %("#{Solrb::Utils.solr_escape(value.to_s)}")
         end
       end
 

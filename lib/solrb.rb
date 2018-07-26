@@ -1,4 +1,5 @@
 require 'solrb/version'
+require 'solrb/utils'
 require 'solrb/document_collection'
 require 'solrb/grouped_document_collection'
 require 'solrb/schema_helper'
