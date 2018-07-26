@@ -5,11 +5,11 @@ module Solr
 
       include Solr::SchemaHelper
 
-      attr_reader :request, :rsolr_response
+      attr_reader :request, :solr_response
 
-      def initialize(request:, rsolr_response:)
+      def initialize(request:, solr_response:)
         @request = request
-        @rsolr_response = rsolr_response.with_indifferent_access
+        @solr_response = solr_response.with_indifferent_access
       end
 
       def to_response
@@ -41,19 +41,19 @@ module Solr
       end
 
       def parse_grouped_total_count(solr_grouping_field)
-        rsolr_response['grouped'][solr_grouping_field]['groups'].reduce(0) do |acc, group|
+        solr_response['grouped'][solr_grouping_field]['groups'].reduce(0) do |acc, group|
           acc + group['doclist']['numFound'].to_i
         end
       end
 
       def parse_regular_total_count
-        rsolr_response.dig('response', 'numFound').to_i
+        solr_response.dig('response', 'numFound').to_i
       end
 
       def parse_group_counts
         group_counts = {}
         if request.grouping.present?
-          Array(rsolr_response.dig('grouped', solr_grouping_field, 'groups')).each do |group|
+          Array(solr_response.dig('grouped', solr_grouping_field, 'groups')).each do |group|
             group_counts[group['groupValue']] = group['doclist']['numFound']
           end
         end
@@ -69,18 +69,18 @@ module Solr
       end
 
       def parse_regular_documents
-        rsolr_response['response']['docs'].map do |d|
-          debug_info = rsolr_response.dig('debug', 'explain', d['id'])
+        solr_response['response']['docs'].map do |d|
+          debug_info = solr_response.dig('debug', 'explain', d['id'])
           model_name, id = d['id'].split
           Document.new(id: id.to_i, model_name: model_name, score: d['score'], debug_info: debug_info)
         end
       end
 
       def parse_grouped_documents(solr_grouping_field)
-        Array(rsolr_response.dig('grouped', solr_grouping_field, 'groups')).map do |group|
+        Array(solr_response.dig('grouped', solr_grouping_field, 'groups')).map do |group|
           Array(group.dig('doclist', 'docs')).map do |doc|
             next unless doc
-            debug_info = rsolr_response.dig('debug', 'explain', doc['id'])
+            debug_info = solr_response.dig('debug', 'explain', doc['id'])
             model_name, id = doc['id'].split
             group_information = Document::GroupInformation.new(key: solr_grouping_field, value: group['groupValue'])
             Document.new(id: id.to_i, model_name: model_name, score: doc['score'],
@@ -95,9 +95,9 @@ module Solr
       end
 
       def field_facet_collection
-        return [] unless rsolr_response_has_facet_data?
+        return [] unless solr_response_has_facet_data?
 
-        raw_facet_data = rsolr_response['facets'].except('count')
+        raw_facet_data = solr_response['facets'].except('count')
 
         parse_facets(raw_facet_data)
       end
@@ -140,13 +140,13 @@ module Solr
                                         subfacets: [])
       end
 
-      def rsolr_response_has_facet_data?
-        rsolr_response['facets'].present?
+      def solr_response_has_facet_data?
+        solr_response['facets'].present?
       end
 
       def spellcheck
-        return Solr::Response::Spellcheck.empty if rsolr_response['spellcheck'].blank?
-        Solr::Response::Spellcheck.new(rsolr_response['spellcheck'])
+        return Solr::Response::Spellcheck.empty if solr_response['spellcheck'].blank?
+        Solr::Response::Spellcheck.new(solr_response['spellcheck'])
       end
     end
   end
