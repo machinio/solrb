@@ -13,8 +13,7 @@ module Solr
     # returns [Solr::Response]
     def run(page:, page_size:)
       solr_params = Solr::Request::EdismaxAdapter.new(self).to_h
-      # TODO: Check if ActiveSupport::Notifications.instrument is available
-      solr_response = ActiveSupport::Notifications.instrument('query.solr_request', solr_params: solr_params) do
+      solr_response = Solrb.with_instrumentation('query.solr_request', solr_params: solr_params) do
         # We should use POST method to avoid GET HTTP 413 error (request entity too large)
         Solrb::SolrCaller.call(page: page, page_size: page_size, solr_params: solr_params)
       end

@@ -71,5 +71,15 @@ module Solrb
         Faraday.new(opts)
       end
     end
+
+    def with_instrumentation(name, params)
+      if defined? ActiveSupport::Notifications
+        ActiveSupport::Notifications.instrument(name, params) do
+          yield
+        end
+      else
+        yield
+      end
+    end
   end
 end
