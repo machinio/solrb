@@ -20,7 +20,7 @@ module Solr
     def call
       response = get_connection.post do |req|
         req.url(SOLR_SELECT_PATH)
-        req.body = @solr_params.merge({ wt: :json, rows: page_size.to_i, start: get_page })
+        req.body = @solr_params.merge({ wt: :json, rows: page_size.to_i, start: start })
         req.headers['Content-Type'] = FORM_URLENCODED_CONTENT_TYPE
       end
 
@@ -29,9 +29,10 @@ module Solr
 
     private
 
-    def get_page
-      page = @page.to_i - 1
-      page < 1 ? 0 : page
+    def start
+      start_page = @page.to_i - 1
+      start_page = start_page < 1 ? 0 : start_page
+      start_page * page_size
     end
 
     def get_connection
