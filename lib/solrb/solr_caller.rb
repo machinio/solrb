@@ -1,6 +1,6 @@
 module Solrb
   class SolrCaller
-    URLENCODED_MIME = 'application/x-www-form-urlencoded; charset=UTF-8'.freeze
+    FORM_URLENCODED_CONTENT_TYPE = 'application/x-www-form-urlencoded; charset=UTF-8'.freeze
     SOLR_SELECT_PATH = 'select'.freeze
 
     class << self
@@ -19,7 +19,7 @@ module Solrb
       response = get_connection.post do |req|
         req.url(SOLR_SELECT_PATH)
         req.body = @solr_params.merge({ wt: :json, rows: @page_size.to_i, start: page })
-        req.headers['Content-Type'] = URLENCODED_MIME
+        req.headers['Content-Type'] = FORM_URLENCODED_CONTENT_TYPE
       end
 
       JSON.parse(response.body)
