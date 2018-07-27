@@ -1,5 +1,6 @@
 require 'solrb/version'
 require 'solrb/utils'
+require 'solrb/solr_caller'
 require 'solrb/document_collection'
 require 'solrb/grouped_document_collection'
 require 'solrb/schema_helper'
@@ -49,12 +50,26 @@ module Solrb
   end
 
   class << self
-    attr_accessor :configuration
-  end
+    attr_accessor :configuration, :connection
 
-  def self.configure
-    self.configuration ||= Configuration.new
-    yield configuration
-    configuration.filter_field_map = configuration.filter_field_map.with_indifferent_access
+    def configure
+      self.configuration ||= Configuration.new
+      yield configuration
+      configuration.filter_field_map = configuration.filter_field_map.with_indifferent_access
+    end
+
+    def get_connection
+      self.connection ||= begin
+        opts = {
+          url: configuration.solr_url,
+          request: {
+            params_encoder: Faraday::FlatParamsEncoder,
+            timeout: configuration.solr_read_timeout,
+            open_timeout: configuration.solr_open_timeout
+          }
+        }
+        Faraday.new(opts)
+      end
+    end
   end
 end

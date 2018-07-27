@@ -16,7 +16,7 @@ module Solr
       # TODO: Check if ActiveSupport::Notifications.instrument is available
       solr_response = ActiveSupport::Notifications.instrument('query.solr_request', solr_params: solr_params) do
         # We should use POST method to avoid GET HTTP 413 error (request entity too large)
-        RSolr.current.paginate(page, page_size, 'select', data: rsolr_params, method: :post)
+        Solrb::SolrCaller.call(page: page, page_size: page_size, solr_params: solr_params)
       end
       Solr::Response::EdismaxAdapter.new(request: self, solr_response: solr_response).to_response
     end
