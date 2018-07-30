@@ -16,7 +16,6 @@ module Solr
         new(documents: Solr::GroupedDocumentCollection.empty)
       end
 
-      # TODO extract this
       def manual_grouped_listing_documents(listing_ids)
         documents = listing_ids.map { |id| Solr::Document.new(id: id, model_name: 'Listing') }
         group_counts = listing_ids.reduce({}) do |acc, id|

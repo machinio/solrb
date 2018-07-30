@@ -24,7 +24,9 @@ module Solr
         req.headers['Content-Type'] = FORM_URLENCODED_CONTENT_TYPE
       end
 
-      JSON.parse(response.body)
+      response = JSON.parse(response.body)
+      Solr::Testing.set_last_solr_request_response(request_params, response)
+      response
     end
 
     private
@@ -37,6 +39,10 @@ module Solr
 
     def get_connection
       Solr.get_connection
+    end
+
+    def request_params
+      solr_params.merge(page: page, page_size: page_size)
     end
   end
 end
