@@ -2,19 +2,19 @@ module Solr
   class Request
     class Spellcheck
       class Disabled
-        attr_reader :previous_search_term, :collationed_search_term
+        attr_reader :previous_search_term, :collated_search_term
 
-        def initialize(previous_search_term: nil, collationed_search_term: nil)
+        def initialize(previous_search_term: nil, collated_search_term: nil)
           @previous_search_term = previous_search_term
-          @collationed_search_term = collationed_search_term
+          @collated_search_term = collated_search_term
         end
 
         def to_h
           {}
         end
 
-        def collationed?
-          collationed_search_term.present?
+        def collated?
+          collated_search_term.present?
         end
 
         def disabled?
@@ -43,10 +43,10 @@ module Solr
         def previous_search_term
         end
 
-        def collationed_search_term
+        def collated_search_term
         end
 
-        def collationed?
+        def collated?
           false
         end
 
@@ -55,11 +55,10 @@ module Solr
         end
       end
 
-      # TODO CHECK THE NAMING
-      def self.collationed(previous:, collationed:)
+      def self.collated(previous:, collated:)
         Disabled.new(
           previous_search_term: previous,
-          collationed_search_term: collationed
+          collated_search_term: collated
         )
       end
 
