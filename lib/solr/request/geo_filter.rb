@@ -5,19 +5,19 @@ module Solr
 
       include Solr::SchemaHelper
 
-      attr_reader :field, :latitude, :longitude
+      attr_reader :field, :latitude, :longitude, :spatial_radius
 
-      def initialize(field:, latitude:, longitude:)
+      def initialize(field:, latitude:, longitude:, spatial_radius: SPATIAL_RADIUS)
         @field = field
         @latitude = latitude
         @longitude = longitude
+        @spatial_radius = spatial_radius
         freeze
       end
 
       def to_solr_s
         solr_field = solarize_field(@field)
-        # TODO this should be configurable
-        "{!geofilt sfield=#{solr_field} pt=#{@latitude},#{@longitude} d=#{SPATIAL_RADIUS}}"
+        "{!geofilt sfield=#{solr_field} pt=#{@latitude},#{@longitude} d=#{spatial_radius}}"
       end
     end
   end
