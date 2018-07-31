@@ -3,8 +3,6 @@ module Solr
     class Spellcheck
       attr_reader :response
 
-      delegate :empty?, to: :collations
-
       class Collation
         def initialize(data)
           @data = data
