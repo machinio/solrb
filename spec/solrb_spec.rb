@@ -1,9 +1,5 @@
-RSpec.describe Solrb do
+RSpec.describe Solr do
   it "has a version number" do
-    expect(Solrb::VERSION).not_to be nil
-  end
-
-  it "does something useful" do
-    expect(false).to eq(true)
+    expect(Solr::VERSION).not_to be nil
   end
 end

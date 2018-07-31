@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "solrb"
+require "solr"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

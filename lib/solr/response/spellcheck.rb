@@ -3,7 +3,8 @@ module Solr
     class Spellcheck
       attr_reader :response
 
-      delegate :empty?, to: :collations
+      # TODO: it's a rails method, need to use pure-ruby
+      # delegate :empty?, to: :collations
 
       class Collation
         def initialize(data)
