@@ -31,7 +31,7 @@ module Solr
         # We should use POST method to avoid GET HTTP 413 error (request entity too large)
         Solr::SolrCaller.call(page: page, page_size: page_size, solr_params: solr_params)
       end
-      Solr::Response::EdismaxAdapter.new(request: self, solr_response: solr_response).to_response
+      Solr::Response::Parser.new(request: self, solr_response: solr_response).to_response
     end
 
     def grouping
