@@ -7,7 +7,10 @@ module Solr
       @read_timeout = 2
       @open_timeout = 8
       @url = ENV.fetch('SOLR_URL')
-      freeze
+    end
+
+    def uri
+      @uri ||= URI.parse(url)
     end
   end
 end
