@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["adriano.luz@machinio.com", "valentin@machinio.com"]
 
   spec.summary       = "Solr Ruby client with a nice object-oriented API"
-  spec.homepage      = "https://github.com/machinio/solr"
+  spec.homepage      = "https://github.com/machinio/solrb"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
