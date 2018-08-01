@@ -1,4 +1,4 @@
-module Solrb
+module Solr
   module Utils
     class << self
       def solr_escape(str)

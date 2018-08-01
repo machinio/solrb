@@ -1,3 +1,8 @@
+require 'solr/response/facet_value'
+require 'solr/response/field_facets'
+require 'solr/response/edismax_adapter'
+require 'solr/response/spellcheck'
+
 module Solr
   class Response
     attr_reader :documents, :available_facets, :spellcheck

@@ -1,15 +1,14 @@
-
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "solrb/version"
+require "solr/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "solrb"
-  spec.version       = Solrb::VERSION
-  spec.authors       = ["Adriano Luz"]
-  spec.email         = ["adriano.luz@machinio.com"]
+  spec.version       = Solr::VERSION
+  spec.authors       = ["Adriano Luz", "Valentin Vasilyev"]
+  spec.email         = ["adriano.luz@machinio.com", "valentin@machinio.com"]
 
-  spec.summary       = "Solr Ruby client"
+  spec.summary       = "Solr Ruby client with a nice object-oriented API"
   spec.homepage      = "https://github.com/machinio/solrb"
   spec.license       = "MIT"
 

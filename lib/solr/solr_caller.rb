@@ -1,4 +1,4 @@
-module Solrb
+module Solr
   class SolrCaller
     FORM_URLENCODED_CONTENT_TYPE = 'application/x-www-form-urlencoded; charset=UTF-8'.freeze
     SOLR_SELECT_PATH = 'select'.freeze
@@ -33,7 +33,7 @@ module Solrb
     end
 
     def get_connection
-      Solrb.get_connection
+      Solr.get_connection
     end
   end
 end

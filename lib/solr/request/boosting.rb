@@ -1,3 +1,16 @@
+require 'solr/request/boosting/scale_function_boost'
+require 'solr/request/boosting/geodist_function'
+require 'solr/request/boosting/recent_field_value_boost_function'
+require 'solr/request/boosting/ranking_field_boost_function'
+require 'solr/request/boosting/field_value_match_boost_function'
+require 'solr/request/boosting/numeric_field_value_match_boost_function'
+require 'solr/request/boosting/textual_field_value_match_boost_function'
+require 'solr/request/boosting/dictionary_boost_function'
+require 'solr/request/boosting/exists_boost_function'
+require 'solr/request/boosting/field_value_less_than_boost_function'
+require 'solr/request/boosting/ln_function_boost'
+require 'solr/request/boosting/phrase_proximity_boost'
+
 module Solr
   class Request
     class Boosting
