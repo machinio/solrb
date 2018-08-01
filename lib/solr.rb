@@ -10,13 +10,13 @@ require 'solr/response'
 
 module Solr
   class Configuration
-    attr_accessor :filter_field_map, :solr_read_timeout, :solr_open_timeout, :solr_url
+    attr_accessor :field_map_function, :solr_read_timeout, :solr_open_timeout, :solr_url
 
     def initialize
-      @filter_field_map = {}
       @solr_read_timeout = 8
       @solr_open_timeout = 2
       @solr_url = ENV['SOLR_URL']
+      @field_map_function = -> (field) { field }
     end
   end
 
@@ -26,7 +26,6 @@ module Solr
     def configure
       self.configuration ||= Configuration.new
       yield configuration
-      configuration.filter_field_map = configuration.filter_field_map.with_indifferent_access
     end
 
     def get_connection
