@@ -10,7 +10,7 @@ module Solr
     end
 
     def uri
-      @uri ||= URI.parse(url)
+      @uri ||= Addressable::URI.parse(url)
     end
   end
 end

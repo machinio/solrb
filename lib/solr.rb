@@ -1,6 +1,6 @@
 require 'json'
-require 'uri'
 require 'faraday'
+require 'addressable/uri'
 require 'solr/configuration'
 require 'solr/version'
 require 'solr/connection'

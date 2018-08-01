@@ -6,8 +6,9 @@ module Solr
 
       include Solr::UrlUtils
 
-      def initialize(docs)
+      def initialize(docs, commit: false)
         @docs = docs
+        @commit = commit
       end
 
       def run
@@ -19,7 +20,10 @@ module Solr
 
       def connection
         @connection ||= begin
-          Solr::Connection.new(solr_url(PATH))
+          url_params = {}
+          url_params[:commit] = true if @commit
+          url = solr_url(PATH, url_params)
+          Solr::Connection.new(url)
         end
       end
     end
