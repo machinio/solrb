@@ -11,6 +11,7 @@ require 'solr/request/spellcheck'
 require 'solr/request/sorting/field'
 require 'solr/request/field_with_boost'
 require 'solr/request/or_filter'
+require 'solr/query/request'
 
 module Solr
   class Request
@@ -27,10 +28,7 @@ module Solr
     # returns [Solr::Response]
     def run(page:, page_size:)
       solr_params = Solr::Request::EdismaxAdapter.new(self).to_h
-      solr_response = Solr.with_instrumentation('query.solr_request', solr_params: solr_params) do
-        # We should use POST method to avoid GET HTTP 413 error (request entity too large)
-        Solr::SolrCaller.call(page: page, page_size: page_size, solr_params: solr_params)
-      end
+      solr_response = Solr::Query::Request.run(page: page, page_size: page_size, solr_params: solr_params)
       Solr::Response::Parser.new(request: self, solr_response: solr_response).to_response
     end
 

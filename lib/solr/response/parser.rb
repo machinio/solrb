@@ -9,7 +9,7 @@ module Solr
 
       def initialize(request:, solr_response:)
         @request = request
-        @solr_response = solr_response.with_indifferent_access
+        @solr_response = solr_response
       end
 
       def to_response

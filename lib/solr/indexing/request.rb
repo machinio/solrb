@@ -18,9 +18,7 @@ module Solr
       private
 
       def connection
-        @connection ||= begin
-          Solr::Connection.new(solr_url(PATH))
-        end
+        @connection ||= Solr::Connection.new(solr_url(PATH))
       end
     end
   end

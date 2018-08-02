@@ -10,7 +10,7 @@ module Solr
     def initialize
       @read_timeout = 2
       @open_timeout = 8
-      @url = ''
+      @url = ENV['SOLR_URL']
       @field_types = {}
       @fields = {}
     end
