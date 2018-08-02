@@ -12,9 +12,7 @@ jobs:
           SOLR_URL: http://localhost:8983/solr/demo
       # service images that primary image will use
       - image: solr:7.4.0
-        command: solr-demo
-        # For convenience, there is a single command that starts Solr, 
-        # creates a collection called "demo", and loads sample data into it
+        name: 'test-solr'
       
       
     working_directory: ~/repo
@@ -42,6 +40,11 @@ jobs:
       - run:
           name: Wait for Solr
           command: dockerize -wait tcp://localhost:8983 -timeout 1m
+          
+      - run:
+          name: Create a test core and fill it with data
+          command: |
+            docker run -it --user=solr test-solr bin/solr create_core -c test-core
 
 
       # run tests!
