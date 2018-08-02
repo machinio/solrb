@@ -25,6 +25,12 @@ request = Solr::Indexing::Request.new([doc], commit: true)
 request.run
 ```
 
+You can also create indexing document directly from attributes:
+
+```ruby
+doc = Solr::Indexing::Document.new(id: 5, name: 'John')
+```
+
 
 ## Running specs
 

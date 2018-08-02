@@ -1,0 +1,5 @@
+require 'solr/support/hash_extensions'
+require 'solr/support/string_extensions'
+require 'solr/support/url_helper'
+require 'solr/support/connection_helper'
+require 'solr/support/schema_helper'
