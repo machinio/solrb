@@ -9,11 +9,9 @@ jobs:
       # primary image where all specs are run
       - image: circleci/ruby:2.5.1-node-browsers
         environment:
-          SOLR_URL: http://localhost:8983/solr/demo
+          SOLR_URL: http://localhost:8983/solr/test-core
       # service images that primary image will use
       - image: solr:7.4.0
-        name: 'test-solr'
-      
       
     working_directory: ~/repo
 
@@ -40,11 +38,10 @@ jobs:
       - run:
           name: Wait for Solr
           command: dockerize -wait tcp://localhost:8983 -timeout 1m
-          
+      
       - run:
-          name: Create a test core and fill it with data
-          command: |
-            docker run -it --user=solr test-solr bin/solr create_core -c test-core
+          name: Create a test core
+          command: curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
 
 
       # run tests!
