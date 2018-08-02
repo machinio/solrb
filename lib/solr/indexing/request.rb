@@ -13,7 +13,7 @@ module Solr
 
       def run
         raw_response = connection.post_as_json(@docs)
-        Solr::BasicResponse.from_raw_response(raw_response.body)
+        Solr::BasicResponse.from_raw_response(raw_response)
       end
 
       private

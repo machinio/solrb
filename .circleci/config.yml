@@ -6,14 +6,17 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
-       - image: circleci/ruby:2.5.1-node-browsers
+      # primary image where all specs are run
+      - image: circleci/ruby:2.5.1-node-browsers
+        environment:
+          SOLR_URL: http://localhost:8983/solr/demo
+      # service images that primary image will use
+      - image: solr:7.4.0
+        command: solr-demo
+        # For convenience, there is a single command that starts Solr, 
+        # creates a collection called "demo", and loads sample data into it
       
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
+      
     working_directory: ~/repo
 
     steps:
@@ -35,7 +38,11 @@ jobs:
           paths:
             - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-        
+
+      - run:
+          name: Wait for Solr
+          command: dockerize -wait tcp://localhost:8983 -timeout 1m
+
 
       # run tests!
       - run:
