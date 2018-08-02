@@ -3,11 +3,32 @@
 
 # Solrb
 
-Object-Oriented approach to Solr in Ruby. 
+Object-Oriented approach to Solr in Ruby.
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solr'
+gem 'solrb'
+```
+
+## Configuration
+
+```
+Solr.configure do |config|
+  config.url = http://yoursolrurl/
+
+  config.define_field_types do |t|
+    t.dynamic_field_type :text, solr_definition: '*_text'
+  end
+
+  config.define_fields do |f|
+    f.field :title, :text
+    f.field :description, :text
+
+    f.with_options dynamic_field_type_name_mapping: false do
+      field :detailed_description_text, :text
+    end
+  end
+end
 ```

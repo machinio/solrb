@@ -1,7 +1,8 @@
 module Solr
   module SchemaHelper
     def solarize_field(field)
-      Solr.configuration.field_map_function.call(field)
+      solr_field = Solr.configuration.fields.fetch(field)
+      solr_field.solr_field_name
     end
   end
 end
