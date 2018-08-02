@@ -32,6 +32,18 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ```
 
 
+### Deleting documents
+
+```ruby
+Solr.delete_by_id(3242343)
+Solr.delete_by_id(3242343, commit: true)
+Solr.delete_by_query('*:*')
+Solr.delete_by_query('*:*', commit: true)
+```
+
+
+
+
 ## Running specs
 
 This project is setup to use CI to run all specs agains a real solr.
