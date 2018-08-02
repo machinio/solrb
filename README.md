@@ -9,7 +9,7 @@ Object-Oriented approach to Solr in Ruby.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solr'
+gem 'solrb'
 ```
 
 ## Usage
@@ -30,7 +30,7 @@ request.run
 
 This project is setup to use CI to run all specs agains a real solr.
 
-If you want to run it locally, you can either use it [circleci cli](https://circleci.com/docs/2.0/local-cli/)
+If you want to run it locally, you can either use  [CircleCI CLI](https://circleci.com/docs/2.0/local-cli/)
 or do a completely manual setup:
 
 ```sh
