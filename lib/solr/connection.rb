@@ -25,7 +25,7 @@ module Solr
 
     def with_instrumentation(data: {})
       if defined? ActiveSupport::Notifications
-        ActiveSupport::Notifications.instrument('solrb.request') do
+        ActiveSupport::Notifications.instrument('solrb.request', data) do
           yield
         end
       else
