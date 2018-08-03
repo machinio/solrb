@@ -6,6 +6,7 @@ module Solr
       @field_types = {}
     end
 
+    # TODO Add support for regular fields
     def dynamic_field_type(name, solr_definition:)
       field_types[name] = Solr::DynamicFieldType.new(name: name, solr_definition: solr_definition)
     end

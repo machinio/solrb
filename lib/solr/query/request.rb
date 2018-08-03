@@ -1,7 +1,8 @@
+require 'solr/testing'
+
 module Solr
   module Query
     class Request
-      FORM_URLENCODED_CONTENT_TYPE = 'application/x-www-form-urlencoded; charset=UTF-8'.freeze
       SOLR_SELECT_PATH = '/select'.freeze
 
       include Solr::UrlUtils
@@ -23,7 +24,7 @@ module Solr
       def run
         response = connection.post_as_json(request_params)
         response = JSON.parse(response.body)
-        # Solr::Testing.set_last_solr_request_response(request_params, response)
+        Solr::Testing.set_last_solr_request_response(request_params, response)
         response
       end
 

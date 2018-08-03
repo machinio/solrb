@@ -25,10 +25,6 @@ Solr.configure do |config|
   config.define_fields do |f|
     f.field :title, :text
     f.field :description, :text
-
-    f.with_options dynamic_field_type_name_mapping: false do
-      field :detailed_description_text, :text
-    end
   end
 end
 ```
