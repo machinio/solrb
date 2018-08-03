@@ -5,10 +5,10 @@ require 'solr/field_configuration/type_definition_builder'
 
 module Solr
   class Configuration
-    attr_accessor :faraday_options, :url, :field_types, :fields
+    attr_accessor :faraday_options, :url, :field_types, :fields, :test_connection
 
     def initialize
-      @faraday_options = { timeout: 2, open_timeout: 8 }
+      @faraday_options = { request: { timeout: 2, open_timeout: 8 } }
       @url = ENV['SOLR_URL']
       @field_types = {}
       @fields = {}
