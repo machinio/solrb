@@ -1,7 +1,7 @@
 module Solr
   # low-level connection that can do network requests to Solr
   class Connection
-    def initialize(url, faraday_options: {})
+    def initialize(url, faraday_options: Solr.configuration.faraday_options)
       # Allow mock the connection for testing
       @raw_connection = Solr.connection || Faraday.new(url, faraday_options)
       freeze

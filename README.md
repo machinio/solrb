@@ -17,6 +17,7 @@ gem 'solrb'
 ```
 Solr.configure do |config|
   config.url = http://yoursolrurl/
+  config.faraday_options = {}
 
   config.define_field_types do |t|
     t.dynamic_field_type :text, solr_definition: '*_text'
