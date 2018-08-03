@@ -3,7 +3,7 @@ module Solr
   class Connection
     def initialize(url, faraday_options: Solr.configuration.faraday_options)
       # Allow mock the connection for testing
-      @raw_connection = Solr.test_connection || Faraday.new(url, faraday_options)
+      @raw_connection = Solr.configuration.test_connection || Faraday.new(url, faraday_options)
       freeze
     end
 
