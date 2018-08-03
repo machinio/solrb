@@ -28,8 +28,8 @@ module Solr
     # returns [Solr::Response]
     def run(page:, page_size:)
       solr_params = Solr::Request::EdismaxAdapter.new(self).to_h
-      solr_response = Solr::Query::Request.run(page: page, page_size: page_size, solr_params: solr_params)
-      Solr::Response::Parser.new(request: self, solr_response: solr_response).to_response
+      raw_response = Solr::Query::Request.run(page: page, page_size: page_size, solr_params: solr_params)
+      Solr::Response::Parser.new(request: self, solr_response: raw_response).to_response
     end
 
     def grouping
