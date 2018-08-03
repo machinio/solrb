@@ -25,6 +25,24 @@ request = Solr::Indexing::Request.new([doc], commit: true)
 request.run
 ```
 
+You can also create indexing document directly from attributes:
+
+```ruby
+doc = Solr::Indexing::Document.new(id: 5, name: 'John')
+```
+
+
+### Deleting documents
+
+```ruby
+Solr.delete_by_id(3242343)
+Solr.delete_by_id(3242343, commit: true)
+Solr.delete_by_query('*:*')
+Solr.delete_by_query('*:*', commit: true)
+```
+
+
+
 
 ## Running specs
 
