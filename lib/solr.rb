@@ -18,7 +18,7 @@ require 'solr/indexing/request'
 
 module Solr
   class << self
-    attr_accessor :configuration
+    attr_accessor :configuration, :connection
 
     Solr.configuration = Configuration.new
 
