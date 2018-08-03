@@ -1,6 +1,6 @@
 module Solr
   module FieldConfiguration
-    class FieldDefinitionBuilder
+    class DynamicFieldMapper
       attr_reader :available_field_types, :fields
 
       def initialize(available_field_types)

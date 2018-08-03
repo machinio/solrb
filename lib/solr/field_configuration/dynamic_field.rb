@@ -1,6 +1,6 @@
 module Solr
   module FieldConfiguration
-    class DynamicFieldType
+    class DynamicField
       attr_reader :name, :solr_definition
 
       def initialize(name:, solr_definition:)

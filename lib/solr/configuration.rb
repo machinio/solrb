@@ -1,7 +1,7 @@
 require 'solr/field_configuration/field'
-require 'solr/field_configuration/dynamic_field_type'
-require 'solr/field_configuration/field_definition_builder'
-require 'solr/field_configuration/type_definition_builder'
+require 'solr/field_configuration/dynamic_field'
+require 'solr/field_configuration/dynamic_field_definition_builder'
+require 'solr/field_configuration/dynamic_field_mapper'
 
 module Solr
   class Configuration
@@ -18,14 +18,14 @@ module Solr
       @uri ||= URI.parse(url)
     end
 
-    def define_field_types
-      builder = Solr::FieldConfiguration::TypeDefinitionBuilder.new
+    def define_dynamic_fields
+      builder = Solr::FieldConfiguration::DynamicFieldDefinitionBuilder.new
       yield builder
       field_types.merge!(builder.build)
     end
 
-    def define_fields
-      builder = Solr::FieldConfiguration::FieldDefinitionBuilder.new(field_types)
+    def map_dynamic_fields
+      builder = Solr::FieldConfiguration::DynamicFieldMapper.new(field_types)
       yield builder
       fields.merge!(builder.build)
     end
