@@ -1,19 +1,10 @@
 require 'solr/field_configuration/dynamic_field'
 require 'solr/field_configuration/field'
 require 'solr/field_configuration/field_definition_builder'
-
+require 'solr/errors/solr_url_not_defined_error'
 
 module Solr
   class Configuration
-    NO_URL_ERROR_MESSAGE = '
-    Solrb gem requires you to set the URL of your Solr instance
-    either through SOLR_URL environmental variable or explicitly inside the configure block:
-
-    Solr.configure do |config|
-      config.url = "http://localhost:8983/solr/core"
-    end
-    '.freeze
-
     attr_accessor :faraday_options, :fields, :test_connection
     attr_writer :url
 
@@ -28,7 +19,7 @@ module Solr
     end
 
     def url
-      raise NO_URL_ERROR_MESSAGE unless @url
+      raise Errors::SolrUrlNotDefinedError unless @url
       @url
     end
 
