@@ -1,23 +1,19 @@
 module Solr
   module FieldConfiguration
     class Field
-      attr_reader :name, :field_type, :dynamic_field_name_mapping, :solr_field
+      attr_reader :name, :dynamic_field, :solr_name
 
-      def initialize(name:, field_type:, dynamic_field_name_mapping: true, solr_field: nil)
+      def initialize(name:, dynamic_field: nil, solr_name: nil)
         @name = name
-        @field_type = field_type
-        @dynamic_field_name_mapping = dynamic_field_name_mapping
-        @solr_field = solr_field
+        @dynamic_field = dynamic_field
+        @solr_name = solr_name
+        freeze
       end
 
       def solr_field_name
-        field = solr_field || name
-
-        if field_type.dynamic? && dynamic_field_name_mapping
-          field_type.solr_definition.gsub('*', field.to_s)
-        else
-          field.to_s
-        end
+        return solr_name.to_s if solr_name
+        return dynamic_field.build(name) if dynamic_field
+        name.to_s
       end
     end
   end

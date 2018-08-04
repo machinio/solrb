@@ -1,7 +1,6 @@
-require 'solr/field_configuration/field'
 require 'solr/field_configuration/dynamic_field'
-require 'solr/field_configuration/dynamic_field_definition_builder'
-require 'solr/field_configuration/dynamic_field_mapper'
+require 'solr/field_configuration/field'
+require 'solr/field_configuration/field_definition_builder'
 
 
 module Solr
@@ -15,13 +14,12 @@ module Solr
     end
     '.freeze
 
-    attr_accessor :faraday_options, :field_types, :fields, :test_connection
+    attr_accessor :faraday_options, :fields, :test_connection
     attr_writer :url
 
     def initialize
       @faraday_options = { request: { timeout: 2, open_timeout: 8 } }
       @url = ENV['SOLR_URL']
-      @field_types = {}
       @fields = {}
     end
 
@@ -34,14 +32,8 @@ module Solr
       @url
     end
 
-    def define_dynamic_fields
-      builder = Solr::FieldConfiguration::DynamicFieldDefinitionBuilder.new
-      yield builder
-      field_types.merge!(builder.build)
-    end
-
-    def map_dynamic_fields
-      builder = Solr::FieldConfiguration::DynamicFieldMapper.new(field_types)
+    def define_fields
+      builder = Solr::FieldConfiguration::FieldDefinitionBuilder.new
       yield builder
       fields.merge!(builder.build)
     end

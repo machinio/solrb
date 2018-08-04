@@ -23,31 +23,19 @@ Solr.configure do |config|
   # options here.
   config.faraday_options = {}
 
-  # The gem will automatically map field names to solr dynamic fields.
-  # This is how you declare dynamic fields:
-  config.define_dynamic_fields do |t|
-    # arguments:
-    # - dynamic field name
-    # - solr_name option: The same name attribute of the dynamic field defined on solr schema
-    t.dynamic_field :text, solr_name: '*_text'
-  end
+  # Define the fields that will be used for querying Solr
+  config.define_fields do |f|
+    f.field :description
+    # When dynamic_field is present, the field name will be mapped to match the dynamic field
+    # solr_name during query construction. Here, "title" will be mapped to "title_text"
+    # You must define the dynamic field to be able to use the dynamic_field option
+    f.field :title, dynamic_field: :text
 
-  # Declare the fields and associate them with a dynamic field.
-  # Solrb will automatically convert the field name to match the dynamic field. In this example
-  # "title" will be converted to "title_text" before querying solr.
-  config.map_dynamic_fields do |f|
-    # arguments:
-    # - field_name
-    # - dynamic field name: As defined in define_dynamic_fields block
-    f.field :title, :text
+    # When solr_name is present, the field name will be mapped to the solr_name during query construction
+    f.field :tags, solr_name: :tags_array
 
-    # dynamic_field_name_mapping (true or false, default true): when false, Solrb will use the field name
-    # without dynamic field conversion for querying. Here "description" won't be converted to "description_text"
-    f.field :description, :text, dynamic_field_name_mapping: false
-
-    # solr_field: When set, Solrb will map the field name directly to solr_field attribute.
-    # Here "tags" will be converted to "tags_array" on the query.
-    f.field :tags, :text, solr_field: :tags_array
+    # define a dynamic field
+    f.dynamic_field :text, solr_name: '*_text'
   end
 end
 ```

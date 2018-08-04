@@ -1,16 +1,16 @@
 module Solr
   module FieldConfiguration
     class DynamicField
-      attr_reader :name, :solr_definition
+      attr_reader :name, :solr_name
 
-      def initialize(name:, solr_definition:)
+      def initialize(name:, solr_name:)
         @name = name
-        @solr_definition = solr_definition
+        @solr_name = solr_name
         freeze
       end
 
-      def dynamic?
-        true
+      def build(name)
+        solr_name.gsub('*', name.to_s)
       end
     end
   end
