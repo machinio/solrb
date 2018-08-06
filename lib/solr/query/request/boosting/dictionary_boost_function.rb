@@ -4,6 +4,7 @@ module Solr
       class Boosting
         class DictionaryBoostFunction
           include Solr::SchemaHelper
+          using Solr::StringExtensions
           attr_reader :field, :dictionary
 
           def initialize(field:, dictionary:)
@@ -22,7 +23,7 @@ module Solr
             sf = solarize_field(field)
             dictionary.to_a.reverse.reduce(1) do |acc, (field_value, boost)|
               if field_value.is_a?(String) || field_value.is_a?(Symbol)
-                "if(termfreq(#{sf},\"#{Solr::Utils.solr_escape(field_value.to_s)}\"),#{boost},#{acc})"
+                "if(termfreq(#{sf},\"#{field_value.to_s.solr_escape}\"),#{boost},#{acc})"
               else
                 "if(eq(#{sf},#{field_value}),#{boost},#{acc})"
               end

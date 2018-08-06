@@ -3,6 +3,7 @@ module Solr
     class Request
       class Filter
         include Solr::SchemaHelper
+        using Solr::StringExtensions
 
         EQUAL_TYPE = :equal
         NOT_EQUAL_TYPE = :not_equal
@@ -52,7 +53,7 @@ module Solr
           if date_or_time?(value)
             value.strftime('%Y-%m-%dT%H:%M:%SZ')
           else
-            %("#{Solr::Utils.solr_escape(value.to_s)}")
+            %("#{value.to_s.solr_escape}")
           end
         end
 
