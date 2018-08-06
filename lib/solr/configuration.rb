@@ -6,7 +6,7 @@ module Solr
       @field_map = {}
       @read_timeout = 2
       @open_timeout = 8
-      @url = ENV.fetch('SOLR_URL')
+      @url = ENV['SOLR_URL']
     end
 
     def uri
