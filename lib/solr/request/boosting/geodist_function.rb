@@ -18,7 +18,6 @@ module Solr
 
         def to_solr_s
           # this constants are magical, but they influence the slope of geo proximity decay function
-          # TODO extract this somehow
           "recip(geodist(),3,17000,3000)"
         end
 

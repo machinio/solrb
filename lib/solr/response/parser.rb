@@ -1,6 +1,6 @@
 module Solr
   class Response
-    class EdismaxAdapter
+    class Parser
       SOLR_INFINITY = '*'.freeze # for cases like [100000 TO *]
 
       include Solr::SchemaHelper
@@ -9,7 +9,7 @@ module Solr
 
       def initialize(request:, solr_response:)
         @request = request
-        @solr_response = solr_response.with_indifferent_access
+        @solr_response = solr_response
       end
 
       def to_response
