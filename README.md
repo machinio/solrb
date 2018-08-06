@@ -49,8 +49,8 @@ end
 doc = Solr::Indexing::Document.new
 doc.add_field(:id, 1)
 doc.add_field(:name, 'Solrb!!!')
-request = Solr::Indexing::Request.new([doc], commit: true)
-request.run
+request = Solr::Indexing::Request.new([doc])
+request.run(commit: true)
 ```
 
 You can also create indexing document directly from attributes:
