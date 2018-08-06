@@ -1,5 +1,4 @@
 require 'solr/request/facet'
-require 'solr/request/limit_docs_by_field'
 require 'solr/request/filter'
 require 'solr/request/boost_magnitude'
 require 'solr/request/geo_filter'

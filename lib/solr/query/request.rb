@@ -5,7 +5,7 @@ module Solr
     class Request
       SOLR_SELECT_PATH = '/select'.freeze
 
-      include Solr::UrlUtils
+      include Solr::ConnectionHelper
 
       attr_reader :page, :page_size, :solr_params
 
@@ -37,7 +37,7 @@ module Solr
       end
 
       def connection
-        Solr::Connection.new(solr_url(SOLR_SELECT_PATH))
+        Solr::Connection.new(SOLR_SELECT_PATH)
       end
 
       def request_params

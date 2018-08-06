@@ -1,20 +1,19 @@
 require 'json'
-require 'uri'
 require 'faraday'
+require 'addressable/uri'
+require 'solr/support'
 require 'solr/configuration'
 require 'solr/version'
 require 'solr/connection'
 require 'solr/basic_response'
-require 'solr/utils'
-require 'solr/url_utils'
 require 'solr/document'
 require 'solr/document_collection'
 require 'solr/grouped_document_collection'
-require 'solr/schema_helper'
 require 'solr/request'
 require 'solr/response'
 require 'solr/indexing/document'
 require 'solr/indexing/request'
+require 'solr/delete/request'
 
 module Solr
   class << self
@@ -24,6 +23,14 @@ module Solr
 
     def configure
       yield configuration
+    end
+
+    def delete_by_id(id, commit: false)
+      Solr::Delete::Request.new(id: 1).run(commit: commit)
+    end
+
+    def delete_by_query(query, commit: false)
+      Solr::Delete::Request.new(query: query).run(commit: commit)
     end
   end
 end

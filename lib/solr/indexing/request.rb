@@ -1,24 +1,21 @@
 module Solr
   module Indexing
     class Request
+      include Solr::ConnectionHelper
+
       # TODO: potentially make handlers configurable and have them handle the path
       PATH = '/update'.freeze
 
-      include Solr::UrlUtils
+      attr_reader :docs
 
       def initialize(docs)
         @docs = docs
       end
 
-      def run
-        raw_response = connection.post_as_json(@docs)
-        Solr::BasicResponse.from_raw_response(raw_response.body)
-      end
-
-      private
-
-      def connection
-        @connection ||= Solr::Connection.new(solr_url(PATH))
+      def run(commit: false)
+        # need to think how to move out commit data from the connection, it doesn't belong there
+        raw_response = connection(PATH, commit: commit).post_as_json(docs)
+        Solr::BasicResponse.from_raw_response(raw_response)
       end
     end
   end
