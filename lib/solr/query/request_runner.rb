@@ -22,7 +22,7 @@ module Solr
       end
 
       def run
-        response = connection.post_as_json(request_params)
+        response = connection(SOLR_SELECT_PATH).post_as_json(request_params)
         response = JSON.parse(response.body)
         Solr::Testing.set_last_solr_request_response(request_params, response)
         response
@@ -34,10 +34,6 @@ module Solr
         start_page = @page.to_i - 1
         start_page = start_page < 1 ? 0 : start_page
         start_page * page_size
-      end
-
-      def connection
-        Solr::Connection.new(SOLR_SELECT_PATH)
       end
 
       def request_params
