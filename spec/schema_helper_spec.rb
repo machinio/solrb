@@ -29,5 +29,9 @@ RSpec.describe Solr::SchemaHelper do
     context 'solr_name field' do
       it { expect(solarize_field(:tags)).to eq('tags_array') }
     end
+
+    context 'undefined field' do
+      it { expect(solarize_field(:undefined_field)).to eq('undefined_field') }
+    end
   end
 end
