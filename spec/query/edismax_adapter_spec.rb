@@ -21,15 +21,6 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
   end
 
   context 'complex query' do
-    before do
-      Solr.configure do |config|
-        config.define_fields do |f|
-          f.field :field_1
-          f.field :field_2
-        end
-      end
-    end
-
     let(:fields) do
       [
         Solr::Query::Request::FieldWithBoost.new(field: :field_1),
