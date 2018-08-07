@@ -10,7 +10,7 @@ require 'solr/query/request/spellcheck'
 require 'solr/query/request/sorting/field'
 require 'solr/query/request/field_with_boost'
 require 'solr/query/request/or_filter'
-require 'solr/query/request_runner'
+require 'solr/query/request/runner'
 
 module Solr
   module Query

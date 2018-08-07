@@ -14,7 +14,7 @@ module Solr
       def run(commit: false)
         # need to think how to move out commit data from the connection, it doesn't belong there
         raw_response = connection(PATH, commit: commit).post_as_json(@delete_command)
-        Solr::BasicResponse.from_raw_response(raw_response)
+        Solr::Response.from_raw_response(raw_response)
       end
 
       private

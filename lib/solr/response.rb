@@ -27,7 +27,11 @@ module Solr
     end
 
     def status
-      header.status
+      if header.status.zero?
+        'OK'
+      else
+        header.status
+      end
     end
 
     def error_message
@@ -37,7 +41,9 @@ module Solr
 
     def inspect
       return 'OK' if ok?
-      "Error: #{http_status.inspect}\n#{solr_error.inspect}"
+      str = "Error: #{http_status.inspect}"
+      str << "\n#{solr_error.inspect}" if solr_error
+      str
     end
   end
 end

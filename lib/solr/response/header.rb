@@ -3,7 +3,7 @@ module Solr
     class Header
       attr_reader :status, :time
 
-      def initialize(status:, time:)
+      def initialize(status:, time: 0)
         @status = status
         @time = time
         freeze
