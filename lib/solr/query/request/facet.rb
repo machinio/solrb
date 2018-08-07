@@ -29,7 +29,7 @@ module Solr
           end
 
           @field       = field
-          @name        = name.presence || field
+          @name        = name ? name : field
           @type        = type
           @value       = value
           @filters     = filters
@@ -54,7 +54,7 @@ module Solr
               type: type,
               field: solarize_field(field),
               limit: limit,
-              q: filters.map(&:to_solr_s).join(' AND ').presence,
+              q: filters.any? ? filters.map(&:to_solr_s).join(' AND ') : nil,
               facet: subfacets.map(&:to_solr_h).reduce(&:merge),
               gap: gap,
               start: lower_bound,
