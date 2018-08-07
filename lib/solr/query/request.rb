@@ -22,6 +22,8 @@ module Solr
       def initialize(document_type:, search_term:)
         @document_type = document_type
         @search_term = search_term
+        @filters = []
+        @fields = []
       end
 
       # Runs this Solr::Request against Solr and
