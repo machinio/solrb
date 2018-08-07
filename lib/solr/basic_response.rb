@@ -30,6 +30,11 @@ module Solr
       header.status
     end
 
+    def error_message
+      return if ok?
+      solr_error ? solr_error.message : http_status.inspect
+    end
+
     def inspect
       return 'OK' if ok?
       "Error: #{http_status.inspect}\n#{solr_error.inspect}"

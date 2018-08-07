@@ -17,5 +17,6 @@ RSpec.describe Solr::BasicResponse do
     expect(res).not_to be_ok
     expect(res).to be_error
     expect(res.status).to eq 400
+    expect(res.error_message).to eq 'Document is missing mandatory uniqueKey field: id'
   end
 end
