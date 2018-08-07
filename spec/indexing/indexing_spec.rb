@@ -13,4 +13,21 @@ RSpec.describe Solr::Indexing do
     resp = req.run(commit: true)
     expect(resp.status).to eq 'OK'
   end
+
+  context 'with configuration' do
+    it 'indexes with dynamic field configuration' do
+      Solr.configure do |config|
+        config.define_fields do |f|
+          f.field :title, dynamic_field: :text_en
+          f.dynamic_field :text_en, solr_name: '*_txt_en'
+        end
+      end
+      doc1 = Solr::Indexing::Document.new(id: 10, title: 'iPhone X')
+      req = Solr::Indexing::Request.new([doc1])
+      resp = req.run(commit: true)
+      expect(resp.status).to eq 'OK'
+      # return default configuration
+      Solr.configuration = Solr::Configuration.new
+    end
+  end
 end

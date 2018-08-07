@@ -43,8 +43,11 @@ jobs:
           name: Create a test core
           command: curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
 
+      - run:
+          name: Disable field type guessing
+          command: curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}' 
 
-      # run tests!
+
       - run:
           name: run tests
           command: |

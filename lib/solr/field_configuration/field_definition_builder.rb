@@ -18,9 +18,10 @@ module Solr
 
       def build
         fields_params.inject({}) do |fields, (name, params)|
-          fields[name] = Solr::FieldConfiguration::Field.new(name: name,
-                                                             solr_name: params[:solr_name],
-                                                             dynamic_field: get_dynamic_field(name, params[:dynamic_field]))
+          fields[name] = 
+            Solr::FieldConfiguration::Field.new(name: name,
+                                                solr_name: params[:solr_name],
+                                                dynamic_field: get_dynamic_field(name, params[:dynamic_field]))
           fields
         end
       end
