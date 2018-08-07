@@ -5,6 +5,8 @@ require 'solr/response/parser'
 
 module Solr
   class Response
+    OK = 'OK'.freeze
+
     def self.from_raw_response(response)
       Solr::Response::Parser.new(response).parse
     end
@@ -28,7 +30,7 @@ module Solr
 
     def status
       if header.status.zero?
-        'OK'
+        OK
       else
         header.status
       end
@@ -40,7 +42,7 @@ module Solr
     end
 
     def inspect
-      return 'OK' if ok?
+      return OK if ok?
       str = "Error: #{http_status.inspect}"
       str << "\n#{solr_error.inspect}" if solr_error
       str

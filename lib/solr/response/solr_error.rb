@@ -12,7 +12,7 @@ module Solr
         end
       end
 
-      def self.none()
+      def self.none
         None.new
       end
 
