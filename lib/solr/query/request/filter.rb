@@ -1,3 +1,5 @@
+require 'date'
+
 module Solr
   module Query
     class Request
