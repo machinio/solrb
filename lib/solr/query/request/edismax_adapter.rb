@@ -59,6 +59,7 @@ module Solr
         end
 
         def add_boosting(solr_params)
+          return solr_params unless request.boosting
           solr_params = add_additive_boost_functions(solr_params)
           solr_params = add_multiplicative_boost_functions(solr_params)
           add_phrase_boosts(solr_params)
