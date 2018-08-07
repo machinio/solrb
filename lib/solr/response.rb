@@ -1,47 +1,43 @@
-require 'solr/response/facet_value'
-require 'solr/response/field_facets'
+require 'solr/response/header'
+require 'solr/response/http_status'
+require 'solr/response/solr_error'
 require 'solr/response/parser'
-require 'solr/response/spellcheck'
 
 module Solr
   class Response
-    attr_reader :documents, :available_facets, :spellcheck
-
-    class << self
-      def empty
-        new(documents: Solr::DocumentCollection.empty)
-      end
-
-      def empty_grouped
-        new(documents: Solr::GroupedDocumentCollection.empty)
-      end
-
-      def manual_grouped_listing_documents(listing_ids)
-        documents = listing_ids.map { |id| Solr::Document.new(id: id, model_name: 'Listing') }
-        group_counts = listing_ids.reduce({}) do |acc, id|
-          acc[id] = 1
-          acc
-        end
-        new(documents: Solr::GroupedDocumentCollection.new(
-          documents: documents,
-          total_count: listing_ids.count,
-          group_counts: group_counts
-        ))
-      end
+    def self.from_raw_response(response)
+      Solr::Response::Parser.new(response).parse
     end
 
-    def initialize(documents:, available_facets: [], spellcheck: Solr::Response::Spellcheck.empty)
-      @documents = documents
-      @available_facets = available_facets
-      @spellcheck = spellcheck
+    attr_reader :header, :http_status, :solr_error
+
+    def initialize(header:, http_status: HttpStatus.ok, solr_error: SolrError.none)
+      @header = header
+      @http_status = http_status
+      @solr_error = solr_error
+      freeze
     end
 
-    def total_count
-      @documents.total_count
+    def ok?
+      header.ok?
     end
 
-    def empty?
-      total_count.zero?
+    def error?
+      !ok?
+    end
+
+    def status
+      header.status
+    end
+
+    def error_message
+      return if ok?
+      solr_error ? solr_error.message : http_status.inspect
+    end
+
+    def inspect
+      return 'OK' if ok?
+      "Error: #{http_status.inspect}\n#{solr_error.inspect}"
     end
   end
 end

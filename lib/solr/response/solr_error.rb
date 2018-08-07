@@ -1,5 +1,5 @@
 module Solr
-  class BasicResponse
+  class Response
     class SolrError
       attr_reader :code, :message
       def initialize(code:, message:)

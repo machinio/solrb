@@ -1,5 +1,5 @@
 module Solr
-  class BasicResponse
+  class Response
     class Header
       attr_reader :status, :time
 

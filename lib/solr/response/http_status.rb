@@ -1,5 +1,5 @@
 module Solr
-  class BasicResponse
+  class Response
     class HttpStatus
       def self.ok
         new(status: 200, message: :OK)
