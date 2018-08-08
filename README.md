@@ -74,12 +74,14 @@ Solr.delete_by_query('*:*', commit: true)
 This project is setup to use CI to run all specs agains a real solr.
 
 If you want to run it locally, you can either use  [CircleCI CLI](https://circleci.com/docs/2.0/local-cli/)
-or do a completely manual setup:
+or do a completely manual setup (for up-to-date steps see circleci config)
 
 ```sh
 docker pull solr:7.4.0
 docker run -it --name test-solr -p 8983:8983/tcp -t solr:7.4.0
 # create a core
 curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+# disable field guessing
+curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}' 
 SOLR_URL=http://localhost:8983/solr/test-core rspec
 ```
