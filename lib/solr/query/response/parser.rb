@@ -16,7 +16,7 @@ module Solr
         def to_response
           documents = parse_documents
           total_count = parse_total_count
-          if request.grouping.present?
+          if request.grouping
             group_counts = parse_group_counts
             document_collection = Solr::GroupedDocumentCollection.new(documents: documents,
                                                                       total_count: total_count,
@@ -24,7 +24,7 @@ module Solr
           else
             document_collection = Solr::DocumentCollection.new(documents: documents, total_count: total_count)
           end
-          Solr::Response.new(
+          Solr::Query::Response.new(
             documents: document_collection,
             available_facets: field_facet_collection,
             spellcheck: spellcheck
@@ -34,7 +34,7 @@ module Solr
         private
 
         def parse_total_count
-          if request.grouping.present?
+          if !request.grouping.empty?
             parse_grouped_total_count(solr_grouping_field)
           else
             parse_regular_total_count
@@ -53,7 +53,7 @@ module Solr
 
         def parse_group_counts
           group_counts = {}
-          if request.grouping.present?
+          if !request.grouping.empty?
             Array(solr_response.dig('grouped', solr_grouping_field, 'groups')).each do |group|
               group_counts[group['groupValue']] = group['doclist']['numFound']
             end
@@ -62,7 +62,7 @@ module Solr
         end
 
         def parse_documents
-          if request.grouping.present?
+          if !request.grouping.empty?
             parse_grouped_documents(solr_grouping_field)
           else
             parse_regular_documents
@@ -125,29 +125,29 @@ module Solr
               text  = facet.delete('val')
               count = facet.delete('count')
 
-              Solr::Response::FacetValue.new(text: text, count: count, subfacets: parse_facets(facet))
+              Solr::Query::Response::FacetValue.new(text: text, count: count, subfacets: parse_facets(facet))
             end
 
-          Solr::Response::FieldFacets.new(field: field_name,
+          Solr::Query::Response::FieldFacets.new(field: field_name,
                                           facet_values: facet_values,
                                           count: count.to_i,
                                           subfacets: parse_facets(facet_data))
         end
 
         def parse_facet_count(field_name, count)
-          Solr::Response::FieldFacets.new(field: field_name,
+          Solr::Query::Response::FieldFacets.new(field: field_name,
                                           facet_values: [],
                                           count: count.to_i,
                                           subfacets: [])
         end
 
         def solr_response_has_facet_data?
-          solr_response['facets'].present?
+          solr_response['facets']
         end
 
         def spellcheck
-          return Solr::Response::Spellcheck.empty if solr_response['spellcheck'].blank?
-          Solr::Response::Spellcheck.new(solr_response['spellcheck'])
+          return Solr::Query::Response::Spellcheck.empty unless solr_response['spellcheck']
+          Solr::Query::Response::Spellcheck.new(solr_response['spellcheck'])
         end
       end
     end
