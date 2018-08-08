@@ -45,7 +45,8 @@ jobs:
 
       - run:
           name: Disable field type guessing
-          command: curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}' 
+          command: |
+            curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}' 
 
 
       - run:

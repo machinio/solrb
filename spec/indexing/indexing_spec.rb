@@ -27,7 +27,7 @@ RSpec.describe Solr::Indexing do
       resp = req.run(commit: true)
       expect(resp.status).to eq 'OK'
       # return default configuration
-      Solr.configuration = Solr::Configuration.new
+      Solr.configuration = Solr:: Configuration.new
     end
   end
 end
