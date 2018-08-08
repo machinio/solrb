@@ -29,7 +29,7 @@ module Solr
           end
 
           @field       = field
-          @name        = name ? name : field
+          @name        = name || field
           @type        = type
           @value       = value
           @filters     = filters
