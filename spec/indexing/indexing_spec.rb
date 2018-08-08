@@ -5,7 +5,7 @@ RSpec.describe Solr::Indexing do
       doc = Solr::Indexing::Document.new(id: 994, name_txt_en: 'Solrb')
       req = Solr::Indexing::Request.new([doc])
       resp = req.run(commit: true)
-      puts resp.inspect
+      puts resp.inspect unless resp.ok?
       expect(resp.status).to eq 'OK'
     end
 
@@ -28,6 +28,7 @@ RSpec.describe Solr::Indexing do
       doc1 = Solr::Indexing::Document.new(id: 10, title: 'iPhone X')
       req = Solr::Indexing::Request.new([doc1])
       resp = req.run(commit: true)
+      puts resp.inspect unless resp.ok?
       expect(resp.status).to eq 'OK'
       # return default configuration
       Solr.configuration = Solr:: Configuration.new
