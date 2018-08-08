@@ -5,13 +5,13 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
   subject { described_class.new(request) }
 
   context 'simple query' do
-    let(:request) { Solr::Query::Request.new(document_type: document_type, search_term: search_term) }
+    let(:request) { Solr::Query::Request.new(search_term: search_term) }
     let(:solr_params) do
       {
         debug: nil,
         defType: :edismax,
         fl: 'id',
-        fq: ['type:document_type'],
+        fq: [],
         q: 'Search Term',
         qf: []
       }
@@ -56,7 +56,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
     end
 
     let(:request) do
-      request = Solr::Query::Request.new(document_type: document_type, search_term: search_term)
+      request = Solr::Query::Request.new(search_term: search_term)
       request.fields = fields
       request.filters = filters
       request.facets = facets
@@ -78,7 +78,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
         debug: nil,
         defType: :edismax,
         fl: "id",
-        fq: ["type:document_type", "field_1:(\"value\")"],
+        fq: ["field_1:(\"value\")"],
         pf: ["field_2^4"],
         ps: 5,
         q: "Search Term",

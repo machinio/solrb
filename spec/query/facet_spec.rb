@@ -4,7 +4,6 @@ RSpec.describe Solr::Query::Request::Facet do
     let(:options) { {} }
     subject { Solr::Query::Request::Facet.new(type: type, field: field, value: value, options: options).to_solr_h }
 
-    # it { is_expected.to eq(result) }
     context 'when type is "terms"' do
       let(:result) do
         {
