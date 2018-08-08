@@ -44,9 +44,7 @@ module Solr
         end
 
         def add_filters(solr_params)
-          filters = []
-          filters << "type:#{request.document_type}"
-          filters += request.filters.map(&:to_solr_s)
+          filters = request.filters.map(&:to_solr_s)
           solr_params.merge(EDISMAX_FILTER_QUERY => filters)
         end
 
