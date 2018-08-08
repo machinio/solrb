@@ -21,4 +21,3 @@ RSpec.describe Solr::Delete::Request do
     expect(response.status).to eq 'OK'
   end
 end
- 

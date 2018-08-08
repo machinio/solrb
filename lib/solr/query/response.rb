@@ -1,11 +1,11 @@
-require 'solr/response/facet_value'
-require 'solr/response/field_facets'
-require 'solr/response/parser'
-require 'solr/response/spellcheck'
+require 'solr/query/response/facet_value'
+require 'solr/query/response/field_facets'
+require 'solr/query/response/parser'
+require 'solr/query/response/spellcheck'
 
 module Solr
   module Query
-    class Response < Solr::Response
+    class Response
       attr_reader :documents, :available_facets, :spellcheck
 
       class << self

@@ -5,7 +5,7 @@ module Solr
       if field_config
         field_config.solr_field_name
       else
-        field
+        field.to_s
       end
     end
   end

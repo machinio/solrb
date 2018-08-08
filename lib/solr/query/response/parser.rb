@@ -16,7 +16,7 @@ module Solr
         def to_response
           documents = parse_documents
           total_count = parse_total_count
-          if request.grouping
+          if !request.grouping.empty?
             group_counts = parse_group_counts
             document_collection = Solr::GroupedDocumentCollection.new(documents: documents,
                                                                       total_count: total_count,
