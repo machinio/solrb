@@ -1,19 +1,22 @@
 RSpec.describe Solr::Indexing do
-  it 'indexes a single document' do
-    doc = Solr::Indexing::Document.new(id: 994, name: 'Solrb')
-    req = Solr::Indexing::Request.new([doc])
-    resp = req.run(commit: true)
-    expect(resp.status).to eq 'OK'
-  end
+  context 'without configuration' do
 
-  it 'indexes multiple documents' do
-    doc1 = Solr::Indexing::Document.new(id: 995, name: 'Curitiba')
-    doc2 = Solr::Indexing::Document.new(id: 996, name: 'Kislovodsk')
-    req = Solr::Indexing::Request.new([doc1, doc2])
-    resp = req.run(commit: true)
-    expect(resp.status).to eq 'OK'
-  end
+    it 'indexes a single document' do
+      doc = Solr::Indexing::Document.new(id: 994, name_txt_en: 'Solrb')
+      req = Solr::Indexing::Request.new([doc])
+      resp = req.run(commit: true)
+      puts resp.inspect
+      expect(resp.status).to eq 'OK'
+    end
 
+    it 'indexes multiple documents' do
+      doc1 = Solr::Indexing::Document.new(id: 995, name_txt_en: 'Curitiba')
+      doc2 = Solr::Indexing::Document.new(id: 996, name_txt_en: 'Kislovodsk')
+      req = Solr::Indexing::Request.new([doc1, doc2])
+      resp = req.run(commit: true)
+      expect(resp.status).to eq 'OK'
+    end
+  end
   context 'with configuration' do
     it 'indexes with dynamic field configuration' do
       Solr.configure do |config|
