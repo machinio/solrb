@@ -34,8 +34,12 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
 
     let(:boosting) do
       Solr::Query::Request::Boosting.new(
-        multiplicative_boost_functions: [Solr::Query::Request::Boosting::RankingFieldBoostFunction.new(field: :field_1)],
-        phrase_boosts: [Solr::Query::Request::Boosting::PhraseProximityBoost.new(field: :field_2, boost_magnitude: 4)]
+        multiplicative_boost_functions: [
+          Solr::Query::Request::Boosting::RankingFieldBoostFunction.new(field: :field_1)
+        ],
+        phrase_boosts: [
+          Solr::Query::Request::Boosting::PhraseProximityBoost.new(field: :field_2, boost_magnitude: 4)
+        ]
       )
     end
 

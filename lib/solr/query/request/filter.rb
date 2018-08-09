@@ -47,7 +47,7 @@ module Solr
                        '*'
                      else
                        to_primitive_solr_value(range.max)
-                    end
+                     end
           "[#{solr_min} TO #{solr_max}]"
         end
 

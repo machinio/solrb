@@ -3,7 +3,7 @@ module Solr
     refine String do
       # REVIEW: this escape
       def solr_escape
-        gsub(/([+\-&|!\(\)\{\}\[\]\^"~\*\?:\\\/])/, '\\\\\1')
+        gsub(%r(([+\-&|!\(\)\{\}\[\]\^"~\*\?:\\/])), '\\\\\1')
       end
     end
   end

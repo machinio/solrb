@@ -105,7 +105,8 @@ module Solr
         # We need to parse them recursively and store in subfacets array.
         def parse_facets(raw_facet_data)
           raw_facet_data.map do |field_name, facet_data|
-            # We need to handle use case when facet_data is not a hash (e.g. query facet request with aggregate function)
+            # We need to handle use case when facet_data is not a hash
+            # (e.g. query facet request with aggregate function)
             if facet_data.is_a?(Hash)
               parse_facet_hash(field_name, facet_data)
             else

@@ -1,6 +1,6 @@
 RSpec.describe Solr::Response do
   it 'parses 400 (bad request)' do
-    body = <<~EOF
+    body = <<~RESPONSE_BODY
       {
         "responseHeader":{
           "status":400,
@@ -11,7 +11,7 @@ RSpec.describe Solr::Response do
             "root-error-class","org.apache.solr.common.SolrException"],
           "msg":"Document is missing mandatory uniqueKey field: id",
           "code":400}}
-    EOF
+    RESPONSE_BODY
     raw_response = double(status: 400, reason_phrase: 'Bad Request', body: body)
     res = described_class.from_raw_response(raw_response)
     expect(res).not_to be_ok
@@ -21,7 +21,7 @@ RSpec.describe Solr::Response do
   end
 
   it 'parses 404 (not found)' do
-    body = <<~EOF
+    body = <<~RESPONSE_BODY
       <html>
       <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
@@ -34,7 +34,7 @@ RSpec.describe Solr::Response do
         </p>
       </body>
       </html>
-    EOF
+    RESPONSE_BODY
     raw_response = double(status: 404, reason_phrase: 'Not Found', body: body)
     res = described_class.from_raw_response(raw_response)
     expect(res).not_to be_ok

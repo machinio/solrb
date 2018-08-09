@@ -18,7 +18,7 @@ module Solr
   module Query
     class Request
       attr_reader :search_term
-      attr_accessor :filters, :fields, :facets, :boosting, :grouping, :sorting, :debug_mode, :spellcheck,
+      attr_accessor :filters, :fields, :facets, :boosting, :debug_mode, :spellcheck,
                     :limit_docs_by_field, :phrase_slop, :response_fields
 
       def initialize(search_term:, fields: [], filters: [])
