@@ -44,9 +44,7 @@ module Solr
         end
 
         def add_filters(solr_params)
-          filters = []
-          filters << "type:#{request.document_type}"
-          filters += request.filters.map(&:to_solr_s)
+          filters = request.filters.map(&:to_solr_s)
           solr_params.merge(EDISMAX_FILTER_QUERY => filters)
         end
 
@@ -59,6 +57,7 @@ module Solr
         end
 
         def add_boosting(solr_params)
+          return solr_params unless request.boosting
           solr_params = add_additive_boost_functions(solr_params)
           solr_params = add_multiplicative_boost_functions(solr_params)
           add_phrase_boosts(solr_params)
@@ -125,6 +124,7 @@ module Solr
         def add_response_fields(solr_params)
           response_fields = 'id'
           response_fields += ',score' if debug_mode?
+          response_fields += request.response_fields if request.response_fields
           solr_params.merge(RESPONSE_FIELDS => response_fields)
         end
 

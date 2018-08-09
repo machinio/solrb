@@ -59,6 +59,107 @@ You can also create indexing document directly from attributes:
 doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ```
 
+### Querying
+
+#### Simple Query
+
+```ruby
+  field = Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en)
+  request = Solr::Query::Request.new(search_term: 'term', fields: [field])
+  request.run(page: 1, page_size: 10)
+```
+
+#### Query with field boost
+
+```ruby
+  fields = [
+    # Use boost_magnitude argument to apply boost to a specific field
+    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en, boost_magnitude: 16),
+    Solr::Query::Request::FieldWithBoost.new(field: :title_txt_en)
+  ]
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request.run(page: 1, page_size: 10)
+```
+
+#### Query with filters
+
+```ruby
+  fields = [
+    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
+    Solr::Query::Request::FieldWithBoost.new(field: :title_txt_en)
+  ]
+  filters = [Solr::Query::Request::Filter.new(type: :equal, field: :title_txt_en, value: 'title')]
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields, filters: filters)
+  request.run(page: 1, page_size: 10)
+```
+
+
+#### Query with sorting
+
+```ruby
+  fields = [
+    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
+    Solr::Query::Request::FieldWithBoost.new(field: :title_txt_en)
+  ]
+  sort_fields = [Solr::Query::Request::Sorting::Field.new(name: :name_txt_en, direction: :asc)]
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request.sorting = Solr::Query::Request::Sorting.new(fields: sort_fields)
+  request.run(page: 1, page_size: 10)
+```
+
+#### Query with grouping
+
+```ruby
+  fields = [
+    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
+    Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
+  ]
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request.grouping = Solr::Query::Request::Grouping.new(field: :category_txt_en, limit: 10)
+  request.run(page: 1, page_size: 10)
+```
+
+#### Query with facets
+
+```ruby
+  fields = [
+    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
+    Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
+  ]
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request.facets = [Solr::Query::Request::Facet.new(type: :terms, field: :category_txt_en, options: { limit: 10 })]
+  request.run(page: 1, page_size: 10)
+```
+
+#### Query with boosting functions
+
+```ruby
+  fields = [
+    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
+    Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
+  ]
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request.boosting = Solr::Query::Request::Boosting.new(
+    multiplicative_boost_functions: [Solr::Query::Request::Boosting::RankingFieldBoostFunction.new(field: :name_txt_en)],
+    phrase_boosts: [Solr::Query::Request::Boosting::PhraseProximityBoost.new(field: :category_txt_en, boost_magnitude: 4)]
+  )
+  request.run(page: 1, page_size: 10)
+```
+
+#### Field list
+
+
+```ruby
+  fields = [
+    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
+    Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
+  ]
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  # Solr::Query::Request will return only :id field by default.
+  # Specify additional return fields (fl param) by setting the request response_fields
+  request.response_fields = [:name_txt_en, :category_txt_en]
+  request.run(page: 1, page_size: 10)
+```
 
 ### Deleting documents
 
@@ -82,6 +183,6 @@ docker run -it --name test-solr -p 8983:8983/tcp -t solr:7.4.0
 # create a core
 curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
 # disable field guessing
-curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}' 
+curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
 SOLR_URL=http://localhost:8983/solr/test-core rspec
 ```

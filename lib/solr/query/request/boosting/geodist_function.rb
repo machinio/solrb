@@ -22,6 +22,7 @@ module Solr
             "recip(geodist(),3,17000,3000)"
           end
 
+          # TODO Check this dead code and the initialize arguments
           def latlng
             "#{latitude},#{longitude}"
           end

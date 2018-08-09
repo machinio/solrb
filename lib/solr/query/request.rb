@@ -11,25 +11,27 @@ require 'solr/query/request/sorting/field'
 require 'solr/query/request/field_with_boost'
 require 'solr/query/request/or_filter'
 require 'solr/query/request/runner'
+require 'solr/query/response'
 
 module Solr
   module Query
     class Request
       attr_reader :document_type, :search_term
       attr_accessor :filters, :fields, :facets, :boosting, :grouping, :sorting, :debug_mode, :spellcheck,
-                    :limit_docs_by_field, :phrase_slop
+                    :limit_docs_by_field, :phrase_slop, :response_fields
 
-      def initialize(document_type:, search_term:)
-        @document_type = document_type
+      def initialize(search_term:, fields: [], filters: [])
         @search_term = search_term
+        @fields = fields
+        @filters = filters
       end
 
       # Runs this Solr::Request against Solr and
       # returns [Solr::Response]
       def run(page:, page_size:)
         solr_params = Solr::Query::Request::EdismaxAdapter.new(self).to_h
-        raw_response = Solr::Query::RequestRunner.run(page: page, page_size: page_size, solr_params: solr_params)
-        Solr::Response::Parser.new(request: self, solr_response: raw_response).to_response
+        raw_response = Solr::Query::Request::Runner.run(page: page, page_size: page_size, solr_params: solr_params)
+        Solr::Query::Response::Parser.new(request: self, solr_response: raw_response).to_response
       end
 
       def grouping
