@@ -8,7 +8,7 @@ module Solr
 
       def initialize(options = {})
         options = validate_delete_options!(options)
-        @delete_command = {delete: options}
+        @delete_command = { delete: options }
       end
 
       def run(commit: false)

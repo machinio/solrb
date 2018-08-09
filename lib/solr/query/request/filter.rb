@@ -44,9 +44,9 @@ module Solr
         def to_interval_solr_value(range)
           solr_min = to_primitive_solr_value(range.min)
           solr_max = if date_infinity?(range.max) || range.max.to_f.infinite?
-                      '*'
-                    else
-                      to_primitive_solr_value(range.max)
+                       '*'
+                     else
+                       to_primitive_solr_value(range.max)
                     end
           "[#{solr_min} TO #{solr_max}]"
         end

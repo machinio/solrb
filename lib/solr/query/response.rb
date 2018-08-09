@@ -17,12 +17,11 @@ module Solr
           new(documents: Solr::GroupedDocumentCollection.empty)
         end
 
-        # TODO listing_ids ??
+        # TODO: listing_ids ??
         def manual_grouped_listing_documents(listing_ids)
           documents = listing_ids.map { |id| Solr::Document.new(id: id, model_name: 'Listing') }
-          group_counts = listing_ids.reduce({}) do |acc, id|
+          group_counts = listing_ids.each_with_object({}) do |id, acc|
             acc[id] = 1
-            acc
           end
           new(documents: Solr::GroupedDocumentCollection.new(
             documents: documents,

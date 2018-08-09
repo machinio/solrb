@@ -39,7 +39,7 @@ module Solr
 
         def request_params
           # https://lucene.apache.org/solr/guide/7_1/json-request-api.html#passing-parameters-via-json
-          { params: solr_params.merge({ wt: :json, rows: page_size.to_i, start: start }) }
+          { params: solr_params.merge(wt: :json, rows: page_size.to_i, start: start) }
         end
       end
     end

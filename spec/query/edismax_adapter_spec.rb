@@ -74,16 +74,16 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
         'group.format' => 'grouped',
         'group.limit' => 10,
         'json.facet' => '{"field_1":{"type":"terms","field":"field_1","limit":10}}',
-        boost: ["field_1"],
+        boost: ['field_1'],
         debug: nil,
         defType: :edismax,
-        fl: "id",
-        fq: ["field_1:(\"value\")"],
-        pf: ["field_2^4"],
+        fl: 'id',
+        fq: ['field_1:("value")'],
+        pf: ['field_2^4'],
         ps: 5,
-        q: "Search Term",
-        qf: ["field_1^1", "field_2^16"],
-        sort: ["exists(field_1) desc, field_1 asc", "exists(field_2) desc, field_2 desc"],
+        q: 'Search Term',
+        qf: ['field_1^1', 'field_2^16'],
+        sort: ['exists(field_1) desc, field_1 asc', 'exists(field_2) desc, field_2 desc']
       }
     end
 

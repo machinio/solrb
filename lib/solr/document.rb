@@ -14,7 +14,7 @@ module Solr
 
     attr_reader :id, :model_name, :score, :debug_info, :group
 
-    # TODO model_name is specific for machinio
+    # TODO: model_name is specific for machinio
     def initialize(id:, model_name: nil, score: nil, debug_info: nil, group: GroupInformation.empty)
       @id = id
       @model_name = model_name

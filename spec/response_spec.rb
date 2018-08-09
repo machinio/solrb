@@ -11,7 +11,7 @@ RSpec.describe Solr::Response do
             "root-error-class","org.apache.solr.common.SolrException"],
           "msg":"Document is missing mandatory uniqueKey field: id",
           "code":400}}
-      EOF
+    EOF
     raw_response = double(status: 400, reason_phrase: 'Bad Request', body: body)
     res = described_class.from_raw_response(raw_response)
     expect(res).not_to be_ok
@@ -42,5 +42,4 @@ RSpec.describe Solr::Response do
     expect(res.status).to eq 404
     expect(res.solr_error).not_to be
   end
-
 end

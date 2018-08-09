@@ -7,11 +7,9 @@ module Solr
       freeze
     end
 
-    def get
-    end
+    def get; end
 
-    def post
-    end
+    def post; end
 
     def post_as_json(data)
       with_instrumentation do

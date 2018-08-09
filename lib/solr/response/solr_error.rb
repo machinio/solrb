@@ -23,7 +23,6 @@ module Solr
         freeze
       end
 
-
       def inspect
         "#{message} (#{code})"
       end

@@ -53,7 +53,7 @@ module Solr
 
         def parse_group_counts
           group_counts = {}
-          if !request.grouping.empty?
+          unless request.grouping.empty?
             Array(solr_response.dig('grouped', solr_grouping_field, 'groups')).each do |group|
               group_counts[group['groupValue']] = group['doclist']['numFound']
             end
@@ -83,7 +83,7 @@ module Solr
               debug_info = solr_response.dig('debug', 'explain', doc['id'])
               group_information = Document::GroupInformation.new(key: solr_grouping_field, value: group['groupValue'])
               Document.new(id: d['id'], score: doc['score'],
-                debug_info: debug_info, group: group_information)
+                           debug_info: debug_info, group: group_information)
             end
           end.flatten.compact
         end
@@ -127,16 +127,16 @@ module Solr
             end
 
           Solr::Query::Response::FieldFacets.new(field: field_name,
-                                          facet_values: facet_values,
-                                          count: count.to_i,
-                                          subfacets: parse_facets(facet_data))
+                                                 facet_values: facet_values,
+                                                 count: count.to_i,
+                                                 subfacets: parse_facets(facet_data))
         end
 
         def parse_facet_count(field_name, count)
           Solr::Query::Response::FieldFacets.new(field: field_name,
-                                          facet_values: [],
-                                          count: count.to_i,
-                                          subfacets: [])
+                                                 facet_values: [],
+                                                 count: count.to_i,
+                                                 subfacets: [])
         end
 
         def solr_response_has_facet_data?

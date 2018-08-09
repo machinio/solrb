@@ -44,7 +44,7 @@ RSpec.describe Solr::Configuration do
     end
 
     it 'users the set faraday_options' do
-      expect(Solr.configuration.faraday_options).to eq({ request: { timeout: 15 } })
+      expect(Solr.configuration.faraday_options).to eq(request: { timeout: 15 })
     end
   end
 

@@ -41,11 +41,9 @@ module Solr
             }
           end
 
-          def previous_search_term
-          end
+          def previous_search_term; end
 
-          def collated_search_term
-          end
+          def collated_search_term; end
 
           def collated?
             false
