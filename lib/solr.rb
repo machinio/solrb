@@ -24,9 +24,8 @@ module Solr
       yield configuration
     end
 
-    def delete_by_id(_id, commit: false)
-      # TODO: Hardcoded id??
-      Solr::Delete::Request.new(id: 1).run(commit: commit)
+    def delete_by_id(id, commit: false)
+      Solr::Delete::Request.new(id: id).run(commit: commit)
     end
 
     def delete_by_query(query, commit: false)
