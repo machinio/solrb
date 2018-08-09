@@ -12,7 +12,7 @@ module Solr
         http_status = parse_http_status
         header = parse_header(parsed_body)
         solr_error = parse_solr_error(parsed_body)
-        Solr::Response.new(header: header, http_status: http_status, solr_error: solr_error)
+        Solr::Response.new(header: header, http_status: http_status, solr_error: solr_error, body: parsed_body)
       end
 
       private
@@ -24,7 +24,7 @@ module Solr
           solr_error: nil
         )
       end
-      
+
       def parse_header(parsed_body)
         parsed_header = parsed_body['responseHeader']
         status = parsed_header['status'].to_i

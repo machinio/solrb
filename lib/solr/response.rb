@@ -11,12 +11,13 @@ module Solr
       Solr::Response::Parser.new(response).parse
     end
 
-    attr_reader :header, :http_status, :solr_error
+    attr_reader :header, :http_status, :solr_error, :body
 
-    def initialize(header:, http_status: HttpStatus.ok, solr_error: SolrError.none)
+    def initialize(header:, http_status: HttpStatus.ok, solr_error: SolrError.none, body: {})
       @header = header
       @http_status = http_status
       @solr_error = solr_error
+      @body = body
       freeze
     end
 

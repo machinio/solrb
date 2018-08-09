@@ -23,8 +23,8 @@ module Solr
         end
 
         def run
-          response = connection(SOLR_SELECT_PATH).post_as_json(request_params)
-          response = JSON.parse(response.body)
+          raw_response = connection(SOLR_SELECT_PATH).post_as_json(request_params)
+          response = Solr::Response.from_raw_response(raw_response)
           Solr::Testing.set_last_solr_request_response(request_params, response)
           response
         end
