@@ -72,8 +72,7 @@ module Solr
         def parse_regular_documents
           solr_response['response']['docs'].map do |d|
             debug_info = solr_response.dig('debug', 'explain', d['id'])
-            id = d['id']
-            Document.new(id: id.to_i, score: d['score'], debug_info: debug_info)
+            Document.new(id: d['id'], score: d['score'], debug_info: debug_info)
           end
         end
 
@@ -82,9 +81,8 @@ module Solr
             Array(group.dig('doclist', 'docs')).map do |doc|
               next unless doc
               debug_info = solr_response.dig('debug', 'explain', doc['id'])
-              id = doc['id']
               group_information = Document::GroupInformation.new(key: solr_grouping_field, value: group['groupValue'])
-              Document.new(id: id.to_i, score: doc['score'],
+              Document.new(id: d['id'], score: doc['score'],
                 debug_info: debug_info, group: group_information)
             end
           end.flatten.compact

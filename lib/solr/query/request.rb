@@ -12,11 +12,12 @@ require 'solr/query/request/field_with_boost'
 require 'solr/query/request/or_filter'
 require 'solr/query/request/runner'
 require 'solr/query/response'
+require 'solr/errors/solr_query_error'
 
 module Solr
   module Query
     class Request
-      attr_reader :document_type, :search_term
+      attr_reader :search_term
       attr_accessor :filters, :fields, :facets, :boosting, :grouping, :sorting, :debug_mode, :spellcheck,
                     :limit_docs_by_field, :phrase_slop, :response_fields
 
@@ -31,9 +32,8 @@ module Solr
       def run(page:, page_size:)
         solr_params = Solr::Query::Request::EdismaxAdapter.new(self).to_h
         solr_response = Solr::Query::Request::Runner.run(page: page, page_size: page_size, solr_params: solr_params)
-        raise Errors::SolrQueryError(solr_response.error_message) unless solr_response.ok?
+        raise Errors::SolrQueryError.new(solr_response.error_message) unless solr_response.ok?
         Solr::Query::Response::Parser.new(request: self, solr_response: solr_response.body).to_response
-
       end
 
       def grouping

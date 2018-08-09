@@ -17,6 +17,7 @@ module Solr
           new(documents: Solr::GroupedDocumentCollection.empty)
         end
 
+        # TODO listing_ids ??
         def manual_grouped_listing_documents(listing_ids)
           documents = listing_ids.map { |id| Solr::Document.new(id: id, model_name: 'Listing') }
           group_counts = listing_ids.reduce({}) do |acc, id|
@@ -31,7 +32,7 @@ module Solr
         end
       end
 
-      def initialize(documents:, available_facets: [], spellcheck: Solr::Response::Spellcheck.empty)
+      def initialize(documents:, available_facets: [], spellcheck: Solr::Query::Response::Spellcheck.empty)
         @documents = documents
         @available_facets = available_facets
         @spellcheck = spellcheck
