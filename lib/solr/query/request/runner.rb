@@ -1,5 +1,3 @@
-require 'solr/testing'
-
 module Solr
   module Query
     class Request
@@ -25,7 +23,8 @@ module Solr
         def run
           raw_response = connection(SOLR_SELECT_PATH).post_as_json(request_params)
           response = Solr::Response.from_raw_response(raw_response)
-          Solr::Testing.set_last_solr_request_response(request_params, response)
+          Solr.instrument(name: 'solrb.request_response_cycle',
+                          data: { request: request_params, response: raw_response })
           response
         end
 
@@ -39,7 +38,7 @@ module Solr
 
         def request_params
           # https://lucene.apache.org/solr/guide/7_1/json-request-api.html#passing-parameters-via-json
-          { params: solr_params.merge(wt: :json, rows: page_size.to_i, start: start) }
+          @request_params ||= { params: solr_params.merge(wt: :json, rows: page_size.to_i, start: start) }
         end
       end
     end

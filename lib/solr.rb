@@ -31,5 +31,15 @@ module Solr
     def delete_by_query(query, commit: false)
       Solr::Delete::Request.new(query: query).run(commit: commit)
     end
+
+    def instrument(name:, data: {})
+      if defined? ActiveSupport::Notifications
+        ActiveSupport::Notifications.instrument(name, data) do
+          yield if block_given?
+        end
+      else
+        yield if block_given?
+      end
+    end
   end
 end
