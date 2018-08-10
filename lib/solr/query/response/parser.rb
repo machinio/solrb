@@ -82,7 +82,7 @@ module Solr
               next unless doc
               debug_info = solr_response.dig('debug', 'explain', doc['id'])
               group_information = Document::GroupInformation.new(key: solr_grouping_field, value: group['groupValue'])
-              Document.new(id: d['id'], score: doc['score'],
+              Document.new(id: doc['id'], score: doc['score'],
                            debug_info: debug_info, group: group_information)
             end
           end.flatten.compact
