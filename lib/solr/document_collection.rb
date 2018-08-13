@@ -48,10 +48,8 @@ module Solr
       @total_count += 1
     end
 
-    def document_for(record)
-      documents.detect do |doc|
-        doc.model_name == record.class.name && doc.id == record.id
-      end
+    def find(id)
+      documents.find { |doc| doc.id == id }
     end
   end
 end
