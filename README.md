@@ -40,6 +40,20 @@ Solr.configure do |config|
 end
 ```
 
+Warning: Solrb doesn't support fields with same name. If you have two fields with the same name mapping
+to a distinct solr field you'll have to rename one of the fields.
+
+```ruby
+...
+config.define_fields do |f|
+  ...
+  # Not allowed: Two fields with same name 'title'
+  f.field :title, solr_name: :article_title
+  f.field :title, solr_name: :page_title
+end
+...
+```
+
 ## Usage
 
 ### Indexing

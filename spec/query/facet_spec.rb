@@ -25,7 +25,7 @@ RSpec.describe Solr::Query::Request::Facet do
     context 'when type is "query"' do
       let(:result) do
         {
-          "field_1" => 'percentile(field_2, 5)'
+          'field_1' => 'percentile(field_2, 5)'
         }
       end
 

@@ -1,7 +1,6 @@
 module Solr
   class Response
     class HttpStatus
-      
       class << self
         def ok
           new(status: 200, message: 'OK')

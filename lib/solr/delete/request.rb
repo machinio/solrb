@@ -8,7 +8,7 @@ module Solr
 
       def initialize(options = {})
         options = validate_delete_options!(options)
-        @delete_command = {delete: options}
+        @delete_command = { delete: options }
       end
 
       def run(commit: false)
@@ -23,8 +23,8 @@ module Solr
         options = options.deep_symbolize_keys
         id, query = options.values_at(:id, :query)
         error_message = 'options must contain either id or query, but not both'
-        raise ArgumentError, message if id.nil? && query.nil?
-        raise ArgumentError, message if id && query
+        raise ArgumentError, error_message if id.nil? && query.nil?
+        raise ArgumentError, error_message if id && query
         options
       end
     end

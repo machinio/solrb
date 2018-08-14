@@ -19,10 +19,10 @@ module Solr
 
           def to_solr_s
             # this constants are magical, but they influence the slope of geo proximity decay function
-            "recip(geodist(),3,17000,3000)"
+            'recip(geodist(),3,17000,3000)'
           end
 
-          # TODO Check this dead code and the initialize arguments
+          # TODO: Check this dead code and the initialize arguments
           def latlng
             "#{latitude},#{longitude}"
           end

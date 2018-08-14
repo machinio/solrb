@@ -14,7 +14,7 @@ module Solr
     def first(n)
       new_documents = documents.first(n)
       self.class.new(documents: new_documents,
-        total_count: new_documents.count, group_counts: group_counts)
+                     total_count: new_documents.count, group_counts: group_counts)
     end
 
     def slice(range)
@@ -29,9 +29,9 @@ module Solr
     def +(other)
       other_group_counts = other.is_a?(Solr::GroupedDocumentCollection) ? other.group_counts : {}
       self.class.new(
-          documents: documents + other.documents,
-          total_count: total_count + other.total_count,
-          group_counts: group_counts.merge(other_group_counts)
+        documents: documents + other.documents,
+        total_count: total_count + other.total_count,
+        group_counts: group_counts.merge(other_group_counts)
       )
     end
   end

@@ -7,30 +7,16 @@ module Solr
       freeze
     end
 
-    def get
-    end
+    def get; end
 
-    def post
-    end
+    def post; end
 
     def post_as_json(data)
-      with_instrumentation do
+      Solr.instrument(name: 'solrb.request', data: data) do
         @raw_connection.post do |req|
           req.headers['Content-Type'] = 'application/json'.freeze
           req.body = JSON.generate(data)
         end
-      end
-    end
-
-    private
-
-    def with_instrumentation(data: {})
-      if defined? ActiveSupport::Notifications
-        ActiveSupport::Notifications.instrument('solrb.request', data) do
-          yield
-        end
-      else
-        yield
       end
     end
   end

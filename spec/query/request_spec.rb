@@ -21,6 +21,6 @@ RSpec.describe Solr::Query::Request do
   it do
     response = subject.run(page: 1, page_size: 10)
     expect(response.total_count).to eq(1)
-    expect(response.documents.map(&:id)).to eq([42])
+    expect(response.documents.map(&:id)).to eq(['42'])
   end
 end

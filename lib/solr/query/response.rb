@@ -17,21 +17,20 @@ module Solr
           new(documents: Solr::GroupedDocumentCollection.empty)
         end
 
-        def manual_grouped_listing_documents(listing_ids)
-          documents = listing_ids.map { |id| Solr::Document.new(id: id, model_name: 'Listing') }
-          group_counts = listing_ids.reduce({}) do |acc, id|
+        def manual_grouped_documents(ids)
+          documents = ids.map { |id| Solr::Document.new(id: id) }
+          group_counts = ids.each_with_object({}) do |id, acc|
             acc[id] = 1
-            acc
           end
           new(documents: Solr::GroupedDocumentCollection.new(
             documents: documents,
-            total_count: listing_ids.count,
+            total_count: ids.count,
             group_counts: group_counts
           ))
         end
       end
 
-      def initialize(documents:, available_facets: [], spellcheck: Solr::Response::Spellcheck.empty)
+      def initialize(documents:, available_facets: [], spellcheck: Solr::Query::Response::Spellcheck.empty)
         @documents = documents
         @available_facets = available_facets
         @spellcheck = spellcheck

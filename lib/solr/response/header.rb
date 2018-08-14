@@ -17,7 +17,7 @@ module Solr
         if ok?
           'OK'
         else
-          "#{status}"
+          status.to_s
         end
       end
     end

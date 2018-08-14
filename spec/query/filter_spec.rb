@@ -6,7 +6,7 @@ RSpec.describe Solr::Query::Request::Filter do
     end
 
     context 'when value is array' do
-      subject { described_class.new(type: :equal, field: :field, value: [1,2,3]).to_solr_s }
+      subject { described_class.new(type: :equal, field: :field, value: [1, 2, 3]).to_solr_s }
       it { is_expected.to eq('field:("1" OR "2" OR "3")') }
     end
 
