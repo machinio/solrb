@@ -3,11 +3,12 @@ module Solr
     class Request
       class Boosting
         class FieldValueMatchBoostFunction
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
-          attr_reader :field, :value, :boost_magnitude
+          attr_reader :core_name, :field, :value, :boost_magnitude
 
-          def initialize(field:, value:, boost_magnitude:)
+          def initialize(core_name: field:, value:, boost_magnitude:)
+            @core_name = core_name
             @field = field
             @value = value
             @boost_magnitude = boost_magnitude
@@ -15,7 +16,7 @@ module Solr
           end
 
           def solr_field
-            solarize_field(field)
+            solarize_field(core_name: core_name, field: field)
           end
         end
       end

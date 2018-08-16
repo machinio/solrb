@@ -3,11 +3,12 @@ module Solr
     class Request
       class Boosting
         class LnFunctionBoost
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
-          attr_reader :field, :min, :boost_magnitude
+          attr_reader :core_name, :field, :min, :boost_magnitude
 
-          def initialize(field:, min: 0.69, boost_magnitude: 1)
+          def initialize(core_name:, field:, min: 0.69, boost_magnitude: 1)
+            @core_name = core_name
             @field = field
             @min = min
             @boost_magnitude = boost_magnitude
@@ -19,7 +20,7 @@ module Solr
           end
 
           def solr_field
-            solarize_field(field)
+            solarize_field(core_name: core_name, field: field)
           end
         end
       end

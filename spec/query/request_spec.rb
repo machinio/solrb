@@ -2,7 +2,7 @@ RSpec.describe Solr::Query::Request do
   before do
     Solr.delete_by_query('*:*', commit: true)
     doc = Solr::Indexing::Document.new(id: 42, name_txt_en: 'Solrb')
-    Solr::Indexing::Request.new([doc]).run(commit: true)
+    Solr::Indexing::Request.new(core_name: :default, docs: [doc]).run(commit: true)
   end
 
   after do

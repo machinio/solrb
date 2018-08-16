@@ -2,7 +2,7 @@ RSpec.describe Solr::Query::Request::Boosting::DictionaryBoostFunction do
   describe '.to_solr_s' do
     before do
       Solr.configure do |config|
-        config.define_fields do |f|
+        config.define_core(name: :default) do |f|
           f.field :machine_type
         end
       end
@@ -17,7 +17,7 @@ RSpec.describe Solr::Query::Request::Boosting::DictionaryBoostFunction do
         { 'tractor' => 2.0, truck: 1.5 }
       end
 
-      subject { described_class.new(field: :machine_type, dictionary: dictionary) }
+      subject { described_class.new(core_name: :default, field: :machine_type, dictionary: dictionary) }
 
       it { expect(subject.to_solr_s).to eq(expected_result) }
     end
@@ -31,7 +31,7 @@ RSpec.describe Solr::Query::Request::Boosting::DictionaryBoostFunction do
         { 3025 => 2.0, 1200 => 1.5 }
       end
 
-      subject { described_class.new(field: :machine_type, dictionary: dictionary) }
+      subject { described_class.new(core_name: :default, field: :machine_type, dictionary: dictionary) }
 
       it { expect(subject.to_solr_s).to eq(expected_result) }
     end

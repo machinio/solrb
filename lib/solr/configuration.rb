@@ -1,17 +1,17 @@
-require 'solr/field_configuration/dynamic_field'
-require 'solr/field_configuration/field'
-require 'solr/field_configuration/field_definition_builder'
+require 'solr/core_configuration/dynamic_field'
+require 'solr/core_configuration/field'
+require 'solr/core_configuration/core_definition_builder'
 require 'solr/errors/solr_url_not_defined_error'
 
 module Solr
   class Configuration
-    attr_accessor :faraday_options, :fields, :test_connection
+    attr_accessor :faraday_options, :cores, :test_connection
     attr_writer :url
 
     def initialize
       @faraday_options = { request: { timeout: 2, open_timeout: 8 } }
       @url = ENV['SOLR_URL']
-      @fields = {}
+      @cores = {}
     end
 
     def uri
@@ -23,10 +23,10 @@ module Solr
       @url
     end
 
-    def define_fields
-      builder = Solr::FieldConfiguration::FieldDefinitionBuilder.new
+    def define_core(name:)
+      builder = Solr::CoreConfiguration::CoreDefinitionBuilder.new(name: name)
       yield builder
-      fields.merge!(builder.build)
+      cores[name] = builder.build
     end
   end
 end

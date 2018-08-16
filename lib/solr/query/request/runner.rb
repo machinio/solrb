@@ -4,7 +4,7 @@ module Solr
       class Runner
         SOLR_SELECT_PATH = '/select'.freeze
 
-        include Solr::ConnectionHelper
+        include Solr::Support::ConnectionHelper
 
         attr_reader :page, :page_size, :solr_params
 

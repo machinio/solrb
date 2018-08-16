@@ -4,7 +4,7 @@ module Solr
       class GeoFilter
         SPATIAL_RADIUS = 161 # roughly 100mi
 
-        include Solr::SchemaHelper
+        include Solr::Support::SchemaHelper
 
         attr_reader :field, :latitude, :longitude, :spatial_radius
 

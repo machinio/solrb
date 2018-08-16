@@ -2,7 +2,7 @@ module Solr
   module Query
     class Request
       class Facet
-        include Solr::SchemaHelper
+        include Solr::Support::SchemaHelper
 
         TERMS_TYPE = :terms
         QUERY_TYPE = :query

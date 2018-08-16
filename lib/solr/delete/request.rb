@@ -1,8 +1,8 @@
 module Solr
   module Delete
     class Request
-      include Solr::ConnectionHelper
-      using Solr::HashExtensions
+      include Solr::Support::ConnectionHelper
+      using Solr::Support::HashExtensions
 
       PATH = '/update'.freeze
 

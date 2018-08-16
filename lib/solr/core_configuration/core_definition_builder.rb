@@ -1,25 +1,26 @@
 module Solr
-  module FieldConfiguration
-    class FieldDefinitionBuilder
-      attr_reader :dynamic_fields, :fields_params
+  module CoreConfiguration
+    class CoreDefinitionBuilder
+      attr_reader :name, :dynamic_fields, :fields_params
 
-      def initialize
+      def initialize(name:)
+        @name = name
         @dynamic_fields = {}
         @fields_params = {}
       end
 
-      def dynamic_field(name, solr_name:)
-        dynamic_fields[name] = Solr::FieldConfiguration::DynamicField.new(name: name, solr_name: solr_name)
+      def dynamic_field(field_name, solr_name:)
+        dynamic_fields[field_name] = Solr::CoreConfiguration::DynamicField.new(name: field_name, solr_name: solr_name)
       end
 
-      def field(name, params = {})
-        fields_params[name] = params
+      def field(field_name, params = {})
+        fields_params[field_name] = params
       end
 
       def build
         fields_params.each_with_object({}) do |(name, params), fields|
           fields[name] =
-            Solr::FieldConfiguration::Field.new(name: name,
+            Solr::CoreConfiguration::Field.new(name: name,
                                                 solr_name: params[:solr_name],
                                                 dynamic_field: get_dynamic_field(name, params[:dynamic_field]))
         end

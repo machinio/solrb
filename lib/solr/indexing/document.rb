@@ -1,7 +1,7 @@
 module Solr
   module Indexing
     class Document
-      include Solr::SchemaHelper
+      include Solr::Support::SchemaHelper
       attr_reader :fields
 
       def initialize(fields = {})

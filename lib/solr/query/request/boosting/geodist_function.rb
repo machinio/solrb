@@ -6,11 +6,12 @@ module Solr
     class Request
       class Boosting
         class GeodistFunction
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
-          attr_reader :field, :latitude, :longitude
+          attr_reader :core_name, :field, :latitude, :longitude
 
-          def initialize(field:, latitude:, longitude:)
+          def initialize(core_name:, field:, latitude:, longitude:)
+            @core_name = core_name
             @field = field
             @latitude = latitude
             @longitude = longitude
@@ -28,7 +29,7 @@ module Solr
           end
 
           def sfield
-            solarize_field(field)
+            solarize_field(core_name: core_name, field: field)
           end
         end
       end

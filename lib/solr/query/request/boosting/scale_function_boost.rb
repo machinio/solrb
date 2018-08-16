@@ -3,11 +3,12 @@ module Solr
     class Request
       class Boosting
         class ScaleFunctionBoost
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
-          attr_reader :field, :min, :max
+          attr_reader :core_name, :field, :min, :max
 
-          def initialize(field:, min:, max:)
+          def initialize(core_name:, field:, min:, max:)
+            @core_name = core_name
             @field = field
             @min = min
             @max = max
@@ -19,7 +20,7 @@ module Solr
           end
 
           def solr_field
-            solarize_field(field)
+            solarize_field(core_name: core_name, field: field)
           end
         end
       end

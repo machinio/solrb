@@ -6,18 +6,19 @@ module Solr
         # solr in action chapter 16.3.5
         # we only need to do the phrase proximity boosting if we have a phrase, i.e. more than 1 word
         class PhraseProximityBoost
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
-          attr_reader :field, :boost_magnitude
+          attr_reader :core_name, :field, :boost_magnitude
 
-          def initialize(field:, boost_magnitude:)
+          def initialize(core_name:, field:, boost_magnitude:)
+            @core_name = core_name
             @field = field
             @boost_magnitude = boost_magnitude
             freeze
           end
 
           def to_solr_s
-            solr_field = solarize_field(field)
+            solr_field = solarize_field(core_name: core_name, field: field)
             "#{solr_field}^#{boost_magnitude}"
           end
         end

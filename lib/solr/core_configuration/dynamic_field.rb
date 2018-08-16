@@ -1,5 +1,5 @@
 module Solr
-  module FieldConfiguration
+  module CoreConfiguration
     class DynamicField
       attr_reader :name, :solr_name
 

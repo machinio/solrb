@@ -3,11 +3,12 @@ module Solr
     class Request
       class Boosting
         class FieldValueLessThanBoostFunction
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
-          attr_reader :field, :max, :boost_magnitude
+          attr_reader :core_name, :field, :max, :boost_magnitude
 
-          def initialize(field:, max:, boost_magnitude:)
+          def initialize(core_name:, field:, max:, boost_magnitude:)
+            @core_name = core_name
             @field = field
             @max = max
             @boost_magnitude = boost_magnitude
@@ -15,7 +16,7 @@ module Solr
           end
 
           def to_solr_s
-            solr_field = solarize_field(field)
+            solr_field = solarize_field(core_name: core_name, field: field)
             "if(sub(#{max},max(#{solr_field},#{max})),1,#{boost_magnitude})"
           end
         end
