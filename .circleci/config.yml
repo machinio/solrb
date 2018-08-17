@@ -9,10 +9,10 @@ jobs:
       # primary image where all specs are run
       - image: circleci/ruby:2.5.1-node-browsers
         environment:
-          SOLR_URL: http://localhost:8983/solr/test-core
+          SOLR_URL: http://localhost:8983/solr
       # service images that primary image will use
       - image: solr:7.4.0
-      
+
     working_directory: ~/repo
 
     steps:
@@ -38,7 +38,7 @@ jobs:
       - run:
           name: Wait for Solr
           command: dockerize -wait tcp://localhost:8983 -timeout 1m
-      
+
       - run:
           name: Create a test core
           command: curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Disable field type guessing
           command: |
-            curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}' 
+            curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
 
 
       - run:
@@ -54,7 +54,7 @@ jobs:
           command: |
             mkdir /tmp/test-results
             TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            
+
             bundle exec rspec --format progress \
                             --format RspecJunitFormatter \
                             --out /tmp/test-results/rspec.xml \
