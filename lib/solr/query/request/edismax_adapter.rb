@@ -142,7 +142,7 @@ module Solr
 
         def add_rerank_query(solr_params)
           return solr_params unless request.limit_docs_by_field
-          rerank_query = request.limit_docs_by_field.to_solr_s(core_name: core_name)
+          rerank_query = request.limit_docs_by_field.to_solr_s(core_name: request.core_name)
           solr_params.merge(RERANK_QUERY => rerank_query)
         end
 
