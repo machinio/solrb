@@ -51,7 +51,7 @@ RSpec.describe Solr::Configuration do
   context 'fields' do
     before do
       Solr.configure do |config|
-        config.define_fields do |f|
+        config.define_core(name: :'test-core') do |f|
           f.field :description
           f.field :title, dynamic_field: :text
           f.field :tags, solr_name: :tags_array
@@ -62,7 +62,7 @@ RSpec.describe Solr::Configuration do
 
     context 'configure fields' do
       it 'sets fields' do
-        expect(Solr.configuration.fields.keys).to include(:description, :title, :tags)
+        expect(Solr.configuration.cores.values.first).to include(:description, :title, :tags)
       end
     end
 
@@ -70,7 +70,7 @@ RSpec.describe Solr::Configuration do
       it 'raises error' do
         expect do
           Solr.configure do |config|
-            config.define_fields do |f|
+            config.define_core(name: :'test-core') do |f|
               f.field :title, dynamic_field: :text
             end
           end

@@ -5,21 +5,20 @@ module Solr
         class ScaleFunctionBoost
           include Solr::Support::SchemaHelper
 
-          attr_reader :core_name, :field, :min, :max
+          attr_reader :field, :min, :max
 
-          def initialize(core_name:, field:, min:, max:)
-            @core_name = core_name
+          def initialize(field:, min:, max:)
             @field = field
             @min = min
             @max = max
             freeze
           end
 
-          def to_solr_s
-            "scale(#{solr_field},#{min},#{max})"
+          def to_solr_s(core_name:)
+            "scale(#{solr_field(core_name: core_name)},#{min},#{max})"
           end
 
-          def solr_field
+          def solr_field(core_name:)
             solarize_field(core_name: core_name, field: field)
           end
         end

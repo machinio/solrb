@@ -1,11 +1,24 @@
 RSpec.describe Solr::Query::Request::EdismaxAdapter do
+  before do
+    Solr.configure do |config|
+      config.define_core(name: :'test-core') do |f|
+        f.field :machine_type
+      end
+    end
+  end
+
+  after(:each) do
+    # Reset configuration
+    Solr.configuration = Solr::Configuration.new
+  end
+
   let(:document_type) { 'document_type' }
   let(:search_term) { 'Search Term' }
 
   subject { described_class.new(request) }
 
   context 'simple query' do
-    let(:request) { Solr::Query::Request.new(search_term: search_term) }
+    let(:request) { Solr::Query::Request.new(core_name: :'test-core', search_term: search_term) }
     let(:solr_params) do
       {
         debug: nil,
@@ -60,7 +73,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
     end
 
     let(:request) do
-      request = Solr::Query::Request.new(search_term: search_term)
+      request = Solr::Query::Request.new(core_name: :'test-core', search_term: search_term)
       request.fields = fields
       request.filters = filters
       request.facets = facets

@@ -60,17 +60,17 @@ end
 
 ```ruby
 # creates a single document and commits it to index
-doc = Solr::Indexing::Document.new
+doc = Solr::Indexing::Document.new(core_name: :default)
 doc.add_field(:id, 1)
 doc.add_field(:name, 'Solrb!!!')
-request = Solr::Indexing::Request.new([doc])
+request = Solr::Indexing::Request.new(core_name: :default, docs: [doc])
 request.run(commit: true)
 ```
 
 You can also create indexing document directly from attributes:
 
 ```ruby
-doc = Solr::Indexing::Document.new(id: 5, name: 'John')
+doc = Solr::Indexing::Document.new(core_name: :default, fields: { id: 5, name: 'John' })
 ```
 
 ### Querying

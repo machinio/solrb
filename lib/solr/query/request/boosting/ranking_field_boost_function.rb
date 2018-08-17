@@ -4,14 +4,13 @@ module Solr
       class Boosting
         class RankingFieldBoostFunction
           include Solr::Support::SchemaHelper
-          attr_reader :core_name, :field
+          attr_reader :field
 
-          def initialize(core_name:, field:)
-            @core_name = core_name
+          def initialize(field:)
             @field = field
           end
 
-          def to_solr_s
+          def to_solr_s(core_name:)
             solarize_field(core_name: core_name, field: field).to_s
           end
         end

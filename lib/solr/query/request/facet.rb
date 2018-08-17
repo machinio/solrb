@@ -40,22 +40,22 @@ module Solr
           @upper_bound = options[:upper_bound]
         end
 
-        def to_solr_h
+        def to_solr_h(core_name:)
           return { name.to_s => value } if type == QUERY_TYPE && value
 
-          default_solr_h
+          default_solr_h(core_name: core_name)
         end
 
         protected
 
-        def default_solr_h
+        def default_solr_h(core_name:)
           {
             "#{name}": {
               type: type,
-              field: solarize_field(field),
+              field: solarize_field(core_name: core_name, field: field),
               limit: limit,
-              q: filters.any? ? filters.map(&:to_solr_s).join(' AND ') : nil,
-              facet: subfacets.map(&:to_solr_h).reduce(&:merge),
+              q: filters.any? ? filters.map { |f| f.to_solr_s(core_name: core_name) }.join(' AND ') : nil,
+              facet: subfacets.map { |f| f.to_solr_h(core_name: core_name) }.reduce(&:merge),
               gap: gap,
               start: lower_bound,
               end: upper_bound

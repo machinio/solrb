@@ -7,7 +7,7 @@ RSpec.describe Solr::Query::Request::OrFilter do
       ]
     end
 
-    subject { described_class.new(*filters).to_solr_s }
+    subject { described_class.new(*filters).to_solr_s(core_name: :'test-core') }
 
     it { is_expected.to eq('(field:("value") OR field:(["1" TO "100"]))') }
   end

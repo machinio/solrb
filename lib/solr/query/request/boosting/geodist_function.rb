@@ -8,17 +8,16 @@ module Solr
         class GeodistFunction
           include Solr::Support::SchemaHelper
 
-          attr_reader :core_name, :field, :latitude, :longitude
+          attr_reader :field, :latitude, :longitude
 
-          def initialize(core_name:, field:, latitude:, longitude:)
-            @core_name = core_name
+          def initialize(field:, latitude:, longitude:)
             @field = field
             @latitude = latitude
             @longitude = longitude
             freeze
           end
 
-          def to_solr_s
+          def to_solr_s(core_name:)
             # this constants are magical, but they influence the slope of geo proximity decay function
             'recip(geodist(),3,17000,3000)'
           end
@@ -28,7 +27,7 @@ module Solr
             "#{latitude},#{longitude}"
           end
 
-          def sfield
+          def sfield(core_name:)
             solarize_field(core_name: core_name, field: field)
           end
         end

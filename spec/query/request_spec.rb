@@ -1,12 +1,12 @@
 RSpec.describe Solr::Query::Request do
   before do
-    Solr.delete_by_query('*:*', commit: true)
+    Solr.delete_by_query('*:*', commit: true, core_name: :'test-core')
     doc = Solr::Indexing::Document.new(id: 42, name_txt_en: 'Solrb')
-    Solr::Indexing::Request.new(core_name: :default, docs: [doc]).run(commit: true)
+    Solr::Indexing::Request.new(core_name: :'test-core', documents: [doc]).run(commit: true)
   end
 
   after do
-    Solr.delete_by_query('*:*', commit: true)
+    Solr.delete_by_query('*:*', commit: true, core_name: :'test-core')
   end
 
   let(:search_term) { 'solrb' }
@@ -15,7 +15,7 @@ RSpec.describe Solr::Query::Request do
   end
 
   subject do
-    Solr::Query::Request.new(search_term: search_term, fields: fields)
+    Solr::Query::Request.new(core_name: :'test-core', search_term: search_term, fields: fields)
   end
 
   it do

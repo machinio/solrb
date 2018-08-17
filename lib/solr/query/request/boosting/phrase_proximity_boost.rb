@@ -8,16 +8,15 @@ module Solr
         class PhraseProximityBoost
           include Solr::Support::SchemaHelper
 
-          attr_reader :core_name, :field, :boost_magnitude
+          attr_reader :field, :boost_magnitude
 
-          def initialize(core_name:, field:, boost_magnitude:)
-            @core_name = core_name
+          def initialize(field:, boost_magnitude:)
             @field = field
             @boost_magnitude = boost_magnitude
             freeze
           end
 
-          def to_solr_s
+          def to_solr_s(core_name:)
             solr_field = solarize_field(core_name: core_name, field: field)
             "#{solr_field}^#{boost_magnitude}"
           end
