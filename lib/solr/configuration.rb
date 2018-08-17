@@ -24,9 +24,9 @@ module Solr
     end
 
     def define_core(name:)
-      builder = Solr::CoreConfiguration::CoreDefinitionBuilder.new(name: name)
+      builder = Solr::CoreConfiguration::CoreDefinitionBuilder.new(name: name.to_sym)
       yield builder
-      cores[name] = builder.build
+      cores[name.to_sym] = builder.build
     end
   end
 end

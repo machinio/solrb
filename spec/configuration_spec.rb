@@ -48,7 +48,7 @@ RSpec.describe Solr::Configuration do
     end
   end
 
-  context 'fields' do
+  context 'one core' do
     before do
       Solr.configure do |config|
         config.define_core(name: :'test-core') do |f|
@@ -63,6 +63,44 @@ RSpec.describe Solr::Configuration do
     context 'configure fields' do
       it 'sets fields' do
         expect(Solr.configuration.cores.values.first).to include(:description, :title, :tags)
+      end
+    end
+
+    context 'use dynamic_field option without dynamic field configuration' do
+      it 'raises error' do
+        expect do
+          Solr.configure do |config|
+            config.define_core(name: :'test-core') do |f|
+              f.field :title, dynamic_field: :text
+            end
+          end
+        end.to raise_error("Field 'title' is mapped to an undefined dynamic field 'text'")
+      end
+    end
+  end
+
+  context 'multiple cores' do
+    before do
+      Solr.configure do |config|
+        config.define_core(name: :'test-core') do |f|
+          f.field :description
+          f.field :title, dynamic_field: :text
+          f.field :tags, solr_name: :tags_array
+          f.dynamic_field :text, solr_name: '*_text'
+        end
+
+        config.define_core(name: :'test-core-2') do |f|
+          f.field :model
+          f.field :manufacturer, dynamic_field: :text
+          f.dynamic_field :text, solr_name: '*_text'
+        end
+      end
+    end
+
+    context 'configure fields' do
+      it 'sets fields' do
+        expect(Solr.configuration.cores[:'test-core'].keys).to include(:description, :title, :tags)
+        expect(Solr.configuration.cores[:'test-core-2'].keys).to include(:model, :manufacturer)
       end
     end
 
