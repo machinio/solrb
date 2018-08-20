@@ -1,7 +1,7 @@
 RSpec.describe Solr::Support::SchemaHelper do
   include Solr::Support::SchemaHelper
 
-  after(:each) do
+  after do
     # Reset configuration
     Solr.configuration = Solr::Configuration.new
   end
