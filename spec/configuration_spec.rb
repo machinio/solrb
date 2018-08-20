@@ -1,7 +1,7 @@
 RSpec.describe Solr::Configuration do
   subject { described_class.new }
 
-  after(:each) do
+  after do
     # Reset configuration
     Solr.configuration = Solr::Configuration.new
   end

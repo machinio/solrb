@@ -8,7 +8,7 @@ RSpec.describe Solr::Query::Request::Boosting::GeodistFunction do
       end
     end
 
-    after(:each) do
+    after do
       # Reset configuration
       Solr.configuration = Solr::Configuration.new
     end
