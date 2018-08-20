@@ -17,7 +17,6 @@ module Solr
       def run(commit: false)
         # need to think how to move out commit data from the connection, it doesn't belong there
         raw_response = connection(path, commit: commit).post_as_json(delete_command)
-        # binding.irb
         Solr::Response.from_raw_response(raw_response)
       end
 
@@ -29,6 +28,8 @@ module Solr
         error_message = 'options must contain either id or query, but not both'
         raise ArgumentError, error_message if id.nil? && query.nil?
         raise ArgumentError, error_message if id && query
+        error_message = 'options must contain core_name'
+        raise ArgumentError, error_message if core_name.nil?
         options
       end
 
