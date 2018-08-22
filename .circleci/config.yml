@@ -9,7 +9,7 @@ jobs:
       # primary image where all specs are run
       - image: circleci/ruby:2.5.1-node-browsers
         environment:
-          SOLR_URL: http://localhost:8983/solr
+          SOLR_URL: http://localhost:8983/solr/test-core
       # service images that primary image will use
       - image: solr:7.4.0
 
