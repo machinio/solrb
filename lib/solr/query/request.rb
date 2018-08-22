@@ -22,8 +22,8 @@ module Solr
                     :limit_docs_by_field, :phrase_slop, :response_fields
       attr_writer :grouping, :sorting
 
-      def initialize(core_name:, search_term:, fields: [], filters: [])
-        @core_name = core_name
+      def initialize(core_name: nil, search_term:, fields: [], filters: [])
+        @core_name = core_name || Solr.configuration.default_core_name
         @search_term = search_term
         @fields = fields
         @filters = filters

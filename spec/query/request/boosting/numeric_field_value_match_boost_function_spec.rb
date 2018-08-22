@@ -8,11 +8,6 @@ RSpec.describe Solr::Query::Request::Boosting::NumericFieldValueMatchBoostFuncti
       end
     end
 
-    after do
-      # Reset configuration
-      Solr.configuration = Solr::Configuration.new
-    end
-
     subject { described_class.new(field: :machine_type, value: 5, boost_magnitude: 16) }
 
     it { expect(subject.to_solr_s(core_name: :'test-core')).to eq('if(sub(def(machine_type,-1),5),1,16)') }

@@ -8,11 +8,6 @@ RSpec.describe Solr::Query::Request::Boosting::DictionaryBoostFunction do
       end
     end
 
-    after do
-      # Reset configuration
-      Solr.configuration = Solr::Configuration.new
-    end
-
     context 'when field value is string or symbol' do
       let(:expected_result) do
         'if(termfreq(machine_type,"tractor"),2.0,if(termfreq(machine_type,"truck"),1.5,1))'

@@ -7,11 +7,6 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
     end
   end
 
-  after do
-    # Reset configuration
-    Solr.configuration = Solr::Configuration.new
-  end
-
   let(:document_type) { 'document_type' }
   let(:search_term) { 'Search Term' }
 

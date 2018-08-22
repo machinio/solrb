@@ -1,11 +1,6 @@
 RSpec.describe Solr::Support::SchemaHelper do
   include Solr::Support::SchemaHelper
 
-  after do
-    # Reset configuration
-    Solr.configuration = Solr::Configuration.new
-  end
-
   context 'solarize_field' do
     before do
       Solr.configure do |config|

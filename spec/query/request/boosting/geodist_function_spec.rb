@@ -8,11 +8,6 @@ RSpec.describe Solr::Query::Request::Boosting::GeodistFunction do
       end
     end
 
-    after do
-      # Reset configuration
-      Solr.configuration = Solr::Configuration.new
-    end
-
     subject { described_class.new(field: :machine_type, latitude: -25.429692, longitude: -49.271265) }
 
     it { expect(subject.to_solr_s(core_name: :'test-core')).to eq('recip(geodist(),3,17000,3000)') }

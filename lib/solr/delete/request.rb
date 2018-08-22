@@ -4,7 +4,7 @@ module Solr
       include Solr::Support::ConnectionHelper
       using Solr::Support::HashExtensions
 
-      SOLR_DELETE_PATH = 'update'.freeze
+      SOLR_DELETE_PATH = '/update'.freeze
 
       attr_reader :core_name, :delete_command
 
@@ -16,7 +16,7 @@ module Solr
 
       def run(commit: false)
         # need to think how to move out commit data from the connection, it doesn't belong there
-        raw_response = connection(path, commit: commit).post_as_json(delete_command)
+        raw_response = connection(SOLR_DELETE_PATH, core_name: core_name, commit: commit).post_as_json(delete_command)
         Solr::Response.from_raw_response(raw_response)
       end
 
@@ -28,13 +28,7 @@ module Solr
         error_message = 'options must contain either id or query, but not both'
         raise ArgumentError, error_message if id.nil? && query.nil?
         raise ArgumentError, error_message if id && query
-        error_message = 'options must contain core_name'
-        raise ArgumentError, error_message if core_name.nil?
         options
-      end
-
-      def path
-        File.join('/', core_name.to_s, SOLR_DELETE_PATH)
       end
     end
   end

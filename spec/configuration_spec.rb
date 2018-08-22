@@ -1,11 +1,6 @@
 RSpec.describe Solr::Configuration do
   subject { described_class.new }
 
-  after do
-    # Reset configuration
-    Solr.configuration = Solr::Configuration.new
-  end
-
   context 'default url' do
     it 'uses default url' do
       expect(Solr.configuration.url).to eq(ENV['SOLR_URL'])
@@ -24,17 +19,27 @@ RSpec.describe Solr::Configuration do
     end
   end
 
-  context 'no url' do
-    before do
-      Solr.configure do |config|
-        config.url = nil
-      end
+  context 'specify nil url' do
+    it 'raises exception' do
+      expect do
+        Solr.configure do |config|
+          config.url = nil
+        end
+      end.to raise_error(Errors::SolrUrlNotDefinedError)
     end
+  end
+
+  context 'specify nil url' do
+    let!(:stored_solr_url) { ENV['SOLR_URL'] }
+
+    before { ENV['SOLR_URL'] = nil }
+    after { ENV['SOLR_URL'] = stored_solr_url }
 
     it 'raises exception' do
       expect { Solr.configuration.url }.to raise_error(Errors::SolrUrlNotDefinedError)
     end
   end
+
 
   context 'set faraday_options' do
     before do
@@ -45,6 +50,37 @@ RSpec.describe Solr::Configuration do
 
     it 'users the set faraday_options' do
       expect(Solr.configuration.faraday_options).to eq(request: { timeout: 15 })
+    end
+  end
+
+  context 'core name in ENV variable' do
+    before do
+      Solr.configure do |config|
+        config.define_core do |f|
+          f.field :description
+        end
+      end
+    end
+
+    it 'raises exception' do
+      expect(Solr.configuration.cores.keys).to eq([nil])
+      expect(Solr.configuration.cores.values.map(&:url)).to eq([ENV['SOLR_URL']])
+    end
+  end
+
+  context 'core name in `define_core`' do
+    before do
+      Solr.configure do |config|
+        config.url = 'http://localhost:8983'
+
+        config.define_core(name: :'test-core') do |f|
+          f.field :description
+        end
+      end
+    end
+
+    it 'raises exception' do
+      expect(Solr.configuration.cores.keys).to include(:'test-core')
     end
   end
 
@@ -62,7 +98,7 @@ RSpec.describe Solr::Configuration do
 
     context 'configure fields' do
       it 'sets fields' do
-        expect(Solr.configuration.cores.values.first).to include(:description, :title, :tags)
+        expect(Solr.configuration.cores.values.first.fields).to include(:description, :title, :tags)
       end
     end
 
@@ -99,8 +135,8 @@ RSpec.describe Solr::Configuration do
 
     context 'configure fields' do
       it 'sets fields' do
-        expect(Solr.configuration.cores[:'test-core'].keys).to include(:description, :title, :tags)
-        expect(Solr.configuration.cores[:'test-core-2'].keys).to include(:model, :manufacturer)
+        expect(Solr.configuration.cores[:'test-core'].fields).to include(:description, :title, :tags)
+        expect(Solr.configuration.cores[:'test-core-2'].fields).to include(:model, :manufacturer)
       end
     end
 
@@ -113,6 +149,22 @@ RSpec.describe Solr::Configuration do
             end
           end
         end.to raise_error("Field 'title' is mapped to an undefined dynamic field 'text'")
+      end
+    end
+
+    context 'multiple cores without names' do
+      it 'raises error' do
+        expect do
+          Solr.configure do |config|
+            config.define_core do |f|
+              f.field :title
+            end
+
+            config.define_core do |f|
+              f.field :model
+            end
+          end
+        end.to raise_error("A core with name '' has been already defined")
       end
     end
   end
