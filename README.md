@@ -23,7 +23,8 @@ Solr.configure do |config|
   # options here.
   config.faraday_options = {}
 
-  # Define the core with fields that will be used for querying Solr
+  # Define the core with fields that will be used for querying Solr.
+  # Core's URL is 'http://localhost:8983/default'
   config.define_core(name: :default) do |f|
     f.field :description
     # When dynamic_field is present, the field name will be mapped to match the dynamic field
@@ -39,9 +40,23 @@ Solr.configure do |config|
   end
 
   # Define multiple cores with fields
+  # Core's URL is 'http://localhost:8983/cars'
   config.define_core(name: :cars) do |f|
     f.field :manufacturer
     f.field :model
+  end
+end
+```
+
+Single core configuration:
+
+```ruby
+Solr.configure do |config|
+  config.url = 'http://localhost:8983/core-name'
+
+  # Core's URL is be 'http://localhost:8983/core-name'
+  config.define_core do |f|
+    f.field :description
   end
 end
 ```
@@ -69,7 +84,9 @@ end
 doc = Solr::Indexing::Document.new
 doc.add_field(:id, 1)
 doc.add_field(:name, 'Solrb!!!')
-request = Solr::Indexing::Request.new(core_name: :default, documents: [doc])
+
+# For multi-core configuration also pass `core_name` param with core's name
+request = Solr::Indexing::Request.new(documents: [doc])
 request.run(commit: true)
 ```
 
@@ -85,7 +102,9 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 
 ```ruby
   field = Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en)
-  request = Solr::Query::Request.new(core_name: :default, search_term: 'term', fields: [field])
+
+  # For multi-core configuration also pass `core_name` param with core's name
+  request = Solr::Query::Request.new(search_term: 'term', fields: [field])
   request.run(page: 1, page_size: 10)
 ```
 
@@ -97,7 +116,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
     Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en, boost_magnitude: 16),
     Solr::Query::Request::FieldWithBoost.new(field: :title_txt_en)
   ]
-  request = Solr::Query::Request.new(core_name: :default, search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   request.run(page: 1, page_size: 10)
 ```
 
@@ -109,7 +128,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
     Solr::Query::Request::FieldWithBoost.new(field: :title_txt_en)
   ]
   filters = [Solr::Query::Request::Filter.new(type: :equal, field: :title_txt_en, value: 'title')]
-  request = Solr::Query::Request.new(core_name: :default, search_term: 'term', fields: fields, filters: filters)
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields, filters: filters)
   request.run(page: 1, page_size: 10)
 ```
 
@@ -122,7 +141,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
     Solr::Query::Request::FieldWithBoost.new(field: :title_txt_en)
   ]
   sort_fields = [Solr::Query::Request::Sorting::Field.new(name: :name_txt_en, direction: :asc)]
-  request = Solr::Query::Request.new(core_name: :default, search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   request.sorting = Solr::Query::Request::Sorting.new(fields: sort_fields)
   request.run(page: 1, page_size: 10)
 ```
@@ -134,7 +153,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
     Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
     Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
   ]
-  request = Solr::Query::Request.new(core_name: :default, search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   request.grouping = Solr::Query::Request::Grouping.new(field: :category_txt_en, limit: 10)
   request.run(page: 1, page_size: 10)
 ```
@@ -146,7 +165,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
     Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
     Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
   ]
-  request = Solr::Query::Request.new(core_name: :default, search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   request.facets = [Solr::Query::Request::Facet.new(type: :terms, field: :category_txt_en, options: { limit: 10 })]
   request.run(page: 1, page_size: 10)
 ```
@@ -158,7 +177,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
     Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
     Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
   ]
-  request = Solr::Query::Request.new(core_name: :default, search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   request.boosting = Solr::Query::Request::Boosting.new(
     multiplicative_boost_functions: [Solr::Query::Request::Boosting::RankingFieldBoostFunction.new(field: :name_txt_en)],
     phrase_boosts: [Solr::Query::Request::Boosting::PhraseProximityBoost.new(field: :category_txt_en, boost_magnitude: 4)]
@@ -174,7 +193,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
     Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
     Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
   ]
-  request = Solr::Query::Request.new(core_name: :default, search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   # Solr::Query::Request will return only :id field by default.
   # Specify additional return fields (fl param) by setting the request response_fields
   request.response_fields = [:name_txt_en, :category_txt_en]
@@ -184,10 +203,11 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ### Deleting documents
 
 ```ruby
-Solr.delete_by_id(3242343, core_name: :default)
-Solr.delete_by_id(3242343, commit: true, core_name: :default)
-Solr.delete_by_query('*:*', core_name: :default)
-Solr.delete_by_query('*:*', commit: true, core_name: :default)
+# For multi-core configuration also pass `core_name` param with core's name
+Solr.delete_by_id(3242343)
+Solr.delete_by_id(3242343, commit: true)
+Solr.delete_by_query('*:*')
+Solr.delete_by_query('*:*', commit: true)
 ```
 
 ## Running specs
@@ -204,5 +224,5 @@ docker run -it --name test-solr -p 8983:8983/tcp -t solr:7.4.0
 curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
 # disable field guessing
 curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
-SOLR_URL=http://localhost:8983/solr rspec
+SOLR_URL=http://localhost:8983/solr/test-core rspec
 ```
