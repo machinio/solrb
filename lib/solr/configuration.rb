@@ -44,7 +44,10 @@ module Solr
     end
 
     def define_core(name: nil)
-      builder = Solr::CoreConfiguration::CoreDefinitionBuilder.new(name: name)
+      builder = Solr::CoreConfiguration::CoreDefinitionBuilder.new(
+        url: @url || null_core.url,
+        name: name
+      )
       yield builder
       core = builder.build
       if cores.has_key?(core.name)

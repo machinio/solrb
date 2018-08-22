@@ -21,7 +21,7 @@ RSpec.describe Solr::Indexing do
     context 'one core' do
       before do
         Solr.configure do |config|
-          config.define_core(name: :'test-core') do |f|
+          config.define_core do |f|
             f.field :name, dynamic_field: :txt_en
             f.dynamic_field :txt_en, solr_name: '*_txt_en'
           end

@@ -3,8 +3,8 @@ module Solr
     class CoreDefinitionBuilder
       attr_reader :url, :name, :dynamic_fields, :fields_params
 
-      def initialize(name: nil)
-        @url = Addressable::URI.join(ENV['SOLR_URL'], name.to_s).to_s
+      def initialize(url: ENV['SOLR_URL'], name: nil)
+        @url = name ? File.join(url, name.to_s) : url
         @name = name
         @dynamic_fields = {}
         @fields_params = {}
