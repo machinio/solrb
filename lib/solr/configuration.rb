@@ -3,7 +3,7 @@ require 'solr/core_configuration/field'
 require 'solr/core_configuration/core_config'
 require 'solr/core_configuration/core_config_builder'
 require 'solr/errors/solr_url_not_defined_error'
-require 'solr/errors/unspecified_core_error'
+require 'solr/errors/ambiguous_core_error'
 
 module Solr
   class Configuration
@@ -42,7 +42,7 @@ module Solr
     end
 
     def default_core_config
-      raise Errors::UnspecifiedCoreError if cores.count > 1
+      raise Errors::AmbiguousCoreError if cores.count > 1
       cores.values.first || unspecified_core
     end
 

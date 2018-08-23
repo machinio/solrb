@@ -48,7 +48,7 @@ RSpec.describe Solr::Query::Request::Runner do
         let(:core) { nil }
 
         it 'runs' do
-          expect { subject.run }.to raise_error(Errors::UnspecifiedCoreError)
+          expect { subject.run }.to raise_error(Errors::AmbiguousCoreError)
         end
       end
 

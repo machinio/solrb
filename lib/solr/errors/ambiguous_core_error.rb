@@ -1,5 +1,5 @@
 module Errors
-  class UnspecifiedCoreError < StandardError
+  class AmbiguousCoreError < StandardError
     ERROR_MESSAGE = 'Multiple cores defined: default core can\'t be found'.freeze
 
     def initialize
