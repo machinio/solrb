@@ -25,7 +25,7 @@ RSpec.describe Solr::Configuration do
         Solr.configure do |config|
           config.url = nil
         end
-      end.to raise_error(Errors::SolrUrlNotDefinedError)
+      end.to raise_error(ArgumentError)
     end
   end
 

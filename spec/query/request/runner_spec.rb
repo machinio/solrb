@@ -48,7 +48,7 @@ RSpec.describe Solr::Query::Request::Runner do
         let(:core_name) { nil }
 
         it 'runs' do
-          expect { subject.run }.to raise_error(Errors::MultipleSolrCoresError)
+          expect { subject.run }.to raise_error(Errors::UnspecifiedCoreError)
         end
       end
 

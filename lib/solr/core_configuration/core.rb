@@ -21,7 +21,7 @@ module Solr
       end
     end
 
-    class NullCore < Core
+    class UnspecifiedCore < Core
       attr_reader :name, :url, :fields
 
       def initialize(name: nil, url: ENV['SOLR_URL'], fields: {})
