@@ -1,6 +1,6 @@
 module Solr
   module CoreConfiguration
-    class Core
+    class CoreConfig
       attr_reader :name, :url, :fields
 
       def initialize(name:, url:, fields:)
@@ -21,7 +21,7 @@ module Solr
       end
     end
 
-    class UnspecifiedCore < Core
+    class UnspecifiedCoreConfig < CoreConfig
       attr_reader :name, :url, :fields
 
       def initialize(name: nil, url: ENV['SOLR_URL'], fields: {})

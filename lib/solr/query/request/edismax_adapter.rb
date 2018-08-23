@@ -39,19 +39,19 @@ module Solr
         private
 
         def add_query_fields(solr_params)
-          fields = request.fields.map { |f| f.to_solr_s(core_name: request.core_name) }
+          fields = request.fields.map { |f| f.to_solr_s(core: request.core) }
           solr_params.merge(EDISMAX_QUERY_FIELDS => fields)
         end
 
         def add_filters(solr_params)
-          filters = request.filters.map { |f| f.to_solr_s(core_name: request.core_name) }
+          filters = request.filters.map { |f| f.to_solr_s(core: request.core) }
           solr_params.merge(EDISMAX_FILTER_QUERY => filters)
         end
 
         def add_facets(solr_params)
           return solr_params if Array(request.facets).empty?
 
-          solr_params['json.facet'] = request.facets.map { |f| f.to_solr_h(core_name: request.core_name) }.reduce(&:merge).to_json
+          solr_params['json.facet'] = request.facets.map { |f| f.to_solr_h(core: request.core) }.reduce(&:merge).to_json
 
           solr_params
         end
@@ -64,7 +64,7 @@ module Solr
         end
 
         def add_additive_boost_functions(solr_params)
-          additive_boosts = request.boosting.additive_boost_functions.map { |f| f.to_solr_s(core_name: request.core_name) }
+          additive_boosts = request.boosting.additive_boost_functions.map { |f| f.to_solr_s(core: request.core) }
           if additive_boosts.any?
             solr_params.merge(EDISMAX_ADDITIVE_BOOST_FUNCTION => additive_boosts)
           else
@@ -73,7 +73,7 @@ module Solr
         end
 
         def add_multiplicative_boost_functions(solr_params)
-          multiplicative_boosts = request.boosting.multiplicative_boost_functions.map { |f| f.to_solr_s(core_name: request.core_name) }
+          multiplicative_boosts = request.boosting.multiplicative_boost_functions.map { |f| f.to_solr_s(core: request.core) }
           if multiplicative_boosts.any?
             solr_params = solr_params.merge(EDISMAX_MULTIPLICATIVE_BOOST_FUNCTION => multiplicative_boosts)
             # https://stackoverflow.com/questions/47025453/
@@ -84,7 +84,7 @@ module Solr
         end
 
         def add_phrase_boosts(solr_params)
-          solr_phrase_boosts = request.boosting.phrase_boosts.map { |f| f.to_solr_s(core_name: request.core_name) }
+          solr_phrase_boosts = request.boosting.phrase_boosts.map { |f| f.to_solr_s(core: request.core) }
           if solr_phrase_boosts.any?
             solr_params.merge(EDISMAX_PHRASE_BOOST => solr_phrase_boosts)
           else
@@ -94,7 +94,7 @@ module Solr
 
         def maybe_add_spatial_fields(solr_params, geodist_function)
           if geodist_function
-            solr_params.merge(pt: geodist_function.latlng, sfield: geodist_function.sfield(core_name: request.core_name))
+            solr_params.merge(pt: geodist_function.latlng, sfield: geodist_function.sfield(core: request.core))
           else
             solr_params
           end
@@ -106,7 +106,7 @@ module Solr
             'group' => true,
             'group.format' => 'grouped',
             'group.limit' => request.grouping.limit,
-            'group.field' => solarize_field(core_name: request.core_name, field: request.grouping.field)
+            'group.field' => solarize_field(core: request.core, field: request.grouping.field)
           }
           solr_params.merge(group_info)
         end
@@ -115,7 +115,7 @@ module Solr
           return solr_params if request.sorting.empty?
           # sorting nulls last, not-nulls first
           solr_sorting = request.sorting.fields.map do |sort_field|
-            solr_field = solarize_field(core_name: request.core_name, field: sort_field.name)
+            solr_field = solarize_field(core: request.core, field: sort_field.name)
             "exists(#{solr_field}) desc, #{solr_field} #{sort_field.direction}"
           end
           solr_params.merge(sort: solr_sorting)
@@ -142,7 +142,7 @@ module Solr
 
         def add_rerank_query(solr_params)
           return solr_params unless request.limit_docs_by_field
-          rerank_query = request.limit_docs_by_field.to_solr_s(core_name: request.core_name)
+          rerank_query = request.limit_docs_by_field.to_solr_s(core: request.core)
           solr_params.merge(RERANK_QUERY => rerank_query)
         end
 

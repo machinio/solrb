@@ -14,12 +14,12 @@ module Solr
             freeze
           end
 
-          def to_solr_s(core_name:)
-            "mul(if(gt(#{solr_field(core_name: core_name)},1),ln(#{solr_field(core_name: core_name)}),#{min}),#{boost_magnitude})"
+          def to_solr_s(core:)
+            "mul(if(gt(#{solr_field(core: core)},1),ln(#{solr_field(core: core)}),#{min}),#{boost_magnitude})"
           end
 
-          def solr_field(core_name:)
-            solarize_field(core_name: core_name, field: field)
+          def solr_field(core:)
+            solarize_field(core: core, field: field)
           end
         end
       end

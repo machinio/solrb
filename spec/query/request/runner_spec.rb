@@ -1,10 +1,10 @@
 RSpec.describe Solr::Query::Request::Runner do
-  let(:core_name) { nil }
+  let(:core) { nil }
   let(:search_term) { 'solrb' }
 
   subject do
     described_class.new(
-      core_name: core_name,
+      core: core,
       page: 1,
       page_size: 10
     )
@@ -45,7 +45,7 @@ RSpec.describe Solr::Query::Request::Runner do
       end
 
       context 'request without specified core' do
-        let(:core_name) { nil }
+        let(:core) { nil }
 
         it 'runs' do
           expect { subject.run }.to raise_error(Errors::UnspecifiedCoreError)
@@ -53,7 +53,7 @@ RSpec.describe Solr::Query::Request::Runner do
       end
 
       context 'request with specified core' do
-        let(:core_name) { 'test-core' }
+        let(:core) { 'test-core' }
 
         it 'runs' do
           expect { subject.run }.not_to raise_error

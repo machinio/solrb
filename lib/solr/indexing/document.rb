@@ -13,9 +13,9 @@ module Solr
       end
 
       # TODO: refactor & optimize this
-      def as_json(core_name:)
+      def as_json(core:)
         fields.map do |k, v|
-          solr_field_name = solarize_field(core_name: core_name, field: k)
+          solr_field_name = solarize_field(core: core, field: k)
           [solr_field_name, v]
         end.to_h
       end

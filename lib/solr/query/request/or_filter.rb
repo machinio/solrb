@@ -6,8 +6,8 @@ module Solr
           @filters = filters
         end
 
-        def to_solr_s(core_name:)
-          subexpressions = @filters.map { |f| "#{f.solr_field(core_name: core_name)}:(#{f.solr_value})" }
+        def to_solr_s(core:)
+          subexpressions = @filters.map { |f| "#{f.solr_field(core: core)}:(#{f.solr_value})" }
           "(#{subexpressions.join(' OR ')})"
         end
       end

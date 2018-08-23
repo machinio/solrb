@@ -85,7 +85,7 @@ doc = Solr::Indexing::Document.new
 doc.add_field(:id, 1)
 doc.add_field(:name, 'Solrb!!!')
 
-# For multi-core configuration also pass `core_name` param with core's name
+# For multi-core configuration also pass `core` param with core's name
 request = Solr::Indexing::Request.new(documents: [doc])
 request.run(commit: true)
 ```
@@ -103,7 +103,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ```ruby
   field = Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en)
 
-  # For multi-core configuration also pass `core_name` param with core's name
+  # For multi-core configuration also pass `core` param with core's name
   request = Solr::Query::Request.new(search_term: 'term', fields: [field])
   request.run(page: 1, page_size: 10)
 ```
@@ -203,7 +203,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ### Deleting documents
 
 ```ruby
-# For multi-core configuration also pass `core_name` param with core's name
+# For multi-core configuration also pass `core` param with core's name
 Solr.delete_by_id(3242343)
 Solr.delete_by_id(3242343, commit: true)
 Solr.delete_by_query('*:*')

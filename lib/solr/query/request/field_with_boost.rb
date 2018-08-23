@@ -9,7 +9,7 @@ module Solr
           @boost_magnitude = boost_magnitude
         end
 
-        def to_solr_s(core_name:)
+        def to_solr_s(core:)
           "#{field}^#{boost_magnitude}"
         end
       end

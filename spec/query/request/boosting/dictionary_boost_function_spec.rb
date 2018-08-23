@@ -19,7 +19,7 @@ RSpec.describe Solr::Query::Request::Boosting::DictionaryBoostFunction do
 
       subject { described_class.new(field: :machine_type, dictionary: dictionary) }
 
-      it { expect(subject.to_solr_s(core_name: :'test-core')).to eq(expected_result) }
+      it { expect(subject.to_solr_s(core: :'test-core')).to eq(expected_result) }
     end
 
     context 'when field value is not string or symbol' do
@@ -33,7 +33,7 @@ RSpec.describe Solr::Query::Request::Boosting::DictionaryBoostFunction do
 
       subject { described_class.new(field: :machine_type, dictionary: dictionary) }
 
-      it { expect(subject.to_solr_s(core_name: :'test-core')).to eq(expected_result) }
+      it { expect(subject.to_solr_s(core: :'test-core')).to eq(expected_result) }
     end
   end
 end

@@ -1,6 +1,6 @@
 module Solr
   module CoreConfiguration
-    class CoreDefinitionBuilder
+    class CoreConfigBuilder
       attr_reader :url, :name, :dynamic_fields, :fields_params
 
       def initialize(url: ENV['SOLR_URL'], name: nil)
@@ -27,7 +27,7 @@ module Solr
       end
 
       def build
-        Solr::CoreConfiguration::Core.new(
+        Solr::CoreConfiguration::CoreConfig.new(
           name: name,
           url: url,
           fields: build_fields

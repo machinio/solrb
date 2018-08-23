@@ -1,7 +1,7 @@
 require 'solr/core_configuration/dynamic_field'
 require 'solr/core_configuration/field'
-require 'solr/core_configuration/core'
-require 'solr/core_configuration/core_definition_builder'
+require 'solr/core_configuration/core_config'
+require 'solr/core_configuration/core_config_builder'
 require 'solr/errors/solr_url_not_defined_error'
 require 'solr/errors/unspecified_core_error'
 
@@ -16,8 +16,8 @@ module Solr
       @cores = {}
     end
 
-    def uri(core_name: nil)
-      @core_to_uri_mapping[core_name] ||= Addressable::URI.parse(url(core_name: core_name))
+    def uri(core: nil)
+      @core_to_uri_mapping[core] ||= Addressable::URI.parse(url(core: core))
     end
 
     def url=(value)
@@ -28,26 +28,26 @@ module Solr
       end
     end
 
-    def url(core_name: nil)
-      return @core_to_url_mapping[core_name] if @core_to_url_mapping.has_key?(core_name)
-      core_url = cores[core_name.to_sym]&.url if core_name
+    def url(core: nil)
+      return @core_to_url_mapping[core] if @core_to_url_mapping.has_key?(core)
+      core_url = cores[core.to_sym]&.url if core
       core_url ||= @url
-      core_url ||= default_core.url
+      core_url ||= default_core_config.url
       raise Errors::SolrUrlNotDefinedError unless core_url
-      @core_to_url_mapping[core_name] = core_url
-    end
-
-    def default_core_name
-      default_core.name
+      @core_to_url_mapping[core] = core_url
     end
 
     def default_core
+      default_core_config.name
+    end
+
+    def default_core_config
       raise Errors::UnspecifiedCoreError if cores.count > 1
       cores.values.first || unspecified_core
     end
 
     def define_core(name: nil)
-      builder = Solr::CoreConfiguration::CoreDefinitionBuilder.new(
+      builder = Solr::CoreConfiguration::CoreConfigBuilder.new(
         url: @url || unspecified_core.url,
         name: name
       )
@@ -61,7 +61,7 @@ module Solr
     end
 
     def unspecified_core
-      Solr::CoreConfiguration::UnspecifiedCore.new
+      Solr::CoreConfiguration::UnspecifiedCoreConfig.new
     end
   end
 end

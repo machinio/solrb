@@ -2,7 +2,7 @@ RSpec.describe Solr::Query::Request::Facet do
   describe '.to_solr_h' do
     let(:value) { nil }
     let(:options) { {} }
-    subject { Solr::Query::Request::Facet.new(type: type, field: field, value: value, options: options).to_solr_h(core_name: :'test-core') }
+    subject { Solr::Query::Request::Facet.new(type: type, field: field, value: value, options: options).to_solr_h(core: :'test-core') }
 
     context 'when type is "terms"' do
       let(:result) do

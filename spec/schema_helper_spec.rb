@@ -14,19 +14,19 @@ RSpec.describe Solr::Support::SchemaHelper do
     end
 
     context 'regular field' do
-      it { expect(solarize_field(core_name: :'test-core', field: :description)).to eq('description') }
+      it { expect(solarize_field(core: :'test-core', field: :description)).to eq('description') }
     end
 
     context 'dynamic field' do
-      it { expect(solarize_field(core_name: :'test-core', field: :title)).to eq('title_text') }
+      it { expect(solarize_field(core: :'test-core', field: :title)).to eq('title_text') }
     end
 
     context 'solr_name field' do
-      it { expect(solarize_field(core_name: :'test-core', field: :tags)).to eq('tags_array') }
+      it { expect(solarize_field(core: :'test-core', field: :tags)).to eq('tags_array') }
     end
 
     context 'undefined field' do
-      it { expect(solarize_field(core_name: :'test-core', field: :undefined_field)).to eq('undefined_field') }
+      it { expect(solarize_field(core: :'test-core', field: :undefined_field)).to eq('undefined_field') }
     end
   end
 end

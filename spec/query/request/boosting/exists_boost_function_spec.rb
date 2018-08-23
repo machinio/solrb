@@ -10,6 +10,6 @@ RSpec.describe Solr::Query::Request::Boosting::ExistsBoostFunction do
 
     subject { described_class.new(field: :machine_type, boost_magnitude: 16) }
 
-    it { expect(subject.to_solr_s(core_name: :'test-core')).to eq('if(exists(machine_type),16,1)') }
+    it { expect(subject.to_solr_s(core: :'test-core')).to eq('if(exists(machine_type),16,1)') }
   end
 end

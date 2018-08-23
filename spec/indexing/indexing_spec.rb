@@ -54,14 +54,14 @@ RSpec.describe Solr::Indexing do
         end
       end
 
-      it 'raises an error on multiple indices without explicit core_name param' do
+      it 'raises an error on multiple indices without explicit core param' do
         doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
         expect { Solr::Indexing::Request.new(documents: [doc1]) }.to raise_error(Errors::UnspecifiedCoreError)
       end
 
-      it 'accepts explicit core_name param' do
+      it 'accepts explicit core param' do
         doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-        req = Solr::Indexing::Request.new(core_name: :'test-core', documents: [doc1])
+        req = Solr::Indexing::Request.new(core: :'test-core', documents: [doc1])
         resp = req.run(commit: true)
         puts resp.inspect unless resp.ok?
         expect(resp.status).to eq 'OK'

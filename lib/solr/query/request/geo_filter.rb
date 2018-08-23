@@ -16,8 +16,8 @@ module Solr
           freeze
         end
 
-        def to_solr_s(core_name:)
-          solr_field = solarize_field(core_name: core_name, field: @field)
+        def to_solr_s(core:)
+          solr_field = solarize_field(core: core, field: @field)
           "{!geofilt sfield=#{solr_field} pt=#{@latitude},#{@longitude} d=#{spatial_radius}}"
         end
       end

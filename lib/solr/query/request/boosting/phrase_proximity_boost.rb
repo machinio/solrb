@@ -16,8 +16,8 @@ module Solr
             freeze
           end
 
-          def to_solr_s(core_name:)
-            solr_field = solarize_field(core_name: core_name, field: field)
+          def to_solr_s(core:)
+            solr_field = solarize_field(core: core, field: field)
             "#{solr_field}^#{boost_magnitude}"
           end
         end

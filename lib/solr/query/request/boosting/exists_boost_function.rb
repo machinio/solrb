@@ -13,12 +13,12 @@ module Solr
             freeze
           end
 
-          def to_solr_s(core_name:)
-            "if(exists(#{solr_field(core_name: core_name)}),#{boost_magnitude},1)"
+          def to_solr_s(core:)
+            "if(exists(#{solr_field(core: core)}),#{boost_magnitude},1)"
           end
 
-          def solr_field(core_name:)
-            solarize_field(core_name: core_name, field: field)
+          def solr_field(core:)
+            solarize_field(core: core, field: field)
           end
         end
       end

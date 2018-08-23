@@ -14,12 +14,12 @@ module Solr
             freeze
           end
 
-          def to_solr_s(core_name:)
-            "scale(#{solr_field(core_name: core_name)},#{min},#{max})"
+          def to_solr_s(core:)
+            "scale(#{solr_field(core: core)},#{min},#{max})"
           end
 
-          def solr_field(core_name:)
-            solarize_field(core_name: core_name, field: field)
+          def solr_field(core:)
+            solarize_field(core: core, field: field)
           end
         end
       end

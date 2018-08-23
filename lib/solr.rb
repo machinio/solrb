@@ -24,12 +24,12 @@ module Solr
       yield configuration
     end
 
-    def delete_by_id(id, commit: false, core_name: Solr.configuration.default_core_name)
-      Solr::Delete::Request.new(core_name: core_name, id: id).run(commit: commit)
+    def delete_by_id(id, commit: false, core: Solr.configuration.default_core)
+      Solr::Delete::Request.new(core: core, id: id).run(commit: commit)
     end
 
-    def delete_by_query(query, commit: false, core_name: Solr.configuration.default_core_name)
-      Solr::Delete::Request.new(core_name: core_name, query: query).run(commit: commit)
+    def delete_by_query(query, commit: false, core: Solr.configuration.default_core)
+      Solr::Delete::Request.new(core: core, query: query).run(commit: commit)
     end
 
     def instrument(name:, data: {})
