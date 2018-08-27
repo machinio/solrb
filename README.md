@@ -10,67 +10,81 @@ Object-Oriented approach to Solr in Ruby.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'solrb'
+gem 'solrb', require: 'solr'
 ```
 
 ## Configuration
 
-The simplest way to use Solrb is `SORL_URL` environment variable with core's name:
+The simplest way to use Solrb is `SORL_URL` environment variable (that has a core name in it):
 
 ```bash
-  ENV['SOLR_URL'] = 'http://localhost:8983/test-core'
+  ENV['SOLR_URL'] = 'http://localhost:8983/solr/demo'
 ```
 
-Specify `Solr.configure` for an extended configuration:
+or through `Solr.configure` to specify the solr URL:
 
 ```ruby
-# Single-core configuration
+# Single core configuration
 Solr.configure do |config|
-  config.url = 'http://localhost:8983/core-name'
+  config.url = 'http://localhost:8983/solr/demo'
+end
+```
 
-  # This gem uses faraday to make requests to Solr. You can pass additional faraday
+Use `Solr.configure` for an additional configuration:
+
+```ruby
+# Single core configuration
+Solr.configure do |config|
+  config.url = 'http://localhost:8983/solr/demo'
+
+  # This gem uses faraday to make requests to Solr. You can specify additional faraday
   # options here.
   config.faraday_options = {}
 
-  # Core's URL is be 'http://localhost:8983/core-name'
+  # Core's URL is 'http://localhost:8983/solr/demo'
+  # Adding fields to work with
   config.define_core do |f|
-    f.field :description
+    f.field :title, dynamic_field: :text
+    f.dynamic_field :text, solr_name: '*_text'
   end
 end
 ```
 
 ```ruby
-# Multi-core configuration
+# Multiple core configuration
 Solr.configure do |config|
-  config.url = 'http://localhost:8983'
+  config.url = 'http://localhost:8983/solr'
 
-  # Define the core with fields that will be used for querying Solr.
-  # Core's URL is 'http://localhost:8983/listings'
+  # Define a core with fields that will be used with Solr.
+  # Core URL is 'http://localhost:8983/solr/listings'
   config.define_core(name: :listings) do |f|
-    f.field :description
-    # When dynamic_field is present, the field name will be mapped to match the dynamic field
-    # solr_name during query construction. Here, "title" will be mapped to "title_text"
-    # You must define the dynamic field to be able to use the dynamic_field option
+    # When a dynamic_field is present, the field name will be mapped to match the dynamic field.
+    # Here, "title" will be mapped to "title_text"
+    # You must define a dynamic field to be able to use the dynamic_field option
     f.field :title, dynamic_field: :text
 
-    # When solr_name is present, the field name will be mapped to the solr_name during query construction
+    # When solr_name is present, the field name will be mapped to the solr_name at runtime
     f.field :tags, solr_name: :tags_array
 
     # define a dynamic field
     f.dynamic_field :text, solr_name: '*_text'
   end
 
-  # Pass `default: true` to use some core as a default one.
-  # Core's URL is 'http://localhost:8983/cars'
+  # Pass `default: true` to use one core as a default.
+  # Core's URL is 'http://localhost:8983/solr/cars'
   config.define_core(name: :cars, default: true) do |f|
-    f.field :manufacturer
-    f.field :model
+    f.field :manufacturer, solr_name: :manuf_s
+    f.field :model, solr_name: :model_s
   end
 end
 ```
 
-Warning: Solrb doesn't support fields with same name. If you have two fields with the same name mapping
-to a distinct solr field you'll have to rename one of the fields.
+It's important to note that those fields that are not configured, will be passed as-is to solr.
+*So you only need to specify fields in configuration if you want Solrb to modify them at runtime*.
+
+
+Warning: Solrb doesn't support fields with the same name. If you have two fields with the same name mapping
+to a single solr field,  you'll have to rename one of the fields.
 
 ```ruby
 ...
@@ -108,7 +122,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 #### Simple Query
 
 ```ruby
-  field = Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en)
+  field = Solr::Query::Request::FieldWithBoost.new(field: :name)
 
   request = Solr::Query::Request.new(search_term: 'term', fields: [field])
   request.run(page: 1, page_size: 10)
@@ -118,9 +132,9 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 
 ```ruby
   fields = [
-    # Use boost_magnitude argument to apply boost to a specific field
-    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en, boost_magnitude: 16),
-    Solr::Query::Request::FieldWithBoost.new(field: :title_txt_en)
+    # Use boost_magnitude argument to apply boost to a specific field that you query
+    Solr::Query::Request::FieldWithBoost.new(field: :name, boost_magnitude: 16),
+    Solr::Query::Request::FieldWithBoost.new(field: :title)
   ]
   request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   request.run(page: 1, page_size: 10)
@@ -130,10 +144,10 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 
 ```ruby
   fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
-    Solr::Query::Request::FieldWithBoost.new(field: :title_txt_en)
+    Solr::Query::Request::FieldWithBoost.new(field: :name),
+    Solr::Query::Request::FieldWithBoost.new(field: :title)
   ]
-  filters = [Solr::Query::Request::Filter.new(type: :equal, field: :title_txt_en, value: 'title')]
+  filters = [Solr::Query::Request::Filter.new(type: :equal, field: :title, value: 'A title')]
   request = Solr::Query::Request.new(search_term: 'term', fields: fields, filters: filters)
   request.run(page: 1, page_size: 10)
 ```
@@ -143,10 +157,10 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 
 ```ruby
   fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
-    Solr::Query::Request::FieldWithBoost.new(field: :title_txt_en)
+    Solr::Query::Request::FieldWithBoost.new(field: :name),
+    Solr::Query::Request::FieldWithBoost.new(field: :title)
   ]
-  sort_fields = [Solr::Query::Request::Sorting::Field.new(name: :name_txt_en, direction: :asc)]
+  sort_fields = [Solr::Query::Request::Sorting::Field.new(name: :name, direction: :asc)]
   request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   request.sorting = Solr::Query::Request::Sorting.new(fields: sort_fields)
   request.run(page: 1, page_size: 10)
@@ -156,11 +170,11 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 
 ```ruby
   fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
-    Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
+    Solr::Query::Request::FieldWithBoost.new(field: :name),
+    Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
   request = Solr::Query::Request.new(search_term: 'term', fields: fields)
-  request.grouping = Solr::Query::Request::Grouping.new(field: :category_txt_en, limit: 10)
+  request.grouping = Solr::Query::Request::Grouping.new(field: :category, limit: 10)
   request.run(page: 1, page_size: 10)
 ```
 
@@ -168,11 +182,11 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 
 ```ruby
   fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
-    Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
+    Solr::Query::Request::FieldWithBoost.new(field: :name),
+    Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
   request = Solr::Query::Request.new(search_term: 'term', fields: fields)
-  request.facets = [Solr::Query::Request::Facet.new(type: :terms, field: :category_txt_en, options: { limit: 10 })]
+  request.facets = [Solr::Query::Request::Facet.new(type: :terms, field: :category, options: { limit: 10 })]
   request.run(page: 1, page_size: 10)
 ```
 
@@ -180,13 +194,13 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 
 ```ruby
   fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
-    Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
+    Solr::Query::Request::FieldWithBoost.new(field: :name),
+    Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
   request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   request.boosting = Solr::Query::Request::Boosting.new(
-    multiplicative_boost_functions: [Solr::Query::Request::Boosting::RankingFieldBoostFunction.new(field: :name_txt_en)],
-    phrase_boosts: [Solr::Query::Request::Boosting::PhraseProximityBoost.new(field: :category_txt_en, boost_magnitude: 4)]
+    multiplicative_boost_functions: [Solr::Query::Request::Boosting::RankingFieldBoostFunction.new(field: :name)],
+    phrase_boosts: [Solr::Query::Request::Boosting::PhraseProximityBoost.new(field: :category, boost_magnitude: 4)]
   )
   request.run(page: 1, page_size: 10)
 ```
@@ -196,13 +210,13 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 
 ```ruby
   fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en),
-    Solr::Query::Request::FieldWithBoost.new(field: :category_txt_en)
+    Solr::Query::Request::FieldWithBoost.new(field: :name),
+    Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
   request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   # Solr::Query::Request will return only :id field by default.
   # Specify additional return fields (fl param) by setting the request response_fields
-  request.response_fields = [:name_txt_en, :category_txt_en]
+  request.response_fields = [:name, :category]
   request.run(page: 1, page_size: 10)
 ```
 
