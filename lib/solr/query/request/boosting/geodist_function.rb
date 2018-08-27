@@ -6,7 +6,7 @@ module Solr
     class Request
       class Boosting
         class GeodistFunction
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
           attr_reader :field, :latitude, :longitude
 

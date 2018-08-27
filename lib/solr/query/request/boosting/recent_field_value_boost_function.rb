@@ -3,7 +3,7 @@ module Solr
     class Request
       class Boosting
         class RecentFieldValueBoostFunction
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
           attr_reader :field, :boost_magnitude, :max_age_days
 

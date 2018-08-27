@@ -1,15 +1,10 @@
-RSpec.describe Solr::SchemaHelper do
-  include Solr::SchemaHelper
-
-  after(:each) do
-    # Reset configuration
-    Solr.configuration = Solr::Configuration.new
-  end
+RSpec.describe Solr::Support::SchemaHelper do
+  include Solr::Support::SchemaHelper
 
   context 'solarize_field' do
     before do
       Solr.configure do |config|
-        config.define_fields do |f|
+        config.define_core(name: :'test-core') do |f|
           f.field :description
           f.field :title, dynamic_field: :text
           f.field :tags, solr_name: :tags_array

@@ -2,7 +2,7 @@ RSpec.describe Solr::Query::Request::Boosting::DictionaryBoostFunction do
   describe '.to_solr_s' do
     before do
       Solr.configure do |config|
-        config.define_fields do |f|
+        config.define_core(name: :'test-core') do |f|
           f.field :machine_type
         end
       end

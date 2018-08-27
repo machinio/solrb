@@ -3,7 +3,7 @@ module Solr
     class Request
       class Boosting
         class RankingFieldBoostFunction
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
           attr_reader :field
 
           def initialize(field:)

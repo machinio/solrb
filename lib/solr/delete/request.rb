@@ -1,10 +1,12 @@
 module Solr
   module Delete
     class Request
-      include Solr::ConnectionHelper
-      using Solr::HashExtensions
+      include Solr::Support::ConnectionHelper
+      using Solr::Support::HashExtensions
 
       PATH = '/update'.freeze
+
+      attr_reader :delete_command
 
       def initialize(options = {})
         options = validate_delete_options!(options)
@@ -13,7 +15,7 @@ module Solr
 
       def run(commit: false)
         # need to think how to move out commit data from the connection, it doesn't belong there
-        raw_response = connection(PATH, commit: commit).post_as_json(@delete_command)
+        raw_response = connection(PATH, commit: commit).post_as_json(delete_command)
         Solr::Response.from_raw_response(raw_response)
       end
 

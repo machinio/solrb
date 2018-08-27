@@ -4,7 +4,7 @@ module Solr
       class Parser
         SOLR_INFINITY = '*'.freeze # for cases like [100000 TO *]
 
-        include Solr::SchemaHelper
+        include Solr::Support::SchemaHelper
 
         attr_reader :request, :solr_response
 

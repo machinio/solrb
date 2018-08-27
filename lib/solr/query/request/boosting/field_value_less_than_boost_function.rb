@@ -3,7 +3,7 @@ module Solr
     class Request
       class Boosting
         class FieldValueLessThanBoostFunction
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
           attr_reader :field, :max, :boost_magnitude
 

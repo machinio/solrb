@@ -6,7 +6,7 @@ module Solr
         # solr in action chapter 16.3.5
         # we only need to do the phrase proximity boosting if we have a phrase, i.e. more than 1 word
         class PhraseProximityBoost
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
           attr_reader :field, :boost_magnitude
 

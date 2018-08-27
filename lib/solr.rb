@@ -8,14 +8,16 @@ require 'solr/connection'
 require 'solr/document'
 require 'solr/document_collection'
 require 'solr/grouped_document_collection'
-require 'solr/query/request'
 require 'solr/response'
+require 'solr/query/request'
 require 'solr/indexing/document'
 require 'solr/indexing/request'
 require 'solr/delete/request'
 
 module Solr
   class << self
+    CURRENT_CORE_CONFIG_VARIABLE_NAME = :solrb_current_core_config
+
     attr_accessor :configuration
 
     Solr.configuration = Configuration.new
@@ -24,12 +26,25 @@ module Solr
       yield configuration
     end
 
+    def current_core_config
+      Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] || Solr.configuration.default_core_config
+    end
+
     def delete_by_id(id, commit: false)
       Solr::Delete::Request.new(id: id).run(commit: commit)
     end
 
     def delete_by_query(query, commit: false)
       Solr::Delete::Request.new(query: query).run(commit: commit)
+    end
+
+    def with_core(core)
+      core_config = Solr.configuration.core_config_by_name(core)
+      old_core_config = Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME]
+      Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] = core_config
+      yield
+    ensure
+      Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] = old_core_config
     end
 
     def instrument(name:, data: {})

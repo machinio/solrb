@@ -4,8 +4,8 @@ module Solr
   module Query
     class Request
       class Filter
-        include Solr::SchemaHelper
-        using Solr::StringExtensions
+        include Solr::Support::SchemaHelper
+        using Solr::Support::StringExtensions
 
         EQUAL_TYPE = :equal
         NOT_EQUAL_TYPE = :not_equal

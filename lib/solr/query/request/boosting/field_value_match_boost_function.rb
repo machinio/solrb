@@ -3,7 +3,7 @@ module Solr
     class Request
       class Boosting
         class FieldValueMatchBoostFunction
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
           attr_reader :field, :value, :boost_magnitude
 

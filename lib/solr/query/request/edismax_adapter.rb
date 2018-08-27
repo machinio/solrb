@@ -3,7 +3,7 @@ module Solr
     class Request
       class EdismaxAdapter
         SOLR_INFINITY = '*'.freeze # for cases like [100000 TO *]
-        include Solr::SchemaHelper
+        include Solr::Support::SchemaHelper
 
         EDISMAX_QUERY_FIELDS = :qf
         EDISMAX_FILTER_QUERY = :fq

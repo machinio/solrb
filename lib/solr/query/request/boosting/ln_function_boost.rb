@@ -3,7 +3,7 @@ module Solr
     class Request
       class Boosting
         class LnFunctionBoost
-          include Solr::SchemaHelper
+          include Solr::Support::SchemaHelper
 
           attr_reader :field, :min, :boost_magnitude
 

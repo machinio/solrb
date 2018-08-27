@@ -1,4 +1,12 @@
 RSpec.describe Solr::Query::Request::EdismaxAdapter do
+  before do
+    Solr.configure do |config|
+      config.define_core(name: :'test-core') do |f|
+        f.field :machine_type
+      end
+    end
+  end
+
   let(:document_type) { 'document_type' }
   let(:search_term) { 'Search Term' }
 

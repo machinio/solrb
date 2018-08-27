@@ -3,8 +3,8 @@ module Solr
     class Request
       class Boosting
         class DictionaryBoostFunction
-          include Solr::SchemaHelper
-          using Solr::StringExtensions
+          include Solr::Support::SchemaHelper
+          using Solr::Support::StringExtensions
           attr_reader :field, :dictionary
 
           def initialize(field:, dictionary:)
