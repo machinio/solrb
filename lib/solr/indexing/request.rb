@@ -8,7 +8,7 @@ module Solr
 
       attr_reader :documents
 
-      def initialize(documents:)
+      def initialize(documents = [])
         @documents = documents
       end
 
