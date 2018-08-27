@@ -52,7 +52,7 @@ module Solr
           {
             "#{name}": {
               type: type,
-              field: solarize_field(field: field),
+              field: solarize_field(field),
               limit: limit,
               q: filters.any? ? filters.map(&:to_solr_s).join(' AND ') : nil,
               facet: subfacets.map(&:to_solr_h).reduce(&:merge),

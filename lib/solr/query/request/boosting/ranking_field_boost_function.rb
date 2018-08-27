@@ -11,7 +11,7 @@ module Solr
           end
 
           def to_solr_s
-            solarize_field(field: field).to_s
+            solarize_field(field).to_s
           end
         end
       end

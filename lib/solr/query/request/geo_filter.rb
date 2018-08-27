@@ -17,7 +17,7 @@ module Solr
         end
 
         def to_solr_s
-          solr_field = solarize_field(field: @field)
+          solr_field = solarize_field(@field)
           "{!geofilt sfield=#{solr_field} pt=#{@latitude},#{@longitude} d=#{spatial_radius}}"
         end
       end

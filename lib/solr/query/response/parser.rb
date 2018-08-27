@@ -90,7 +90,7 @@ module Solr
 
         def solr_grouping_field
           grouping_field = request.grouping.field
-          solarize_field(field: grouping_field)
+          solarize_field(grouping_field)
         end
 
         def field_facet_collection

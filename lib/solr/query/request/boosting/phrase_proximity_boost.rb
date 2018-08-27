@@ -17,7 +17,7 @@ module Solr
           end
 
           def to_solr_s
-            solr_field = solarize_field(field: field)
+            solr_field = solarize_field(field)
             "#{solr_field}^#{boost_magnitude}"
           end
         end

@@ -22,7 +22,7 @@ module Solr
         end
 
         def solr_field
-          solarize_field(field: @field)
+          solarize_field(@field)
         end
 
         def solr_value

@@ -20,7 +20,7 @@ module Solr
           # if(eq(category_id_it, 3025), 2.0, if(eq(category_id_it, 3024), 1.5, if(eq(category_id_it, 3023), 1.2, 1)))
           # note that I added spaces for readability, real Solr query functions must always be w/out spaces
           def to_solr_s
-            sf = solarize_field(field: field)
+            sf = solarize_field(field)
             dictionary.to_a.reverse.reduce(1) do |acc, (field_value, boost)|
               if field_value.is_a?(String) || field_value.is_a?(Symbol)
                 "if(termfreq(#{sf},\"#{field_value.to_s.solr_escape}\"),#{boost},#{acc})"

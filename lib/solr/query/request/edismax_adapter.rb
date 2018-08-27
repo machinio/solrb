@@ -106,7 +106,7 @@ module Solr
             'group' => true,
             'group.format' => 'grouped',
             'group.limit' => request.grouping.limit,
-            'group.field' => solarize_field(field: request.grouping.field)
+            'group.field' => solarize_field(request.grouping.field)
           }
           solr_params.merge(group_info)
         end
@@ -115,7 +115,7 @@ module Solr
           return solr_params if request.sorting.empty?
           # sorting nulls last, not-nulls first
           solr_sorting = request.sorting.fields.map do |sort_field|
-            solr_field = solarize_field(field: sort_field.name)
+            solr_field = solarize_field(sort_field.name)
             "exists(#{solr_field}) desc, #{solr_field} #{sort_field.direction}"
           end
           solr_params.merge(sort: solr_sorting)

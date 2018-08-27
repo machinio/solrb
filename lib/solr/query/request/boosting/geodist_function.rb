@@ -28,7 +28,7 @@ module Solr
           end
 
           def sfield
-            solarize_field(field: field)
+            solarize_field(field)
           end
         end
       end
