@@ -13,7 +13,13 @@ module Solr
       Solr.instrument(name: INSTRUMENT_KEY) { @raw_connection.get }
     end
 
-    def post; end
+    def post(data = {})
+      Solr.instrument(name: INSTRUMENT_KEY) do 
+        @raw_connection.post do |req|
+          req.body = data
+        end
+      end
+    end
 
     def post_as_json(data)
       Solr.instrument(name: INSTRUMENT_KEY, data: data) do
