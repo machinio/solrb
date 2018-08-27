@@ -2,7 +2,7 @@ RSpec.describe Solr::Indexing do
   context 'without configuration' do
     it 'indexes a single document' do
       doc = Solr::Indexing::Document.new(id: 994, name_txt_en: 'Solrb')
-      req = Solr::Indexing::Request.new(documents: [doc])
+      req = Solr::Indexing::Request.new([doc])
       resp = req.run(commit: true)
       expect(resp.status).to eq 'OK'
     end
@@ -10,7 +10,7 @@ RSpec.describe Solr::Indexing do
     it 'indexes multiple documents' do
       doc1 = Solr::Indexing::Document.new(id: 995, name_txt_en: 'Curitiba')
       doc2 = Solr::Indexing::Document.new(id: 996, name_txt_en: 'Kislovodsk')
-      req = Solr::Indexing::Request.new(documents: [doc1, doc2])
+      req = Solr::Indexing::Request.new([doc1, doc2])
       resp = req.run(commit: true)
       expect(resp.status).to eq 'OK'
     end
@@ -29,7 +29,7 @@ RSpec.describe Solr::Indexing do
 
       it 'indexes with dynamic field configuration' do
         doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-        req = Solr::Indexing::Request.new(documents: [doc1])
+        req = Solr::Indexing::Request.new([doc1])
         resp = req.run(commit: true)
         expect(resp.status).to eq 'OK'
       end
@@ -55,13 +55,13 @@ RSpec.describe Solr::Indexing do
 
         it 'raises an error on multiple indices without explicit core param' do
           doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-          req = Solr::Indexing::Request.new(documents: [doc1])
+          req = Solr::Indexing::Request.new([doc1])
           expect { req.run(commit: true) }.to raise_error(Errors::AmbiguousCoreError)
         end
 
         it 'accepts explicit core param' do
           doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-          req = Solr::Indexing::Request.new(documents: [doc1])
+          req = Solr::Indexing::Request.new([doc1])
           resp = Solr.with_core(:'test-core') do
             req.run(commit: true)
           end
@@ -88,13 +88,13 @@ RSpec.describe Solr::Indexing do
 
         it 'doesn\'t rais an error on multiple indices without explicit core param' do
           doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-          req = Solr::Indexing::Request.new(documents: [doc1])
+          req = Solr::Indexing::Request.new([doc1])
           expect { req.run(commit: true) }.not_to raise_error
         end
 
         it 'accepts explicit core param' do
           doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-          req = Solr::Indexing::Request.new(documents: [doc1])
+          req = Solr::Indexing::Request.new([doc1])
           resp = req.run(commit: true)
           expect(resp.status).to eq 'OK'
         end
