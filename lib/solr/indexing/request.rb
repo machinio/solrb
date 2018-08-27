@@ -14,8 +14,7 @@ module Solr
 
       def run(commit: false)
         # need to think how to move out commit data from the connection, it doesn't belong there
-        data = documents.map { |d| d.as_json }
-        raw_response = connection(PATH, commit: commit).post_as_json(data)
+        raw_response = connection(PATH, commit: commit).post_as_json(documents)
         Solr::Response.from_raw_response(raw_response)
       end
     end
