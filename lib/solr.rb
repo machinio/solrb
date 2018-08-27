@@ -13,6 +13,7 @@ require 'solr/query/request'
 require 'solr/indexing/document'
 require 'solr/indexing/request'
 require 'solr/delete/request'
+require 'solr/commit/request'
 
 module Solr
   class << self
@@ -28,6 +29,10 @@ module Solr
 
     def current_core_config
       Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] || Solr.configuration.default_core_config
+    end
+
+    def commit
+      Solr::Commit::Request.new.run
     end
 
     def delete_by_id(id, commit: false)
