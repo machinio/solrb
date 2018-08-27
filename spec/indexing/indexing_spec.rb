@@ -4,7 +4,6 @@ RSpec.describe Solr::Indexing do
       doc = Solr::Indexing::Document.new(id: 994, name_txt_en: 'Solrb')
       req = Solr::Indexing::Request.new(documents: [doc])
       resp = req.run(commit: true)
-      puts resp.inspect unless resp.ok?
       expect(resp.status).to eq 'OK'
     end
 
@@ -32,7 +31,6 @@ RSpec.describe Solr::Indexing do
         doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
         req = Solr::Indexing::Request.new(documents: [doc1])
         resp = req.run(commit: true)
-        puts resp.inspect unless resp.ok?
         expect(resp.status).to eq 'OK'
       end
     end
@@ -67,7 +65,6 @@ RSpec.describe Solr::Indexing do
           resp = Solr.with_core(:'test-core') do
             req.run(commit: true)
           end
-          puts resp.inspect unless resp.ok?
           expect(resp.status).to eq 'OK'
         end
       end
@@ -99,7 +96,6 @@ RSpec.describe Solr::Indexing do
           doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
           req = Solr::Indexing::Request.new(documents: [doc1])
           resp = req.run(commit: true)
-          puts resp.inspect unless resp.ok?
           expect(resp.status).to eq 'OK'
         end
       end
