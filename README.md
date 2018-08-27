@@ -58,7 +58,7 @@ Solr.configure do |config|
   # Define a core with fields that will be used with Solr.
   # Core URL is 'http://localhost:8983/solr/listings'
   config.define_core(name: :listings) do |f|
-    # When dynamic_field is present, the field name will be mapped to match the dynamic field.
+    # When a dynamic_field is present, the field name will be mapped to match the dynamic field.
     # Here, "title" will be mapped to "title_text"
     # You must define a dynamic field to be able to use the dynamic_field option
     f.field :title, dynamic_field: :text
@@ -78,6 +78,10 @@ Solr.configure do |config|
   end
 end
 ```
+
+It's important to note that those fields that are not configured, will be passed as-is to solr.
+*So you only need to specify fields in configuration if you want Solrb to modify them at runtime*.
+
 
 Warning: Solrb doesn't support fields with the same name. If you have two fields with the same name mapping
 to a single solr field,  you'll have to rename one of the fields.
