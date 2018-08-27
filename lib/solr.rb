@@ -16,7 +16,7 @@ require 'solr/delete/request'
 
 module Solr
   class << self
-    THREAD_CURRENT_CORE_CONFIG_NAME = :solrb_current_core_config
+    CURRENT_CORE_CONFIG_VARIABLE_NAME = :solrb_current_core_config
 
     attr_accessor :configuration
 
@@ -27,7 +27,7 @@ module Solr
     end
 
     def current_core_config
-      Thread.current[THREAD_CURRENT_CORE_CONFIG_NAME] || Solr.configuration.default_core_config
+      Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] || Solr.configuration.default_core_config
     end
 
     def delete_by_id(id, commit: false)
@@ -40,11 +40,11 @@ module Solr
 
     def with_core(core)
       core_config = Solr.configuration.core_config_by_name(core)
-      old_core_config = Thread.current[THREAD_CURRENT_CORE_CONFIG_NAME]
-      Thread.current[THREAD_CURRENT_CORE_CONFIG_NAME] = core_config
+      old_core_config = Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME]
+      Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] = core_config
       yield
     ensure
-      Thread.current[THREAD_CURRENT_CORE_CONFIG_NAME] = old_core_config
+      Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] = old_core_config
     end
 
     def instrument(name:, data: {})
