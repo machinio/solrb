@@ -24,8 +24,7 @@ module Solr
     end
 
     def core_config_by_name(core)
-      cores[core.to_sym] ||
-        Solr::CoreConfiguration::UnspecifiedCoreConfig.new(name: core)
+      cores[core.to_sym] || unspecified_core(name: core)
     end
 
     def default_core_config
@@ -50,8 +49,8 @@ module Solr
       end
     end
 
-    def unspecified_core
-      Solr::CoreConfiguration::UnspecifiedCoreConfig.new
+    def unspecified_core(name: nil)
+      Solr::CoreConfiguration::UnspecifiedCoreConfig.new(name: name)
     end
 
     def validate_default_core_config!(default:)
