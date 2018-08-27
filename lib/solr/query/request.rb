@@ -17,13 +17,12 @@ require 'solr/errors/solr_query_error'
 module Solr
   module Query
     class Request
-      attr_reader :core, :search_term
+      attr_reader :search_term
       attr_accessor :filters, :fields, :facets, :boosting, :debug_mode, :spellcheck,
                     :limit_docs_by_field, :phrase_slop, :response_fields
       attr_writer :grouping, :sorting
 
-      def initialize(core: nil, search_term:, fields: [], filters: [])
-        @core = core || Solr.configuration.default_core
+      def initialize(search_term:, fields: [], filters: [])
         @search_term = search_term
         @fields = fields
         @filters = filters
@@ -33,7 +32,7 @@ module Solr
       # returns [Solr::Response]
       def run(page:, page_size:)
         solr_params = Solr::Query::Request::EdismaxAdapter.new(self).to_h
-        solr_response = Solr::Query::Request::Runner.run(core: core, page: page, page_size: page_size, solr_params: solr_params)
+        solr_response = Solr::Query::Request::Runner.run(page: page, page_size: page_size, solr_params: solr_params)
         raise Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
         Solr::Query::Response::Parser.new(request: self, solr_response: solr_response.body).to_response
       end

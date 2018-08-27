@@ -14,8 +14,8 @@ module Solr
             freeze
           end
 
-          def solr_field(core:)
-            solarize_field(core: core, field: field)
+          def solr_field
+            solarize_field(field: field)
           end
         end
       end

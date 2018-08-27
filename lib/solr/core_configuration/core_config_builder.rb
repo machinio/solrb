@@ -1,11 +1,11 @@
 module Solr
   module CoreConfiguration
     class CoreConfigBuilder
-      attr_reader :url, :name, :dynamic_fields, :fields_params
+      attr_reader :name, :dynamic_fields, :fields_params, :default
 
-      def initialize(url: ENV['SOLR_URL'], name: nil)
-        @url = name ? File.join(url, name.to_s) : url
+      def initialize(name: nil, default:)
         @name = name
+        @default = default
         @dynamic_fields = {}
         @fields_params = {}
       end
@@ -18,19 +18,11 @@ module Solr
         fields_params[field_name] = params
       end
 
-      def url(value=nil)
-        if value
-          @url = value
-        else
-          @url
-        end
-      end
-
       def build
         Solr::CoreConfiguration::CoreConfig.new(
           name: name,
-          url: url,
-          fields: build_fields
+          fields: build_fields,
+          default: default
         )
       end
 

@@ -10,6 +10,6 @@ RSpec.describe Solr::Query::Request::Boosting::PhraseProximityBoost do
 
     subject { described_class.new(field: :machine_type, boost_magnitude: 16) }
 
-    it { expect(subject.to_solr_s(core: :'test-core')).to eq('machine_type^16') }
+    it { expect(subject.to_solr_s).to eq('machine_type^16') }
   end
 end

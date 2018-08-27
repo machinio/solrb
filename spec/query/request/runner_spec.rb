@@ -1,10 +1,8 @@
 RSpec.describe Solr::Query::Request::Runner do
-  let(:core) { nil }
   let(:search_term) { 'solrb' }
 
   subject do
     described_class.new(
-      core: core,
       page: 1,
       page_size: 10
     )
@@ -31,32 +29,60 @@ RSpec.describe Solr::Query::Request::Runner do
       end
     end
 
-    context 'two cores' do
-      before do
-        Solr.configure do |config|
-          config.define_core(name: :'test-core') do |f|
-            f.field :machine_type
-          end
+    context 'multiple cores' do
+      context 'without default core' do
+        before do
+          Solr.configure do |config|
+            config.define_core(name: :'test-core') do |f|
+              f.field :machine_type
+            end
 
-          config.define_core(name: :'test-core-2') do |f|
-            f.field :machine_type
+            config.define_core(name: :'test-core-2') do |f|
+              f.field :machine_type
+            end
+          end
+        end
+
+        context 'request without specified core' do
+          it 'runs' do
+            expect { subject.run }.to raise_error(Errors::AmbiguousCoreError)
+          end
+        end
+
+        context 'request with specified core' do
+          it 'runs' do
+            expect {
+              Solr.with_core(:'test-core') { subject.run }
+            }.not_to raise_error
           end
         end
       end
 
-      context 'request without specified core' do
-        let(:core) { nil }
+      context 'with default core' do
+        before do
+          Solr.configure do |config|
+            config.define_core(name: :'test-core', default: true) do |f|
+              f.field :machine_type
+            end
 
-        it 'runs' do
-          expect { subject.run }.to raise_error(Errors::AmbiguousCoreError)
+            config.define_core(name: :'test-core-2') do |f|
+              f.field :machine_type
+            end
+          end
         end
-      end
 
-      context 'request with specified core' do
-        let(:core) { 'test-core' }
+        context 'request without specified core' do
+          it 'runs' do
+            expect { subject.run }.not_to raise_error
+          end
+        end
 
-        it 'runs' do
-          expect { subject.run }.not_to raise_error
+        context 'request with specified core' do
+          it 'runs' do
+            expect {
+              Solr.with_core(:'test-core') { subject.run }
+            }.not_to raise_error
+          end
         end
       end
     end

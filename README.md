@@ -15,17 +15,38 @@ gem 'solrb'
 
 ## Configuration
 
+The simplest way to use Solrb is `SORL_URL` environment variable with core's name:
+
+```bash
+  ENV['SOLR_URL'] = 'http://localhost:8983/test-core'
+```
+
+Specify `Solr.configure` for an extended configuration:
+
 ```ruby
+# Single-core configuration
 Solr.configure do |config|
-  # Can be set using `SORL_URL` environment variable or through the configuration block.
-  config.url = 'http://localhost:8983'
+  config.url = 'http://localhost:8983/core-name'
+
   # This gem uses faraday to make requests to Solr. You can pass additional faraday
   # options here.
   config.faraday_options = {}
 
+  # Core's URL is be 'http://localhost:8983/core-name'
+  config.define_core do |f|
+    f.field :description
+  end
+end
+```
+
+```ruby
+# Multi-core configuration
+Solr.configure do |config|
+  config.url = 'http://localhost:8983'
+
   # Define the core with fields that will be used for querying Solr.
-  # Core's URL is 'http://localhost:8983/default'
-  config.define_core(name: :default) do |f|
+  # Core's URL is 'http://localhost:8983/listings'
+  config.define_core(name: :listings) do |f|
     f.field :description
     # When dynamic_field is present, the field name will be mapped to match the dynamic field
     # solr_name during query construction. Here, "title" will be mapped to "title_text"
@@ -39,24 +60,11 @@ Solr.configure do |config|
     f.dynamic_field :text, solr_name: '*_text'
   end
 
-  # Define multiple cores with fields
+  # Pass `default: true` to use some core as a default one.
   # Core's URL is 'http://localhost:8983/cars'
-  config.define_core(name: :cars) do |f|
+  config.define_core(name: :cars, default: true) do |f|
     f.field :manufacturer
     f.field :model
-  end
-end
-```
-
-Single core configuration:
-
-```ruby
-Solr.configure do |config|
-  config.url = 'http://localhost:8983/core-name'
-
-  # Core's URL is be 'http://localhost:8983/core-name'
-  config.define_core do |f|
-    f.field :description
   end
 end
 ```
@@ -66,7 +74,7 @@ to a distinct solr field you'll have to rename one of the fields.
 
 ```ruby
 ...
-config.define_core(name: :default) do |f|
+config.define_core do |f|
   ...
   # Not allowed: Two fields with same name 'title'
   f.field :title, solr_name: :article_title
@@ -203,11 +211,22 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ### Deleting documents
 
 ```ruby
-# For multi-core configuration also pass `core` param with core's name
 Solr.delete_by_id(3242343)
 Solr.delete_by_id(3242343, commit: true)
 Solr.delete_by_query('*:*')
 Solr.delete_by_query('*:*', commit: true)
+```
+
+### Using multi-core configuration
+
+For multi-core configuration use `Solr.with_core` block:
+
+```ruby
+Solr.with_core(:models) do
+  Solr.delete_by_id(3242343)
+  Solr::Query::Request.new(search_term: 'term', fields: fields)
+  Solr::Indexing::Request.new(documents: [doc])
+end
 ```
 
 ## Running specs

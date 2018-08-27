@@ -17,7 +17,7 @@ module Solr
             freeze
           end
 
-          def to_solr_s(core:)
+          def to_solr_s
             # this constants are magical, but they influence the slope of geo proximity decay function
             'recip(geodist(),3,17000,3000)'
           end
@@ -27,8 +27,8 @@ module Solr
             "#{latitude},#{longitude}"
           end
 
-          def sfield(core:)
-            solarize_field(core: core, field: field)
+          def sfield
+            solarize_field(field: field)
           end
         end
       end

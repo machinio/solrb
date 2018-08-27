@@ -10,8 +10,8 @@ module Solr
             @field = field
           end
 
-          def to_solr_s(core:)
-            solarize_field(core: core, field: field).to_s
+          def to_solr_s
+            solarize_field(field: field).to_s
           end
         end
       end

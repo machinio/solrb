@@ -8,16 +8,11 @@ require 'solr/errors/ambiguous_core_error'
 module Solr
   class Configuration
     attr_accessor :faraday_options, :cores, :test_connection
+    attr_reader :url
 
     def initialize
       @faraday_options = { request: { timeout: 2, open_timeout: 8 } }
-      @core_to_uri_mapping = {}
-      @core_to_url_mapping = {}
       @cores = {}
-    end
-
-    def uri(core: nil)
-      @core_to_uri_mapping[core] ||= Addressable::URI.parse(url(core: core))
     end
 
     def url=(value)
@@ -28,28 +23,23 @@ module Solr
       end
     end
 
-    def url(core: nil)
-      return @core_to_url_mapping[core] if @core_to_url_mapping.has_key?(core)
-      core_url = cores[core.to_sym]&.url if core
-      core_url ||= @url
-      core_url ||= default_core_config.url
-      raise Errors::SolrUrlNotDefinedError unless core_url
-      @core_to_url_mapping[core] = core_url
-    end
-
-    def default_core
-      default_core_config.name
+    def core_config_by_name(core)
+      cores[core.to_sym] ||
+        Solr::CoreConfiguration::UnspecifiedCoreConfig.new(name: core)
     end
 
     def default_core_config
+      defined_default_core_config = cores.values.detect(&:default?)
+      return defined_default_core_config if defined_default_core_config
       raise Errors::AmbiguousCoreError if cores.count > 1
       cores.values.first || unspecified_core
     end
 
-    def define_core(name: nil)
+    def define_core(name: nil, default: false)
+      validate_default_core_config!(default: default)
       builder = Solr::CoreConfiguration::CoreConfigBuilder.new(
-        url: @url || unspecified_core.url,
-        name: name
+        name: name,
+        default: default
       )
       yield builder
       core = builder.build
@@ -62,6 +52,13 @@ module Solr
 
     def unspecified_core
       Solr::CoreConfiguration::UnspecifiedCoreConfig.new
+    end
+
+    def validate_default_core_config!(default:)
+      return unless default
+      if cores.any? { |name, core_config| core_config.default? }
+        raise ArgumentError, 'Only one default core can be specified'
+      end
     end
   end
 end

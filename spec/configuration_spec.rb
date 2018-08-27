@@ -1,12 +1,6 @@
 RSpec.describe Solr::Configuration do
   subject { described_class.new }
 
-  context 'default url' do
-    it 'uses default url' do
-      expect(Solr.configuration.url).to eq(ENV['SOLR_URL'])
-    end
-  end
-
   context 'set url on config block' do
     before do
       Solr.configure do |config|
@@ -29,18 +23,6 @@ RSpec.describe Solr::Configuration do
     end
   end
 
-  context 'specify nil url' do
-    let!(:stored_solr_url) { ENV['SOLR_URL'] }
-
-    before { ENV['SOLR_URL'] = nil }
-    after { ENV['SOLR_URL'] = stored_solr_url }
-
-    it 'raises exception' do
-      expect { Solr.configuration.url }.to raise_error(Errors::SolrUrlNotDefinedError)
-    end
-  end
-
-
   context 'set faraday_options' do
     before do
       Solr.configure do |config|
@@ -50,6 +32,8 @@ RSpec.describe Solr::Configuration do
 
     it 'users the set faraday_options' do
       expect(Solr.configuration.faraday_options).to eq(request: { timeout: 15 })
+      core = Solr.configuration.default_core_config
+      expect(core.url).to eq(ENV['SOLR_URL'])
     end
   end
 
@@ -64,7 +48,8 @@ RSpec.describe Solr::Configuration do
 
     it 'raises exception' do
       expect(Solr.configuration.cores.keys).to eq([nil])
-      expect(Solr.configuration.cores.values.map(&:url)).to eq([ENV['SOLR_URL']])
+      core = Solr.configuration.default_core_config
+      expect(core.url).to eq(ENV['SOLR_URL'])
     end
   end
 
@@ -81,6 +66,9 @@ RSpec.describe Solr::Configuration do
 
     it 'raises exception' do
       expect(Solr.configuration.cores.keys).to include(:'test-core')
+      core = Solr.configuration.default_core_config
+      expect(core.url).to eq('http://localhost:8983/test-core')
+      expect(core.name).to eq(:'test-core')
     end
   end
 

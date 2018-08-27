@@ -38,33 +38,70 @@ RSpec.describe Solr::Indexing do
     end
 
     context 'multiple cores' do
-      before do
-        Solr.configure do |config|
-          config.url = 'http://localhost:8983/solr'
+      context 'without default core' do
+        before do
+          Solr.configure do |config|
+            config.url = 'http://localhost:8983/solr'
 
-          config.define_core(name: :'test-core') do |f|
-            f.field :name, dynamic_field: :txt_en
-            f.dynamic_field :txt_en, solr_name: '*_txt_en'
-          end
+            config.define_core(name: :'test-core') do |f|
+              f.field :name, dynamic_field: :txt_en
+              f.dynamic_field :txt_en, solr_name: '*_txt_en'
+            end
 
-          config.define_core(name: :'test-core-2') do |f|
-            f.field :name, dynamic_field: :txt_en
-            f.dynamic_field :txt_en, solr_name: '*_txt_en'
+            config.define_core(name: :'test-core-2') do |f|
+              f.field :name, dynamic_field: :txt_en
+              f.dynamic_field :txt_en, solr_name: '*_txt_en'
+            end
           end
+        end
+
+        it 'raises an error on multiple indices without explicit core param' do
+          doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
+          req = Solr::Indexing::Request.new(documents: [doc1])
+          expect { req.run(commit: true) }.to raise_error(Errors::AmbiguousCoreError)
+        end
+
+        it 'accepts explicit core param' do
+          doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
+          req = Solr::Indexing::Request.new(documents: [doc1])
+          resp = Solr.with_core(:'test-core') do
+            req.run(commit: true)
+          end
+          puts resp.inspect unless resp.ok?
+          expect(resp.status).to eq 'OK'
         end
       end
 
-      it 'raises an error on multiple indices without explicit core param' do
-        doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-        expect { Solr::Indexing::Request.new(documents: [doc1]) }.to raise_error(Errors::AmbiguousCoreError)
-      end
+      context 'with default core' do
+        before do
+          Solr.configure do |config|
+            config.url = 'http://localhost:8983/solr'
 
-      it 'accepts explicit core param' do
-        doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-        req = Solr::Indexing::Request.new(core: :'test-core', documents: [doc1])
-        resp = req.run(commit: true)
-        puts resp.inspect unless resp.ok?
-        expect(resp.status).to eq 'OK'
+            config.define_core(name: :'test-core', default: true) do |f|
+              f.field :name, dynamic_field: :txt_en
+              f.dynamic_field :txt_en, solr_name: '*_txt_en'
+            end
+
+            config.define_core(name: :'test-core-2') do |f|
+              f.field :name, dynamic_field: :txt_en
+              f.dynamic_field :txt_en, solr_name: '*_txt_en'
+            end
+          end
+        end
+
+        it 'doesn\'t rais an error on multiple indices without explicit core param' do
+          doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
+          req = Solr::Indexing::Request.new(documents: [doc1])
+          expect { req.run(commit: true) }.not_to raise_error
+        end
+
+        it 'accepts explicit core param' do
+          doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
+          req = Solr::Indexing::Request.new(documents: [doc1])
+          resp = req.run(commit: true)
+          puts resp.inspect unless resp.ok?
+          expect(resp.status).to eq 'OK'
+        end
       end
     end
   end

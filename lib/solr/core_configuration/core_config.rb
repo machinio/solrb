@@ -1,33 +1,43 @@
 module Solr
   module CoreConfiguration
     class CoreConfig
-      attr_reader :name, :url, :fields
+      attr_reader :name, :fields
 
-      def initialize(name:, url:, fields:)
+      def initialize(name:, fields:, default:)
         @name = name
-        @url = url
         @fields = fields
-        validate_options!
+        @default = default
       end
 
       def field_by_name(field_name)
         fields[field_name.to_sym]
       end
 
-      private
+      def default?
+        @default
+      end
 
-      def validate_options!
-        raise ArgumentError, 'pass name or url' if name.nil? && url.nil?
+      def url
+        @url ||= File.join(Solr.configuration.url || ENV['SOLR_URL'], name.to_s).chomp('/')
+      end
+
+      def uri
+        @uri ||= Addressable::URI.parse(url)
       end
     end
 
     class UnspecifiedCoreConfig < CoreConfig
-      attr_reader :name, :url, :fields
+      attr_reader :name, :fields
 
-      def initialize(name: nil, url: ENV['SOLR_URL'], fields: {})
+      def initialize(name: nil, fields: {})
         @name = name
-        @url = url
         @fields = fields
+        @default = false
+      end
+
+      def url
+        raise ArgumentError, "Solr's URL can't be nil" if ENV['SOLR_URL'].nil?
+        ENV['SOLR_URL']
       end
     end
   end

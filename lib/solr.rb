@@ -24,12 +24,25 @@ module Solr
       yield configuration
     end
 
-    def delete_by_id(id, commit: false, core: Solr.configuration.default_core)
-      Solr::Delete::Request.new(core: core, id: id).run(commit: commit)
+    def current_core_config
+      Thread.current[:solrb_current_core_config] || Solr.configuration.default_core_config
     end
 
-    def delete_by_query(query, commit: false, core: Solr.configuration.default_core)
-      Solr::Delete::Request.new(core: core, query: query).run(commit: commit)
+    def delete_by_id(id, commit: false)
+      Solr::Delete::Request.new(id: id).run(commit: commit)
+    end
+
+    def delete_by_query(query, commit: false)
+      Solr::Delete::Request.new(query: query).run(commit: commit)
+    end
+
+    def with_core(core)
+      core_config = Solr.configuration.core_config_by_name(core)
+      old_core_config = Thread.current[:solrb_current_core_config]
+      Thread.current[:solrb_current_core_config] = core_config
+      yield
+    ensure
+      Thread.current[:solrb_current_core_config] = old_core_config
     end
 
     def instrument(name:, data: {})

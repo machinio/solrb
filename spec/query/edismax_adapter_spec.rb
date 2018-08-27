@@ -13,7 +13,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
   subject { described_class.new(request) }
 
   context 'simple query' do
-    let(:request) { Solr::Query::Request.new(core: :'test-core', search_term: search_term) }
+    let(:request) { Solr::Query::Request.new(search_term: search_term) }
     let(:solr_params) do
       {
         debug: nil,
@@ -68,7 +68,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
     end
 
     let(:request) do
-      request = Solr::Query::Request.new(core: :'test-core', search_term: search_term)
+      request = Solr::Query::Request.new(search_term: search_term)
       request.fields = fields
       request.filters = filters
       request.facets = facets

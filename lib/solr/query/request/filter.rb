@@ -17,12 +17,12 @@ module Solr
           @value = value
         end
 
-        def to_solr_s(core:)
-          "#{solr_prefix}#{solr_field(core: core)}:(#{solr_value})"
+        def to_solr_s
+          "#{solr_prefix}#{solr_field}:(#{solr_value})"
         end
 
-        def solr_field(core:)
-          solarize_field(core: core, field: @field)
+        def solr_field
+          solarize_field(field: @field)
         end
 
         def solr_value

@@ -10,6 +10,6 @@ RSpec.describe Solr::Query::Request::Boosting::TextualFieldValueMatchBoostFuncti
 
     subject { described_class.new(field: :machine_type, value: 'value', boost_magnitude: 16) }
 
-    it { expect(subject.to_solr_s(core: :'test-core')).to eq('if(termfreq(machine_type,\'value\'),16,1)') }
+    it { expect(subject.to_solr_s).to eq('if(termfreq(machine_type,\'value\'),16,1)') }
   end
 end

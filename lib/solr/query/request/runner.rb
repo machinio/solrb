@@ -6,7 +6,7 @@ module Solr
 
         include Solr::Support::ConnectionHelper
 
-        attr_reader :core, :page, :page_size, :solr_params
+        attr_reader :page, :page_size, :solr_params
 
         class << self
           def run(opts)
@@ -14,15 +14,14 @@ module Solr
           end
         end
 
-        def initialize(core: nil, page:, page_size:, solr_params: {})
-          @core = core
+        def initialize(page:, page_size:, solr_params: {})
           @page = page
           @page_size = page_size
           @solr_params = solr_params
         end
 
         def run
-          raw_response = connection(PATH, core: core).post_as_json(request_params)
+          raw_response = connection(PATH).post_as_json(request_params)
           response = Solr::Response.from_raw_response(raw_response)
           Solr.instrument(name: 'solrb.request_response_cycle',
                           data: { request: request_params, response: raw_response })
