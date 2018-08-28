@@ -24,14 +24,14 @@ module Solr
     end
 
     def core_config_by_name(core)
-      cores[core.to_sym] || unspecified_core(name: core)
+      cores[core.to_sym] || build_env_url_core_config(name: core)
     end
 
     def default_core_config
       defined_default_core_config = cores.values.detect(&:default?)
       return defined_default_core_config if defined_default_core_config
       raise Errors::AmbiguousCoreError if cores.count > 1
-      cores.values.first || unspecified_core
+      cores.values.first || build_env_url_core_config
     end
 
     def define_core(name: nil, default: false)
@@ -49,8 +49,8 @@ module Solr
       end
     end
 
-    def unspecified_core(name: nil)
-      Solr::CoreConfiguration::UnspecifiedCoreConfig.new(name: name)
+    def build_env_url_core_config(name: nil)
+      Solr::CoreConfiguration::EnvUrlCoreConfig.new(name: name)
     end
 
     def validate_default_core_config!(default:)
