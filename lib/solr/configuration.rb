@@ -24,7 +24,7 @@ module Solr
     end
 
     def core_config_by_name(core)
-      cores[core.to_sym] || build_env_url_core_config
+      cores[core.to_sym] || build_env_url_core_config(name: core)
     end
 
     def default_core_config
@@ -49,8 +49,8 @@ module Solr
       end
     end
 
-    def build_env_url_core_config
-      Solr::CoreConfiguration::EnvUrlCoreConfig.new
+    def build_env_url_core_config(name: nil)
+      Solr::CoreConfiguration::EnvUrlCoreConfig.new(name: name)
     end
 
     def validate_default_core_config!(default:)
