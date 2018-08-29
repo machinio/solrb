@@ -11,7 +11,10 @@ module Solr
     attr_reader :url
 
     def initialize
-      @faraday_options = { request: { timeout: 2, open_timeout: 8 } }
+      @faraday_options = {
+        request: { timeout: 2, open_timeout: 8 },
+        headers: { user_agent: "Solrb v#{Solr::VERSION}" }
+      }
       @cores = {}
     end
 
