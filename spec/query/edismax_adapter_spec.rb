@@ -76,6 +76,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
       request.grouping = grouping
       request.sorting = sorting
       request.phrase_slop = 5
+      request.query_operator = :AND
       request
     end
 
@@ -94,6 +95,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
         pf: ['field_2^4'],
         ps: 5,
         q: 'Search Term',
+        'q.op': :AND,
         qf: ['field_1^1', 'field_2^16'],
         sort: ['exists(field_1) desc, field_1 asc', 'exists(field_2) desc, field_2 desc']
       }

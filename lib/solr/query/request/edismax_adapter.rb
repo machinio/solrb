@@ -13,6 +13,7 @@ module Solr
         EDISMAX_PHRASE_SLOP = :ps
         RESPONSE_FIELDS = :fl
         RERANK_QUERY = :rq
+        QUERY_OPERATOR = :'q.op'
 
         attr_reader :request
 
@@ -33,6 +34,7 @@ module Solr
           solr_params = add_spellcheck(solr_params)
           solr_params = add_rerank_query(solr_params)
           solr_params = add_phrase_slop(solr_params)
+          solr_params = add_query_operator(solr_params)
           solr_params
         end
 
@@ -149,6 +151,11 @@ module Solr
         def add_phrase_slop(solr_params)
           return solr_params unless request.phrase_slop
           solr_params.merge(EDISMAX_PHRASE_SLOP => request.phrase_slop)
+        end
+
+        def add_query_operator(solr_params)
+          return solr_params unless request.query_operator
+          solr_params.merge(QUERY_OPERATOR => request.query_operator)
         end
       end
     end
