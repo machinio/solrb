@@ -7,15 +7,23 @@ require 'solr/errors/ambiguous_core_error'
 
 module Solr
   class Configuration
-    attr_accessor :faraday_options, :cores, :test_connection
-    attr_reader :url
+    SOLRB_USER_AGENT_HEADER = { user_agent: "Solrb v#{Solr::VERSION}" }.freeze
+
+    attr_accessor :cores, :test_connection
+    attr_reader :url, :faraday_options
 
     def initialize
       @faraday_options = {
         request: { timeout: 2, open_timeout: 8 },
-        headers: { user_agent: "Solrb v#{Solr::VERSION}" }
+        headers: SOLRB_USER_AGENT_HEADER
       }
       @cores = {}
+    end
+
+    def faraday_options=(options)
+      options[:headers] ||= {}
+      options[:headers].merge!(SOLRB_USER_AGENT_HEADER)
+      @faraday_options = options
     end
 
     def url=(value)
