@@ -26,12 +26,16 @@ RSpec.describe Solr::Configuration do
   context 'set faraday_options' do
     before do
       Solr.configure do |config|
-        config.faraday_options = { request: { timeout: 15 } }
+        config.faraday_options = { request: { timeout: 15, open_timeout: 10 } }
       end
     end
 
+    let(:expected_config) do
+      { headers: { user_agent: "Solrb v#{Solr::VERSION}"}, request: { timeout: 15, open_timeout: 10 } }
+    end
+
     it 'users the set faraday_options' do
-      expect(Solr.configuration.faraday_options).to eq(request: { timeout: 15 })
+      expect(Solr.configuration.faraday_options).to eq(expected_config)
       core = Solr.configuration.default_core_config
       expect(core.url).to eq(ENV['SOLR_URL'])
     end
