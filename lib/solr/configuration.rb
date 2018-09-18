@@ -28,7 +28,7 @@ module Solr
 
     def url=(value)
       if value.nil?
-        raise ArgumentError, "Solr's URL can't be nil"
+        raise ArgumentError, "Configuration error: Solr URL can't be nil"
       else
         @url = value
       end
