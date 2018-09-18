@@ -36,7 +36,7 @@ module Solr
       end
 
       def url
-        raise ArgumentError, "Solr's URL can't be nil" if ENV['SOLR_URL'].nil?
+        raise ArgumentError, "Solr URL can't be nil" if ENV['SOLR_URL'].nil?
         ENV['SOLR_URL']
       end
     end
