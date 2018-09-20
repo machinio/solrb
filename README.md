@@ -42,8 +42,6 @@ The simplest way to use Solrb is `SORL_URL` environment variable (that has a cor
   ENV['SOLR_URL'] = 'http://localhost:8983/solr/demo'
 ```
 
-It's important to note that those fields that are not configured, will be passed as-is to solr.
-*So you only need to specify fields in configuration if you want Solrb to modify them at runtime*.
 
 You can also use `Solr.configure` to specify the solr URL explicitly:
 
@@ -52,6 +50,9 @@ Solr.configure do |config|
   config.url = 'http://localhost:8983/solr/demo'
 end
 ```
+
+It's important to note that those fields that are not configured, will be passed as-is to solr.
+*So you only need to specify fields in configuration if you want Solrb to modify them at runtime*.
 
 ## Single core configuration
 
