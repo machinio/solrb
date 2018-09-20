@@ -1,19 +1,40 @@
 [![CircleCI](https://circleci.com/gh/machinio/solrb/tree/master.svg?style=svg)](https://circleci.com/gh/machinio/solrb/tree/master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/81e84c1c42f10f9da801/maintainability)](https://codeclimate.com/github/machinio/solrb/maintainability)
 
-# Solrb
+Solrb
+======
 
 Object-Oriented approach to Solr in Ruby.
 
-## Installation
+Installation: `gem install solrb`
 
-Add this line to your application's Gemfile:
+## Table of contents
 
-```ruby
-gem 'solrb', require: 'solr'
-```
 
-## Configuration
+* [Configuration](#configuration)
+  * [Setting Solr URL via environment variable](#setting-solr-url-via-environment-variable)
+  * [Single core configuration](#single-core-configuration)
+  * [Multiple core configuration](#multiple-core-configuration)
+* [Indexing](#indexing)
+* [Querying](#querying)
+  * [Simple Query](#simple-query)
+  * [Querying multiple cores](#querying-multiple-cores)
+  * [Query with field boost](#query-with-field-boost)
+  * [Query with filtering](#query-with-filtering)
+  * [Query with sorting](#query-with-sorting)
+  * [Query with grouping](#query-with-grouping)
+  * [Query with facets](#query-with-facets)
+  * [Query with boosting functions](#query-with-boosting-functions)
+    * [Dictionary boosting function](#dictionary-boosting-function)
+  * [Field list](#field-list)
+* [Deleting documents](#deleting-documents)
+* [Running specs](#running-specs)
+
+
+
+# Configuration
+
+## Setting Solr URL via environment variable
 
 The simplest way to use Solrb is `SORL_URL` environment variable (that has a core name in it):
 
@@ -21,19 +42,22 @@ The simplest way to use Solrb is `SORL_URL` environment variable (that has a cor
   ENV['SOLR_URL'] = 'http://localhost:8983/solr/demo'
 ```
 
-or through `Solr.configure` to specify the solr URL:
+It's important to note that those fields that are not configured, will be passed as-is to solr.
+*So you only need to specify fields in configuration if you want Solrb to modify them at runtime*.
+
+You can also use `Solr.configure` to specify the solr URL explicitly:
 
 ```ruby
-# Single core configuration
 Solr.configure do |config|
   config.url = 'http://localhost:8983/solr/demo'
 end
 ```
 
+## Single core configuration
+
 Use `Solr.configure` for an additional configuration:
 
 ```ruby
-# Single core configuration
 Solr.configure do |config|
   config.url = 'http://localhost:8983/solr/demo'
 
@@ -50,8 +74,9 @@ Solr.configure do |config|
 end
 ```
 
+## Multiple core configuration
+
 ```ruby
-# Multiple core configuration
 Solr.configure do |config|
   config.url = 'http://localhost:8983/solr'
 
@@ -79,10 +104,6 @@ Solr.configure do |config|
 end
 ```
 
-It's important to note that those fields that are not configured, will be passed as-is to solr.
-*So you only need to specify fields in configuration if you want Solrb to modify them at runtime*.
-
-
 Warning: Solrb doesn't support fields with the same name. If you have two fields with the same name mapping
 to a single solr field,  you'll have to rename one of the fields.
 
@@ -97,9 +118,8 @@ end
 ...
 ```
 
-## Usage
 
-### Indexing
+# Indexing
 
 ```ruby
 # creates a single document and commits it to index
@@ -117,9 +137,9 @@ You can also create indexing document directly from attributes:
 doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ```
 
-### Querying
+# Querying
 
-#### Simple Query
+## Simple Query
 
 ```ruby
   field = Solr::Query::Request::FieldWithBoost.new(field: :name)
@@ -127,8 +147,19 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
   request = Solr::Query::Request.new(search_term: 'term', fields: [field])
   request.run(page: 1, page_size: 10)
 ```
+## Querying multiple cores
 
-#### Query with field boost
+For multi-core configuration use `Solr.with_core` block:
+
+```ruby
+Solr.with_core(:models) do
+  Solr.delete_by_id(3242343)
+  Solr::Query::Request.new(search_term: 'term', fields: fields)
+  Solr::Indexing::Request.new(documents: [doc])
+end
+```
+
+## Query with field boost
 
 ```ruby
   fields = [
@@ -140,7 +171,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
   request.run(page: 1, page_size: 10)
 ```
 
-#### Query with filters
+## Query with filtering
 
 ```ruby
   fields = [
@@ -153,7 +184,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ```
 
 
-#### Query with sorting
+## Query with sorting
 
 ```ruby
   fields = [
@@ -166,7 +197,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
   request.run(page: 1, page_size: 10)
 ```
 
-#### Query with grouping
+## Query with grouping
 
 ```ruby
   fields = [
@@ -178,7 +209,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
   request.run(page: 1, page_size: 10)
 ```
 
-#### Query with facets
+## Query with facets
 
 ```ruby
   fields = [
@@ -190,7 +221,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
   request.run(page: 1, page_size: 10)
 ```
 
-#### Query with boosting functions
+## Query with boosting functions
 
 ```ruby
   fields = [
@@ -204,8 +235,34 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
   )
   request.run(page: 1, page_size: 10)
 ```
+### Dictionary boosting function
+Sometimes you want to do a dictionary-style boosting
+example: given a hash (dictionary)
 
-#### Field list
+```ruby
+{3025 => 2.0, 3024 => 1.5, 3023 => 1.2}
+```
+
+and a field of `category_id`
+the resulting boosting function will be:
+```
+if(eq(category_id_it, 3025), 2.0, if(eq(category_id_it, 3024), 1.5, if(eq(category_id_it, 3023), 1.2, 1)))
+```
+note that I added spaces for readability, real Solr query functions must always be w/out spaces
+
+Example of usage:
+
+```ruby
+  category_id_boosts = {3025 => 2.0, 3024 => 1.5, 3023 => 1.2}
+  request.boosting = Solr::Query::Request::Boosting.new(
+    multiplicative_boost_functions: [
+      Solr::Query::Request::Boosting::DictionaryBoostFunction.new(field: :category_id, 
+        dictionary: category_id_boosts)
+    ]
+  )
+```
+
+## Field list
 
 
 ```ruby
@@ -220,7 +277,7 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
   request.run(page: 1, page_size: 10)
 ```
 
-### Deleting documents
+# Deleting documents
 
 ```ruby
 Solr.delete_by_id(3242343)
@@ -229,19 +286,8 @@ Solr.delete_by_query('*:*')
 Solr.delete_by_query('*:*', commit: true)
 ```
 
-### Using multi-core configuration
 
-For multi-core configuration use `Solr.with_core` block:
-
-```ruby
-Solr.with_core(:models) do
-  Solr.delete_by_id(3242343)
-  Solr::Query::Request.new(search_term: 'term', fields: fields)
-  Solr::Indexing::Request.new(documents: [doc])
-end
-```
-
-## Running specs
+# Running specs
 
 This project is setup to use CI to run all specs agains a real solr.
 
