@@ -28,6 +28,7 @@ Installation: `gem install solrb`
     * [Dictionary boosting function](#dictionary-boosting-function)
   * [Field list](#field-list)
 * [Deleting documents](#deleting-documents)
+* [Active Support instrumentation](#active-support-instrumentation)
 * [Running specs](#running-specs)
 
 
@@ -286,6 +287,24 @@ Solr.delete_by_id(3242343, commit: true)
 Solr.delete_by_query('*:*')
 Solr.delete_by_query('*:*', commit: true)
 ```
+
+# Active Support instrumentation
+
+This gem publishes events via [Active Support Instrumentation](https://edgeguides.rubyonrails.org/active_support_instrumentation.html)
+
+To subscribe to solrb events, you can add this code to initializer:
+
+```ruby
+ActiveSupport::Notifications.subscribe('request.solrb')  do |*args|
+  event = ActiveSupport::Notifications::Event.new(*args)
+  if Logger::INFO == Rails.logger.level
+    Rails.logger.info("Solrb #{event.duration.round(1)}ms")
+  elsif Logger::DEBUG == Rails.logger.level && Rails.env.development?
+    Pry::ColorPrinter.pp(event.payload)
+  end
+end
+```
+
 
 
 # Running specs

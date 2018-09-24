@@ -1,7 +1,7 @@
 module Solr
   # low-level connection that can do network requests to Solr
   class Connection
-    INSTRUMENT_KEY = 'solrb.request'.freeze
+    INSTRUMENT_KEY = 'request.solrb'.freeze
 
     def initialize(url, faraday_options: Solr.configuration.faraday_options)
       # Allow mock the connection for testing
