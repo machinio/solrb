@@ -17,7 +17,8 @@ module Solr
                     :subfacets,
                     :gap,
                     :lower_bound,
-                    :upper_bound
+                    :upper_bound,
+                    :facet_filters
 
         def initialize(field:, type:, name: nil, value: nil, filters: [], subfacets: [], options: {})
           if options[:limit].nil? && type == TERMS_TYPE
@@ -28,16 +29,17 @@ module Solr
             raise ArgumentError, "Need to specify :lower_bound, :upper_bound, :gap option values for 'range' facet type"
           end
 
-          @field       = field
-          @name        = name || field
-          @type        = type
-          @value       = value
-          @filters     = filters
-          @subfacets   = subfacets
-          @limit       = options[:limit].to_i
-          @gap         = options[:gap]
-          @lower_bound = options[:lower_bound]
-          @upper_bound = options[:upper_bound]
+          @field        = field
+          @name         = name || field
+          @type         = type
+          @value        = value
+          @filters      = filters
+          @subfacets    = subfacets
+          @limit        = options[:limit].to_i
+          @gap          = options[:gap]
+          @lower_bound  = options[:lower_bound]
+          @upper_bound  = options[:upper_bound]
+          @facet_filters = options[:facet_filters] || []
         end
 
         def to_solr_h
@@ -58,9 +60,15 @@ module Solr
               facet: subfacets.map(&:to_solr_h).reduce(&:merge),
               gap: gap,
               start: lower_bound,
-              end: upper_bound
+              end: upper_bound,
+              domain: build_domain_params
             }.compact
           }
+        end
+
+        def build_domain_params
+          return unless facet_filters.any?
+          { filter: facet_filters.map(&:to_solr_s).join(' AND ') }
         end
       end
     end
