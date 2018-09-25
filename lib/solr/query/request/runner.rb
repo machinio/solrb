@@ -22,7 +22,11 @@ module Solr
 
         def run
           raw_response = connection(PATH).post_as_json(request_params)
-          Solr::Response.from_raw_response(raw_response)
+          response = Solr::Response.from_raw_response(raw_response)
+          # TODO: need to remove that later
+          Solr.instrument(name: '__testing_request_response.solrb',
+                          data: { request: request_params, response: raw_response })
+          response
         end
 
         private
