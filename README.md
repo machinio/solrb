@@ -29,6 +29,7 @@ Installation: `gem install solrb`
   * [Field list](#field-list)
 * [Deleting documents](#deleting-documents)
 * [Active Support instrumentation](#active-support-instrumentation)
+* [Testing](#running-specs)
 * [Running specs](#running-specs)
 
 
@@ -258,7 +259,7 @@ Example of usage:
   category_id_boosts = {3025 => 2.0, 3024 => 1.5, 3023 => 1.2}
   request.boosting = Solr::Query::Request::Boosting.new(
     multiplicative_boost_functions: [
-      Solr::Query::Request::Boosting::DictionaryBoostFunction.new(field: :category_id, 
+      Solr::Query::Request::Boosting::DictionaryBoostFunction.new(field: :category_id,
         dictionary: category_id_boosts)
     ]
   )
@@ -301,6 +302,24 @@ ActiveSupport::Notifications.subscribe('request.solrb')  do |*args|
     Rails.logger.info("Solrb #{event.duration.round(1)}ms")
   elsif Logger::DEBUG == Rails.logger.level && Rails.env.development?
     Pry::ColorPrinter.pp(event.payload)
+  end
+end
+```
+
+# Testing
+
+It's possible to inspect the parameters for each solr query request done using Solrb by requiring
+`solr/testing` file in your test suite. The query parameters will be accessible by reading
+`Solr::Testing.last_solr_request_params` after each request.
+
+```ruby
+require 'solr/testing'
+
+RSpec.describe MyTest do
+  let(:query) { Solr::Query::Request.new(search_term: 'Solrb') }
+  it 'returns the last solr request params' do
+    query.run(page: 1, page_size: 10)
+    expect(Solr::Testing.last_solr_request_params).to eq({ ... })
   end
 end
 ```
