@@ -120,13 +120,20 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
       ]
     end
 
+    let(:request) do
+      request = Solr::Query::Request.new(search_term: search_term)
+      request.filters = filters
+      request
+    end
+
     let(:solr_params) do
       {
         debug: nil,
         defType: :edismax,
         fl: 'id',
         fq: ['((field_1:("value1") AND field_2:("value2")) OR (field_3:("value3") AND field_4:("value4")))'],
-        q: 'Search Term'
+        q: 'Search Term',
+        qf: []
       }
     end
 
