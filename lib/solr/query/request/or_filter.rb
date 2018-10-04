@@ -2,6 +2,8 @@ module Solr
   module Query
     class Request
       class OrFilter
+        attr_reader :filters
+
         def initialize(*filters)
           @filters = filters
         end
