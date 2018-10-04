@@ -103,4 +103,33 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
 
     it { expect(subject.to_h).to eq(solr_params) }
   end
+
+  context 'nested AND and OR filters' do
+    let(:filters) do
+      [
+        Solr::Query::Request::OrFilter.new(
+          Solr::Query::Request::AndFilter.new(
+            Solr::Query::Request::Filter.new(type: :equal, field: :field_1, value: 'value1'),
+            Solr::Query::Request::Filter.new(type: :equal, field: :field_2, value: 'value2')
+          ),
+          Solr::Query::Request::AndFilter.new(
+            Solr::Query::Request::Filter.new(type: :equal, field: :field_3, value: 'value3'),
+            Solr::Query::Request::Filter.new(type: :equal, field: :field_4, value: 'value4')
+          )
+        )
+      ]
+    end
+
+    let(:solr_params) do
+      {
+        debug: nil,
+        defType: :edismax,
+        fl: 'id',
+        fq: ['((field_1:("value1") AND field_2:("value2")) OR (field_3:("value3") AND field_4:("value4")))'],
+        q: 'Search Term'
+      }
+    end
+
+    it { expect(subject.to_h).to eq(solr_params) }
+  end
 end
