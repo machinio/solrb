@@ -186,6 +186,24 @@ end
   request.run(page: 1, page_size: 10)
 ```
 
+### AND and OR filters
+
+```ruby
+  usa_filter =
+    Solr::Query::Request::AndFilter.new(
+      Solr::Query::Request::Filter.new(type: :equal, field: :contry, value: 'USA'),
+      Solr::Query::Request::Filter.new(type: :equal, field: :region, value: 'Idaho')
+    )
+  canada_filter =
+    Solr::Query::Request::AndFilter.new(
+      Solr::Query::Request::Filter.new(type: :equal, field: :contry, value: 'Canada'),
+      Solr::Query::Request::Filter.new(type: :equal, field: :region, value: 'Alberta')
+    )
+
+  location_filters = Solr::Query::Request::OrFilter.new(usa_filter, canada_filter)
+  request = Solr::Query::Request.new(search_term: 'term', filters: location_filters)
+  request.run(page: 1, page_size: 10)
+```
 
 ## Query with sorting
 
