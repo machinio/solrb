@@ -5,8 +5,8 @@ require 'solr/version'
 Gem::Specification.new do |spec|
   spec.name          = 'solrb'
   spec.version       = Solr::VERSION
-  spec.authors       = ['Adriano Luz', 'Valentin Vasilyev']
-  spec.email         = ['adriano.luz@machinio.com', 'valentin@machinio.com']
+  spec.authors       = ['Adriano Luz', 'Valentin Vasilyev', 'Vladislav Syabruk']
+  spec.email         = ['adriano.luz@machinio.com', 'valentin@machinio.com', 'vladislav.syabruk@machinio.com']
 
   spec.summary       = 'Solr Ruby client with a nice object-oriented API'
   spec.homepage      = 'https://github.com/machinio/solrb'

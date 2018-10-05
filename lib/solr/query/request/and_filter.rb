@@ -1,7 +1,7 @@
 module Solr
   module Query
     class Request
-      class OrFilter
+      class AndFilter
         attr_reader :filters
 
         def initialize(*filters)
@@ -10,7 +10,7 @@ module Solr
 
         def to_solr_s
           subexpressions = @filters.map(&:to_solr_s)
-          "(#{subexpressions.join(' OR ')})"
+          "(#{subexpressions.join(' AND ')})"
         end
       end
     end
