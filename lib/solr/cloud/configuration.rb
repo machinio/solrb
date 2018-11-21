@@ -3,11 +3,11 @@ require 'zk'
 module Solr
   module Cloud
     class Configuration
-      attr_reader :zookeeper_url, :collections, :collection_states, :updated, :number
+      attr_reader :zookeeper_url, :collections, :collection_states
 
       def self.configure(zookeeper_url, collections)
         configuration = new(zookeeper_url, collections)
-        configuration.watch_solr_nodes_state
+        configuration.watch_solr_collections_state
         configuration
       end
 
@@ -15,12 +15,6 @@ module Solr
         @zookeeper_url = zookeeper_url
         @collections = collections
         @collection_states = {}
-      end
-
-      def watch_solr_nodes_state
-        collections.each do |collection|
-          watch_collection_state(collection)
-        end
       end
 
       def active_nodes_for(collection:)
@@ -35,6 +29,14 @@ module Solr
         end.uniq
       end
 
+      def watch_solr_collections_state
+        collections.each do |collection|
+          watch_collection_state(collection)
+        end
+      end
+
+      private
+
       def watch_collection_state(collection_name)
         collection_state_znode = collection_state_znode_path(collection_name)
         zookeeper.register(collection_state_znode) do |event|
@@ -42,8 +44,6 @@ module Solr
         end
         get_collection_state(collection_name, watch: true)
       end
-
-      private
 
       def get_collection_state(collection_name, watch: true)
         collection_state_znode = collection_state_znode_path(collection_name)

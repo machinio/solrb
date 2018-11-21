@@ -1,8 +1,15 @@
+require 'solr/errors/cluster_connection_failed_error'
+require 'solr/errors/no_active_solr_nodes_error'
+
 module Solr
   module Support
     class RequestRunner
       class << self
         def post_as_json(path, request_params, url_params = {})
+          new(path, request_params, url_params).post_as_json
+        end
+
+        def post(path, request_params, url_params = {})
           new(path, request_params, url_params).post_as_json
         end
       end
@@ -16,12 +23,22 @@ module Solr
       end
 
       def post_as_json
+        run_request(:post_as_json)
+      end
+
+      def post
+        run_request(:post)
+      end
+
+      private
+
+      def run_request(method)
         raise Errors::NoActiveSolrNodesError unless available_nodes_urls.any?
 
         available_nodes_urls.shuffle.each do |url|
           request_url = build_request_url(url, path, url_params)
           begin
-            raw_response = Solr::Connection.new(request_url).post_as_json(request_params)
+            raw_response = Solr::Connection.new(request_url).public_send(method, request_params)
             response = Solr::Response.from_raw_response(raw_response)
             return response
           rescue Faraday::ClientError => e
@@ -31,8 +48,6 @@ module Solr
 
         raise Errors::ClusterConnectionFailedError
       end
-
-      private
 
       def available_nodes_urls
         @available_nodes_urls ||= if Solr.cloud_enabled?
