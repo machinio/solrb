@@ -1,10 +1,10 @@
+require 'solr/support/request_runner'
+
 module Solr
   module Query
     class Request
       class Runner
         PATH = '/select'.freeze
-
-        include Solr::Support::ConnectionHelper
 
         attr_reader :page, :page_size, :solr_params
 
@@ -21,9 +21,7 @@ module Solr
         end
 
         def run
-          raw_response = connection(PATH).post_as_json(request_params)
-          response = Solr::Response.from_raw_response(raw_response)
-          response
+          Solr::Support::RequestRunner.post_as_json(PATH, request_params)
         end
 
         private

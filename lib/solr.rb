@@ -14,12 +14,13 @@ require 'solr/indexing/document'
 require 'solr/indexing/request'
 require 'solr/delete/request'
 require 'solr/commit/request'
+require 'solr/cloud/configuration'
 
 module Solr
   class << self
     CURRENT_CORE_CONFIG_VARIABLE_NAME = :solrb_current_core_config
 
-    attr_accessor :configuration
+    attr_accessor :configuration, :cloud
 
     Solr.configuration = Configuration.new
 
@@ -54,12 +55,23 @@ module Solr
 
     def instrument(name:, data: {})
       if defined? ActiveSupport::Notifications
-        ActiveSupport::Notifications.instrument(name, data) do
+        # Create a copy of data to avoid modifications on the original object by rails
+        # https://github.com/rails/rails/blob/master/activesupport/lib/active_support/notifications.rb#L66-L70
+        ActiveSupport::Notifications.instrument(name, data.dup) do
           yield if block_given?
         end
       else
         yield if block_given?
       end
+    end
+
+    def cloud_enabled?
+      !@cloud.nil?
+    end
+
+    def enable_solr_cloud
+      raise 'You must provide a ZooKeeper URL to enable solr cloud mode' if configuration.zookeeper_url.nil?
+      @cloud = Solr::Cloud::Configuration.configure(configuration.zookeeper_url, configuration.cores.keys)
     end
   end
 end
