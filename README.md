@@ -16,6 +16,7 @@ Installation: `gem install solrb`
   * [Setting Solr URL via environment variable](#setting-solr-url-via-environment-variable)
   * [Single core configuration](#single-core-configuration)
   * [Multiple core configuration](#multiple-core-configuration)
+  * [Solr Cloud](#solr-cloud)
 * [Indexing](#indexing)
 * [Querying](#querying)
   * [Simple Query](#simple-query)
@@ -30,6 +31,7 @@ Installation: `gem install solrb`
   * [Field list](#field-list)
 * [Deleting documents](#deleting-documents)
 * [Active Support instrumentation](#active-support-instrumentation)
+
 * [Testing](#running-specs)
 * [Running specs](#running-specs)
 
@@ -122,6 +124,17 @@ end
 ...
 ```
 
+## Solr Cloud
+
+To enable solr cloud mode you must define a zookeeper url on solr config block. Solrb will watch zookeeper
+to receive up-to-date information about active solr nodes. The `config.url` and `ENV['SOLR_URL']` will be
+ignored when cloud mode is active.
+
+```ruby
+Solr.configure do |config|
+  config.zookeeper_url = 'localhost:2181'
+end
+```
 
 # Indexing
 
