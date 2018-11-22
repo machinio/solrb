@@ -41,7 +41,7 @@ module Solr
             raw_response = Solr::Connection.new(request_url).public_send(method, request_params)
             response = Solr::Response.from_raw_response(raw_response)
             return response
-          rescue Faraday::ClientError => e
+          rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
             # Try next node
           end
         end
