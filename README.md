@@ -136,6 +136,16 @@ Solr.configure do |config|
 end
 ```
 
+Now you can enable solr cloud mode by calling `Solr.enable_solr_cloud`. This method will initialize the
+zookeeper connection and setup cloud mode. If you are using puma web server you must call this method
+on `on_worker_boot` callback.
+
+```ruby
+on_worker_boot do
+  Solr.enable_solr_cloud
+end
+```
+
 # Indexing
 
 ```ruby
