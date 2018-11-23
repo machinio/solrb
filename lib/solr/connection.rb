@@ -5,16 +5,16 @@ module Solr
 
     def initialize(url, faraday_options: Solr.configuration.faraday_options)
       # Allow mock the connection for testing
-      @raw_connection = Solr.configuration.test_connection || Faraday.new(url, faraday_options)
+      @raw_connection = Solr.configuration.test_connection || build_faraday_connection(url, faraday_options)
       freeze
     end
 
-    def get 
+    def get
       Solr.instrument(name: INSTRUMENT_KEY) { @raw_connection.get }
     end
 
     def post(data = {})
-      Solr.instrument(name: INSTRUMENT_KEY) do 
+      Solr.instrument(name: INSTRUMENT_KEY) do
         @raw_connection.post do |req|
           req.body = data
         end
@@ -28,6 +28,16 @@ module Solr
           req.body = JSON.generate(data)
         end
       end
+    end
+
+    private
+
+    def build_faraday_connection(url, faraday_options)
+      connection = Faraday.new(url, faraday_options)
+      if Solr.configuration.auth_user && Solr.configuration.auth_password
+        connection.basic_auth(Solr.configuration.auth_user, Solr.configuration.auth_password)
+      end
+      connection
     end
   end
 end
