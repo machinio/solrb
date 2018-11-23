@@ -18,7 +18,7 @@ module Solr
       end
 
       def active_nodes_for(collection:)
-        collection_state = collection_states.dig(collection, 'shards')
+        collection_state = collection_states.dig(collection.to_s, 'shards')
         return unless collection_state
         collection_state.flat_map do |_, shard|
           shard['replicas'].select do |_, replica|
@@ -48,6 +48,7 @@ module Solr
       def get_collection_state(collection_name, watch: true)
         collection_state_znode = collection_state_znode_path(collection_name)
         znode_data = zookeeper.get(collection_state_znode, watch: watch).first
+        return unless znode_data
         @collection_states[collection_name.to_s] = JSON.parse(znode_data)[collection_name.to_s]
       end
 

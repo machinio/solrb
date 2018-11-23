@@ -32,7 +32,7 @@ module Solr
             raw_response = Solr::Connection.new(request_url).public_send(method, request_params)
             response = Solr::Response.from_raw_response(raw_response)
             return response
-          rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
+          rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Errno::EADDRNOTAVAIL => e
             # Try next node
           end
         end
@@ -43,7 +43,7 @@ module Solr
       private
 
       def active_solr_nodes_urls
-        @active_solr_nodes_urls ||= Solr.cloud.active_nodes_for(collection: active_core_name)
+        @active_solr_nodes_urls ||= Solr.cloud.active_nodes_for(collection: active_collection_name)
       end
 
       def active_collection_name
