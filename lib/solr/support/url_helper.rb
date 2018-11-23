@@ -7,6 +7,13 @@ module Solr
         full_uri.query_values = url_params if url_params.any?
         full_uri
       end
+
+      def build_request_url(url:, collection_name:, path:, url_params: {})
+        action_url = File.join(url, collection_name, path).chomp('/')
+        full_uri = Addressable::URI.parse(action_url)
+        full_uri.query_values = url_params if url_params.any?
+        full_uri
+      end
     end
   end
 end

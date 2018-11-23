@@ -5,7 +5,7 @@ module Solr
       PATH = '/update'.freeze
 
       def run
-        Solr::Support::RequestRunner.post(PATH, {}, commit: true)
+        Solr::Request::Runner.post(PATH, {}, commit: true)
       end
     end
   end

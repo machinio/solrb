@@ -1,5 +1,3 @@
-require 'solr/support/request_runner'
-
 module Solr
   module Query
     class Request
@@ -21,7 +19,7 @@ module Solr
         end
 
         def run
-          Solr::Support::RequestRunner.post_as_json(PATH, request_params)
+          Solr::Request::Runner.post_as_json(PATH, request_params)
         end
 
         private

@@ -14,7 +14,7 @@ module Solr
       end
 
       def run(commit: false)
-        Solr::Support::RequestRunner.post_as_json(PATH, delete_command, commit: commit)
+        Solr::Request::Runner.post_as_json(PATH, delete_command, commit: commit)
       end
 
       private

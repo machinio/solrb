@@ -13,7 +13,7 @@ module Solr
       end
 
       def run(commit: false)
-        Solr::Support::RequestRunner.post_as_json(PATH, documents, commit: commit)
+        Solr::Request::Runner.post_as_json(PATH, documents, commit: commit)
       end
     end
   end
