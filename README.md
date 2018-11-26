@@ -17,6 +17,7 @@ Installation: `gem install solrb`
   * [Single core configuration](#single-core-configuration)
   * [Multiple core configuration](#multiple-core-configuration)
   * [Solr Cloud](#solr-cloud)
+  * [Basic Authentication](#basic-authentication)
 * [Indexing](#indexing)
 * [Querying](#querying)
   * [Simple Query](#simple-query)
@@ -143,6 +144,18 @@ on `on_worker_boot` callback.
 ```ruby
 on_worker_boot do
   Solr.enable_solr_cloud
+end
+```
+
+## Basic Authentication
+
+Basic authentication is supported by solrb. You can enable it by providing `auth_user` and `auth_password`
+on the config block.
+
+```ruby
+Solr.configure do |config|
+  config.auth_user = 'user'
+  config.auth_password = 'password'
 end
 ```
 
