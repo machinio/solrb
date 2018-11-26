@@ -1,4 +1,4 @@
-RSpec.describe Solr::Request::SolrCloudRequestRouter do
+RSpec.describe Solr::Request::SolrCloudRouter do
   let(:cloud_config) { double(:cloud_config) }
 
   before do

@@ -1,5 +1,5 @@
-require 'solr/request/single_solr_instance_request_router'
-require 'solr/request/solr_cloud_request_router'
+require 'solr/request/single_solr_instance_router'
+require 'solr/request/solr_cloud_router'
 
 module Solr
   module Request
@@ -23,7 +23,7 @@ module Solr
         private
 
         def selected_router
-          Solr.cloud_enabled? ? Request::SolrCloudRequestRouter : Request::SingleSolrInstanceRequestRouter
+          Solr.cloud_enabled? ? Request::SolrCloudRouter : Request::SingleSolrInstanceRouter
         end
       end
     end

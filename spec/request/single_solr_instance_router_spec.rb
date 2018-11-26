@@ -1,4 +1,4 @@
-RSpec.describe Solr::Request::SingleSolrInstanceRequestRouter do
+RSpec.describe Solr::Request::SingleSolrInstanceRouter do
   describe '.run' do
     let(:solr_connection_instance) { double(:solr_connection_instance) }
     let(:response_body) do

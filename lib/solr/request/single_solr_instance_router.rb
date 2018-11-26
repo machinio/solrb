@@ -1,6 +1,6 @@
 module Solr
   module Request
-    class SingleSolrInstanceRequestRouter
+    class SingleSolrInstanceRouter
       include Solr::Support::UrlHelper
 
       attr_reader :path, :url_params, :request_params, :method

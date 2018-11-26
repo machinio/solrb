@@ -3,7 +3,7 @@ require 'solr/errors/no_active_solr_nodes_error'
 
 module Solr
   module Request
-    class SolrCloudRequestRouter
+    class SolrCloudRouter
       include Solr::Support::UrlHelper
 
       attr_reader :path, :url_params, :request_params, :method

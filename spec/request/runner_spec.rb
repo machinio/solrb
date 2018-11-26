@@ -1,7 +1,7 @@
 RSpec.describe Solr::Request::Runner do
   context 'when solr cloud is not enabled' do
-    it 'uses SingleSolrInstanceRequestRouter' do
-      expect(Solr::Request::SingleSolrInstanceRequestRouter).to receive(:run)
+    it 'uses SingleSolrInstanceRouter' do
+      expect(Solr::Request::SingleSolrInstanceRouter).to receive(:run)
       described_class.post('/select', {})
     end
   end
@@ -14,8 +14,8 @@ RSpec.describe Solr::Request::Runner do
       Solr.enable_solr_cloud
     end
 
-    it 'uses SolrCloudRequestRouter' do
-      expect(Solr::Request::SolrCloudRequestRouter).to receive(:run)
+    it 'uses SolrCloudRouter' do
+      expect(Solr::Request::SolrCloudRouter).to receive(:run)
       described_class.post('/select', {})
     end
   end
