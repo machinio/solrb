@@ -14,7 +14,7 @@ RSpec.describe Solr::Request::SolrCloudRequestRouter do
       expect { described_class.run(path: '/select',
                                    url_params: { page: 1 },
                                    request_params: { q: 'solr' },
-                                   method: :post_as_json) }.to raise_error(Errors::NoActiveSolrNodesError)
+                                   method: :post_as_json) }.to raise_error(Solr::Errors::NoActiveSolrNodesError)
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe Solr::Request::SolrCloudRequestRouter do
       expect { described_class.run(path: '/select',
                                    url_params: { page: 1 },
                                    request_params: { q: 'solr' },
-                                   method: :post_as_json) }.to raise_error(Errors::ClusterConnectionFailedError)
+                                   method: :post_as_json) }.to raise_error(Solr::Errors::ClusterConnectionFailedError)
     end
   end
 

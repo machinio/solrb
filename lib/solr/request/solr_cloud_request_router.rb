@@ -20,7 +20,7 @@ module Solr
       end
 
       def run
-        raise Errors::NoActiveSolrNodesError unless active_solr_nodes_urls.any?
+        raise Solr::Errors::NoActiveSolrNodesError unless active_solr_nodes_urls.any?
 
         # Based on Solrj V2Request implementation
         active_solr_nodes_urls.shuffle.each do |url|
@@ -37,7 +37,7 @@ module Solr
           end
         end
 
-        raise Errors::ClusterConnectionFailedError
+        raise Solr::Errors::ClusterConnectionFailedError
       end
 
       private

@@ -45,7 +45,7 @@ RSpec.describe Solr::Query::Request::Runner do
 
         context 'request without specified core' do
           it 'runs' do
-            expect { subject.run }.to raise_error(Errors::AmbiguousCoreError)
+            expect { subject.run }.to raise_error(Solr::Errors::AmbiguousCoreError)
           end
         end
 

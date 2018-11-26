@@ -35,7 +35,7 @@ module Solr
       def run(page: 1, page_size: 10)
         solr_params = Solr::Query::Request::EdismaxAdapter.new(self).to_h
         solr_response = Solr::Query::Request::Runner.run(page: page, page_size: page_size, solr_params: solr_params)
-        raise Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
+        raise Solr::Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
         Solr::Query::Response::Parser.new(request: self, solr_response: solr_response.body).to_response
       end
 
