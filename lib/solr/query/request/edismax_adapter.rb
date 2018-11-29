@@ -115,11 +115,7 @@ module Solr
 
         def add_sorting(solr_params)
           return solr_params if request.sorting.empty?
-          # sorting nulls last, not-nulls first
-          solr_sorting = request.sorting.fields.map do |sort_field|
-            solr_field = solarize_field(sort_field.name)
-            "exists(#{solr_field}) desc, #{solr_field} #{sort_field.direction}"
-          end
+          solr_sorting = request.sorting.fields.map(&:to_solr_s).join(', ')
           solr_params.merge(sort: solr_sorting)
         end
 
