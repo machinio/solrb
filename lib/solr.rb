@@ -54,6 +54,10 @@ module Solr
       Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] = old_core_config
     end
 
+    def solr_url(path = '')
+      Solr::Support::UrlHelper.solr_url(path)
+    end
+
     def instrument(name:, data: {})
       if defined? ActiveSupport::Notifications
         # Create a copy of data to avoid modifications on the original object by rails

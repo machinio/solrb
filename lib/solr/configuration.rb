@@ -41,7 +41,7 @@ module Solr
     def default_core_config
       defined_default_core_config = cores.values.detect(&:default?)
       return defined_default_core_config if defined_default_core_config
-      raise Errors::AmbiguousCoreError if cores.count > 1
+      raise Solr::Errors::AmbiguousCoreError if cores.count > 1
       cores.values.first || build_env_url_core_config
     end
 
