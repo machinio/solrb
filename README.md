@@ -219,6 +219,21 @@ end
   request.run(page: 1, page_size: 10)
 ```
 
+Default sorting logic is following: nulls last, not-nulls first.
+
+```ruby
+  fields = [
+    Solr::Query::Request::FieldWithBoost.new(field: :name)
+  ]
+  sort_fields = [
+    Solr::Query::Request::Sorting::Field.new(name: :is_featured, direction: :desc),
+    Solr::Query::Request::Sorting::Function.new(function: "score desc")
+  ]
+  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request.sorting = Solr::Query::Request::Sorting.new(fields: sort_fields)
+  request.run(page: 1, page_size: 10)
+```
+
 ## Query with grouping
 
 ```ruby

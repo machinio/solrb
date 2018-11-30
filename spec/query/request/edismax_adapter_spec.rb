@@ -58,7 +58,8 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
     let(:sorting) do
       sort_fields = [
         Solr::Query::Request::Sorting::Field.new(name: :field_1, direction: :asc),
-        Solr::Query::Request::Sorting::Field.new(name: :field_2, direction: :desc)
+        Solr::Query::Request::Sorting::Field.new(name: :field_2, direction: :desc),
+        Solr::Query::Request::Sorting::Function.new(function: "score desc")
       ]
       Solr::Query::Request::Sorting.new(fields: sort_fields)
     end
@@ -97,7 +98,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
         q: 'Search Term',
         'q.op': :AND,
         qf: ['field_1^1', 'field_2^16'],
-        sort: ['exists(field_1) desc, field_1 asc', 'exists(field_2) desc, field_2 desc']
+        sort: 'exists(field_1) desc, field_1 asc, exists(field_2) desc, field_2 desc, score desc'
       }
     end
 
