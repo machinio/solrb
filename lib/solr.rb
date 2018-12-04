@@ -15,6 +15,7 @@ require 'solr/indexing/document'
 require 'solr/indexing/request'
 require 'solr/delete/request'
 require 'solr/commit/request'
+require 'solr/data_import/request'
 require 'solr/cloud/configuration'
 
 module Solr
@@ -43,6 +44,10 @@ module Solr
 
     def delete_by_query(query, commit: false)
       Solr::Delete::Request.new(query: query).run(commit: commit)
+    end
+
+    def full_data_import(params)
+      Solr::DataImport::Request.new(params).run
     end
 
     def with_core(core)

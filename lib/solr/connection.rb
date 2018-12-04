@@ -9,7 +9,7 @@ module Solr
       freeze
     end
 
-    def get
+    def get(_)
       Solr.instrument(name: INSTRUMENT_KEY) { @raw_connection.get }
     end
 

@@ -13,6 +13,10 @@ module Solr
           run_request(path, request_params, url_params, :post)
         end
 
+        def get(path, url_params = {})
+          run_request(path, {}, url_params, :get)
+        end
+
         def run_request(path, request_params, url_params = {}, method)
           selected_router.run(path: path,
                               url_params: url_params,
