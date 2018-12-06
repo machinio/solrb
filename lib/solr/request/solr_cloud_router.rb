@@ -20,7 +20,9 @@ module Solr
       end
 
       def run
-        raise Solr::Errors::NoActiveSolrNodesError unless active_solr_nodes_urls.any?
+        unless active_solr_nodes_urls && active_solr_nodes_urls.any?
+          raise Solr::Errors::NoActiveSolrNodesError
+        end
 
         # Based on Solrj V2Request implementation
         active_solr_nodes_urls.shuffle.each do |url|
