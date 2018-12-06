@@ -29,6 +29,20 @@ module Solr
         end.uniq
       end
 
+      # This is a very simple way of finding a leader node and it does not take sharding into account.
+      # Right now it's assuming a cluster with single shard.
+      # For multiple shards a document id would be required as an argument to find the shard leader based
+      # on the shard range.
+      def leader_node_for(collection:)
+        collection_state = collection_states.dig(collection.to_s, 'shards')
+        return unless collection_state
+        collection_state.flat_map do |_, shard|
+          shard['replicas'].find do |_, replica|
+            replica['state'] == 'active' && replica['leader'] == 'true'
+          end
+        end.last['base_url']
+      end
+
       def watch_solr_collections_state
         collections.each do |collection|
           watch_collection_state(collection)
