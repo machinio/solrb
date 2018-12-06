@@ -17,9 +17,12 @@ require 'solr/delete/request'
 require 'solr/commit/request'
 require 'solr/data_import/request'
 require 'solr/cloud/configuration'
+require 'solr/commands'
 
 module Solr
   class << self
+    include Solr::Commands
+
     CURRENT_CORE_CONFIG_VARIABLE_NAME = :solrb_current_core_config
 
     attr_accessor :configuration, :cloud
@@ -32,22 +35,6 @@ module Solr
 
     def current_core_config
       Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] || Solr.configuration.default_core_config
-    end
-
-    def commit
-      Solr::Commit::Request.new.run
-    end
-
-    def delete_by_id(id, commit: false)
-      Solr::Delete::Request.new(id: id).run(commit: commit)
-    end
-
-    def delete_by_query(query, commit: false)
-      Solr::Delete::Request.new(query: query).run(commit: commit)
-    end
-
-    def full_data_import(params)
-      Solr::DataImport::Request.new(params).run
     end
 
     def with_core(core)
