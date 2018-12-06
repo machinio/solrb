@@ -1,3 +1,5 @@
+require 'solr/request/solr_cloud_leader_router'
+
 module Solr
   module DataImport
     class Request
@@ -12,7 +14,16 @@ module Solr
       end
 
       def run
-        Solr::Request::Runner.get(PATH, params)
+        request_router.run(path: PATH,
+                           url_params: params,
+                           request_params: {},
+                           method: :get)
+      end
+
+      private
+
+      def request_router
+        Solr.cloud_enabled? ? Solr::Request::SolrCloudLeaderRouter : Solr::Request::SingleSolrInstanceRouter
       end
     end
   end
