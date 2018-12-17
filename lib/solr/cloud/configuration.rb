@@ -3,17 +3,20 @@ require 'zk'
 module Solr
   module Cloud
     class Configuration
-      attr_reader :zookeeper_url, :collections, :collection_states
+      attr_reader :zookeeper_url, :collections, :collection_states,
+                  :zookeeper_auth_user, :zookeeper_auth_password
 
-      def self.configure(zookeeper_url, collections)
-        configuration = new(zookeeper_url, collections)
+      def self.configure(opts)
+        configuration = new(opts)
         configuration.watch_solr_collections_state
         configuration
       end
 
-      def initialize(zookeeper_url, collections)
+      def initialize(zookeeper_url:, collections:, zookeeper_auth_user: nil, zookeeper_auth_password: nil)
         @zookeeper_url = zookeeper_url
         @collections = collections
+        @zookeeper_auth_user = zookeeper_auth_user
+        @zookeeper_auth_password = zookeeper_auth_password
         @collection_states = {}
       end
 
@@ -67,7 +70,14 @@ module Solr
       end
 
       def zookeeper
-        @zookeeper ||= ZK.new(zookeeper_url)
+        @zookeeper ||= begin
+          zk = ZK.new(zookeeper_url)
+          if zookeeper_auth_user && zookeeper_auth_password
+            auth_cert = "#{zookeeper_auth_user}:#{zookeeper_auth_password}"
+            zk.add_auth(scheme: 'digest', cert: auth_cert)
+          end
+          zk
+        end
       end
 
       def collection_state_znode_path(collection_name)

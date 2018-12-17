@@ -9,7 +9,8 @@ module Solr
   class Configuration
     SOLRB_USER_AGENT_HEADER = { user_agent: "Solrb v#{Solr::VERSION}" }.freeze
 
-    attr_accessor :cores, :test_connection, :zookeeper_url, :auth_user, :auth_password
+    attr_accessor :cores, :test_connection, :zookeeper_url, :auth_user, :auth_password,
+                  :zookeeper_auth_user, :zookeeper_auth_password
     attr_reader :url, :faraday_options
 
     def initialize

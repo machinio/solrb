@@ -20,7 +20,6 @@ module Solr
       end
 
       def run
-        puts collection_leader_solr_node
         raise Solr::Errors::NoActiveSolrNodesError unless collection_leader_solr_node
 
         request_url = build_request_url(url: collection_leader_solr_node,
