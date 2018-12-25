@@ -18,6 +18,11 @@ RSpec.describe Solr::Query::Request::Filter do
         subject { described_class.new(type: :equal, field: :field, value: 1..Float::INFINITY).to_solr_s }
         it { is_expected.to eq('field:(["1" TO *])') }
       end
+
+      context 'when min is infinity' do
+        subject { described_class.new(type: :equal, field: :field, value: -Float::INFINITY..1).to_solr_s }
+        it { is_expected.to eq('field:([* TO "1"])') }
+      end
     end
 
     context 'when value is date' do
