@@ -48,7 +48,7 @@ module Solr
         end
 
         def to_primitive_solr_value(value)
-          if date_infinity?(value) || value.to_f.infinite?
+          if date_infinity?(value) || numeric_infinity?(value)
             '*'
           elsif date_or_time?(value)
             value.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -59,6 +59,10 @@ module Solr
 
         def date_infinity?(value)
           value.is_a?(DateTime::Infinity)
+        end
+
+        def numeric_infinity?(value)
+          value.is_a?(Numeric) && value.infinite?
         end
 
         def date_or_time?(value)
