@@ -38,21 +38,19 @@ module Solr
         private
 
         def solr_prefix
-          '-' if NOT_EQUAL_TYPE == @type
+          '-' if NOT_EQUAL_TYPE == type
         end
 
         def to_interval_solr_value(range)
           solr_min = to_primitive_solr_value(range.first)
-          solr_max = if date_infinity?(range.last) || range.last.to_f.infinite?
-                       '*'
-                     else
-                       to_primitive_solr_value(range.last)
-                     end
+          solr_max = to_primitive_solr_value(range.last)
           "[#{solr_min} TO #{solr_max}]"
         end
 
         def to_primitive_solr_value(value)
-          if date_or_time?(value)
+          if date_infinity?(value) || numeric_infinity?(value)
+            '*'
+          elsif date_or_time?(value)
             value.strftime('%Y-%m-%dT%H:%M:%SZ')
           else
             %("#{value.to_s.solr_escape}")
@@ -61,6 +59,10 @@ module Solr
 
         def date_infinity?(value)
           value.is_a?(DateTime::Infinity)
+        end
+
+        def numeric_infinity?(value)
+          value.is_a?(Numeric) && value.infinite?
         end
 
         def date_or_time?(value)
