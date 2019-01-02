@@ -7,11 +7,9 @@ Solrb
 
 Object-Oriented approach to Solr in Ruby.
 
-Installation: `gem install solrb`
-
 ## Table of contents
 
-
+* [Installation](#installation)
 * [Configuration](#configuration)
   * [Setting Solr URL via environment variable](#setting-solr-url-via-environment-variable)
   * [Single core configuration](#single-core-configuration)
@@ -32,11 +30,24 @@ Installation: `gem install solrb`
   * [Field list](#field-list)
 * [Deleting documents](#deleting-documents)
 * [Active Support instrumentation](#active-support-instrumentation)
-
 * [Testing](#running-specs)
 * [Running specs](#running-specs)
 
 
+# Installation
+
+Add `solrb` to your Gemfile:
+
+```ruby
+gem solrb
+```
+
+If you are going to use solrb with solr cloud:
+
+```ruby
+gem zk # required for solrb solr-cloud integration
+gem solrb
+```
 
 # Configuration
 

@@ -1,4 +1,9 @@
-require 'zk'
+begin
+  require 'zk'
+rescue LoadError
+  require 'solr/errors/zookeeper_required'
+  raise Solr::Errors::ZookeeperRequired
+end
 
 module Solr
   module Cloud
