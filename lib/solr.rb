@@ -31,6 +31,8 @@ module Solr
 
     def configure
       yield configuration
+      configuration.validate!
+      configuration
     end
 
     def current_core_config

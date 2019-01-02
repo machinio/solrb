@@ -71,5 +71,11 @@ module Solr
         raise ArgumentError, 'Only one default core can be specified'
       end
     end
+
+    def validate!
+      if !(url || zookeeper_url || ENV['SOLR_URL'])
+        raise Solr::Errors::SolrUrlNotDefinedError
+      end
+    end
   end
 end

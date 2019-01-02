@@ -147,7 +147,7 @@ You can also specify the ACL credentials for Zookeeper. [More Information](https
 
 ```ruby
 Solr.configure do |config|
-  config.zookeeper_url = 'localhost:2181'
+  config.zookeeper_url = 'localhost:2181,localhost:2182,localhost:2183'
   config.zookeeper_auth_user = 'zk_acl_user'
   config.zookeeper_auth_password = 'zk_acl_password'
 end
