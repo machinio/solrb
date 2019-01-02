@@ -1,8 +1,6 @@
 module Solr
   module Indexing
     class Request
-      include Solr::Support::ConnectionHelper
-
       # TODO: potentially make handlers configurable and have them handle the path
       PATH = '/update'.freeze
 

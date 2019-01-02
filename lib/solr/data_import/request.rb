@@ -3,8 +3,6 @@ require 'solr/request/solr_cloud_leader_router'
 module Solr
   module DataImport
     class Request
-      include Solr::Support::ConnectionHelper
-
       PATH = '/dataimport'.freeze
 
       attr_reader :params

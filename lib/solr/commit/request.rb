@@ -1,7 +1,6 @@
 module Solr
   module Commit
     class Request
-      include Solr::Support::ConnectionHelper
       PATH = '/update'.freeze
 
       def run
