@@ -142,9 +142,14 @@ To enable solr cloud mode you must define a zookeeper url on solr config block. 
 to receive up-to-date information about active solr nodes. The `config.url` and `ENV['SOLR_URL']` will be
 ignored when cloud mode is active.
 
+You can also specify the ACL credentials for Zookeeper. [More Information](https://lucene.apache.org/solr/guide/7_6/zookeeper-access-control.html#ZooKeeperAccessControl-AboutZooKeeperACLs)
+
+
 ```ruby
 Solr.configure do |config|
   config.zookeeper_url = 'localhost:2181'
+  config.zookeeper_auth_user = 'zk_acl_user'
+  config.zookeeper_auth_password = 'zk_acl_password'
 end
 ```
 
