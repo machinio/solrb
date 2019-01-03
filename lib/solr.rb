@@ -70,7 +70,7 @@ module Solr
 
     def enable_solr_cloud
       raise 'You must provide a ZooKeeper URL to enable solr cloud mode' if configuration.zookeeper_url.nil?
-      cloud = Solr::Cloud::Configuration.configure(zookeeper_url: configuration.zookeeper_url,
+      @cloud = Solr::Cloud::Configuration.configure(zookeeper_url: configuration.zookeeper_url,
                                                    collections: configuration.cores.keys,
                                                    zookeeper_auth_user: configuration.zookeeper_auth_user,
                                                    zookeeper_auth_password: configuration.zookeeper_auth_password)

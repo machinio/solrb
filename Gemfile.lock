@@ -1,10 +1,9 @@
 PATH
   remote: .
   specs:
-    solrb (0.1.7)
+    solrb (0.1.8)
       addressable
       faraday
-      zk
 
 GEM
   remote: https://rubygems.org/
@@ -82,6 +81,7 @@ DEPENDENCIES
   rubocop
   simplecov
   solrb!
+  zk
 
 BUNDLED WITH
    1.16.6

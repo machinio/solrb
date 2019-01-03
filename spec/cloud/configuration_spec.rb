@@ -51,7 +51,7 @@ RSpec.describe Solr::Cloud::Configuration do
     end
     let(:expected_urls) { ['http://192.168.1.193:8983/solr'] }
 
-    subject { described_class.new('localhost:2181', [:en]) }
+    subject { described_class.new(zookeeper_url: 'localhost:2181', collections: [:en]) }
 
     before do
       allow(subject).to receive(:collection_states).and_return(collection_states)
@@ -71,7 +71,7 @@ RSpec.describe Solr::Cloud::Configuration do
 
     it 'watches zookeeper znodes for all defined collections' do
       expect(zookeeper_instance).to receive(:get).with('/collections/en/state.json', watch: true).and_return([])
-      described_class.configure('localhost:2181', [:en])
+      described_class.configure(zookeeper_url: 'localhost:2181', collections: [:en])
     end
   end
 end
