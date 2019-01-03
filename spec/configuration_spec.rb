@@ -23,6 +23,20 @@ RSpec.describe Solr::Configuration do
     end
   end
 
+  context 'don\'t specify url' do
+    it 'raises exception' do
+      solr_url_env = ENV['SOLR_URL']
+      ENV['SOLR_URL'] = nil
+
+      expect do
+        Solr.configure do |config|
+        end
+      end.to raise_error(Solr::Errors::SolrUrlNotDefinedError)
+
+      ENV['SOLR_URL'] = solr_url_env
+    end
+  end
+
   context 'set faraday_options' do
     before do
       Solr.configure do |config|
