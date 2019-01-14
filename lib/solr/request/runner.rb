@@ -2,20 +2,19 @@ require 'solr/request/default_solr_node_selector'
 
 module Solr
   module Request
+    # TODO: Add documentation about request running
     class Runner
       include Solr::Support::UrlHelper
 
-      attr_reader :request, :collection_name, :response_parser, :solr_node_selector
+      attr_reader :request, :response_parser, :solr_node_selector
 
       def self.call(opts)
         new(opts).call
       end
 
       def initialize(request:,
-                     collection_name:,
-                     solr_node_selector: Solr::Request::DefaultSolrNodeSelector)
+                     node_selection_strategy: Solr::Request::DefaultNodeSelectionStrategy)
         @request = request
-        @collection_name = collection_name
         @response_parser = response_parser
         @solr_node_selector = solr_node_selector
       end
@@ -31,8 +30,10 @@ module Solr
                                           path: request.path,
                                           url_params: request.url_params)
           begin
-            response = Solr::Connection.call(url: request_url, method: request.method, body: request.body)
-            return Solr::Response::Parser.call(response)
+            raw_response = Solr::Connection.call(url: request_url, method: request.method, body: request.body)
+            solr_response = Solr::Response::Parser.call(raw_response)
+            raise Solr::Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
+            return solr_response
           rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Errno::EADDRNOTAVAIL => e
             # Try next node
           end
@@ -44,7 +45,11 @@ module Solr
       private
 
       def solr_nodes_urls
-        @solr_nodes_urls ||= solr_node_selector.call(collection_name)
+        @solr_nodes_urls ||= node_selection_strategy.call(collection_name)
+      end
+
+      def collection_name
+        Solr.current_core_config.name
       end
     end
   end

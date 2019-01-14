@@ -13,10 +13,15 @@ module Solr
       end
 
       def run(commit: false)
-        Solr::Request::Runner.post_as_json(PATH, delete_command, commit: commit)
+        http_request = build_http_request(commit)
+        Solr::Request::Runner.call(request: http_request)
       end
 
       private
+
+      def build_http_request(commit)
+        Solr::Request::HttpRequest.new(path: PATH, body: delete_command, url_params: { commit: commit }, method: :post)
+      end
 
       def validate_delete_options!(options)
         options = options.deep_symbolize_keys

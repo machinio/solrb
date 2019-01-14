@@ -25,10 +25,14 @@ module Solr
         @collection_states = {}
       end
 
+      def shards_for(collection:)
+        collection_states.dig(collection.to_s, 'shards').keys
+      end
+
       def active_nodes_for(collection:)
-        collection_state = collection_states.dig(collection.to_s, 'shards')
-        return unless collection_state
-        collection_state.flat_map do |_, shard|
+        shards = collection_states.dig(collection.to_s, 'shards')
+        return unless shards
+        shards.flat_map do |_, shard|
           shard['replicas'].select do |_, replica|
             replica['state'] == 'active'
           end.flat_map do |_, replica|
@@ -37,18 +41,14 @@ module Solr
         end.uniq
       end
 
-      # This is a very simple way of finding a leader node and it does not take sharding into account.
-      # Right now it's assuming a cluster with single shard.
-      # For multiple shards a document id would be required as an argument to find the shard leader based
-      # on the shard range.
-      def leader_node_for(collection:)
-        collection_state = collection_states.dig(collection.to_s, 'shards')
-        return unless collection_state
-        collection_state.flat_map do |_, shard|
-          shard['replicas'].find do |_, replica|
-            replica['state'] == 'active' && replica['leader'] == 'true'
-          end
-        end.last['base_url']
+      def leader_replica_node_for(collection:, shard:)
+        shards = collection_states.dig(collection.to_s, 'shards')
+        return unless shards
+        shard_replicas = shards[shard.to_s]
+
+        shard_replicas.select do |replica|
+          replica['state'] == 'active' && replica['leader'] == 'true'
+        end.first['base_url']
       end
 
       def watch_solr_collections_state

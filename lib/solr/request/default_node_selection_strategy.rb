@@ -1,6 +1,6 @@
 module Solr
   module Request
-    class DefaultSolrNodeSelector
+    class DefaultNodeSelectionStrategy
       attr_reader :collection_name
 
       def self.call(collection_name)
@@ -34,10 +34,6 @@ module Solr
         base_url << "/solr"
         base_url
       end
-
-      # def active_collection_name
-      #   Solr.current_core_config.name.to_s
-      # end
     end
   end
 end

@@ -1,11 +1,15 @@
-require 'solr/request/base_http_request'
+require 'solr/request/http_request'
 
 module Solr
   module Query
-    class HttpRequest < Solr::Request::BaseHttpRequest
+    class HttpRequestBuilder
       PATH = '/select'.freeze
 
       attr_reader :query, :page, :page_size
+
+      def self.call(opts)
+        new(opts).call
+      end
 
       def initialize(query:, page:, page_size:)
         @query = query
@@ -13,20 +17,18 @@ module Solr
         @page_size = page_size
       end
 
-      def body
-        # https://lucene.apache.org/solr/guide/7_1/json-request-api.html#passing-parameters-via-json
-        @request_params ||= { params: solr_params.merge(wt: :json, rows: page_size.to_i, start: start) }
-      end
-
-      def path
-        PATH
-      end
-
-      def method
-        :post
+      def call
+        Solr::Request::HttpRequest.new(path: PATH,
+                                       body: build_body,
+                                       method: :post)
       end
 
       private
+
+      # 🏋️
+      def build_body
+        @request_params ||= { params: solr_params.merge(wt: :json, rows: page_size.to_i, start: start) }
+      end
 
       def start
         start_page = page.to_i - 1

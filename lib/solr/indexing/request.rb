@@ -1,7 +1,8 @@
+require 'solr/request/http_request'
+
 module Solr
   module Indexing
     class Request
-      # TODO: potentially make handlers configurable and have them handle the path
       PATH = '/update'.freeze
 
       attr_reader :documents
@@ -11,7 +12,14 @@ module Solr
       end
 
       def run(commit: false)
-        Solr::Request::Runner.post_as_json(PATH, documents, commit: commit)
+        http_request = build_http_request(commit)
+        Solr::Request::Runner.call(request: http_request)
+      end
+
+      private
+
+      def build_http_request(commit)
+        Solr::Request::HttpRequest.new(path: PATH, body: documents.to_json, url_params: { commit: commit }, method: :post)
       end
     end
   end

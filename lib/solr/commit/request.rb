@@ -4,7 +4,8 @@ module Solr
       PATH = '/update'.freeze
 
       def run
-        Solr::Request::Runner.post(PATH, {}, commit: true)
+        http_request = Solr::Request::HttpRequest.new(path: PATH, url_params: { commit: true }, method: :post)
+        Solr::Request::Runner.call(request: http_request)
       end
     end
   end
