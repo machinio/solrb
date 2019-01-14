@@ -9,19 +9,16 @@ module Solr
       freeze
     end
 
+    def self.call(url:, method:, body:)
+      raise "HTTP method not supported: #{method}" unless [:get, :post].include?(method.to_sym)
+      new(url).public_send(method, body)
+    end
+
     def get(_)
       Solr.instrument(name: INSTRUMENT_KEY) { @raw_connection.get }
     end
 
-    def post(data = {})
-      Solr.instrument(name: INSTRUMENT_KEY) do
-        @raw_connection.post do |req|
-          req.body = data
-        end
-      end
-    end
-
-    def post_as_json(data)
+    def post(data)
       Solr.instrument(name: INSTRUMENT_KEY, data: data) do
         @raw_connection.post do |req|
           req.headers['Content-Type'] = 'application/json'.freeze

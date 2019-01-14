@@ -1,11 +1,15 @@
 module Solr
   class Response
     class Parser
+      def self.call(raw_response)
+        new(raw_response).call
+      end
+
       def initialize(raw_response)
         @raw_response = raw_response
       end
 
-      def parse
+      def call
         # 404 is a special case, it didn't hit Solr (more likely than not)
         return not_found_response if @raw_response.status == 404
         parsed_body = JSON.parse(@raw_response.body).freeze
