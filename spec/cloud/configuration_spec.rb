@@ -19,7 +19,7 @@ RSpec.describe Solr::Cloud::Configuration do
               {'core' => 'en_shard1_replica_n2',
                'base_url' => 'http://192.168.1.193:7574/solr',
                'node_name' => '192.168.1.193:7574_solr',
-               'state' => 'down',
+               'state' => 'active',
                'type' => 'NRT',
                'force_set_state' => 'false',
                'leader' => 'true'}}},
@@ -46,16 +46,17 @@ RSpec.describe Solr::Cloud::Configuration do
        'maxShardsPerNode' => '2',
        'autoAddReplicas' => 'false',
        'nrtReplicas' => '2',
-       'tlogReplicas' => '0'}}
+       'tlogReplicas' => '0'}}.to_json
   end
 
   describe '.active_nodes_for' do
-    let(:expected_urls) { ['http://192.168.1.193:8983/solr', 'http://192.168.1.193:7575/solr'] }
+    let(:expected_urls) { ['http://192.168.1.193:8983/solr', 'http://192.168.1.193:7574/solr', 'http://192.168.1.193:7575/solr'] }
+    let(:zookeeper_instance) { double(:zookeeper_instance, register: true) }
 
-    subject { described_class.new(zookeeper_url: 'localhost:2181', collections: [:en]) }
+    subject { described_class.configure(zookeeper: zookeeper_instance, collections: [:en]) }
 
     before do
-      allow(subject).to receive(:collection_states).and_return(collection_states)
+      allow(zookeeper_instance).to receive(:get).and_return(collection_states)
     end
 
     it 'return only active solr nodes' do
@@ -63,30 +64,27 @@ RSpec.describe Solr::Cloud::Configuration do
     end
   end
 
-  # describe '.leader_node_for' do
-  #   let(:expected_urls) { 'http://192.168.1.193:7575/solr' }
+  describe '.leader_replica_node_for' do
+    let(:expected_urls) { 'http://192.168.1.193:7574/solr' }
+    let(:zookeeper_instance) { double(:zookeeper_instance, register: true) }
 
-  #   subject { described_class.new(zookeeper_url: 'localhost:2181', collections: [:en]) }
+    subject { described_class.configure(zookeeper: zookeeper_instance, collections: [:en]) }
 
-  #   before do
-  #     allow(subject).to receive(:collection_states).and_return(collection_states)
-  #   end
+    before do
+      allow(zookeeper_instance).to receive(:get).and_return(collection_states)
+    end
 
-  #   it 'return only active solr nodes' do
-  #     expect(subject.leader_node_for(collection: :en)).to eq(expected_urls)
-  #   end
-  # end
+    it 'return only active solr nodes' do
+      expect(subject.leader_replica_node_for(collection: :en, shard: 'shard1')).to eq(expected_urls)
+    end
+  end
 
   describe '.watch_solr_collections_state' do
     let(:zookeeper_instance) { double(:zookeeper_instance, register: true) }
 
-    before do
-      allow(ZK).to receive(:new).and_return(zookeeper_instance)
-    end
-
     it 'watches zookeeper znodes for all defined collections' do
-      expect(zookeeper_instance).to receive(:get).with('/collections/en/state.json', watch: true).and_return([])
-      described_class.configure(zookeeper_url: 'localhost:2181', collections: [:en])
+      expect(zookeeper_instance).to receive(:get).with('/collections/en/state.json', watch: true).and_return('{}')
+      described_class.configure(zookeeper: zookeeper_instance, collections: [:en])
     end
   end
 end

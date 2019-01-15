@@ -1,15 +1,9 @@
-begin
-  require 'zk'
-rescue LoadError
-  require 'solr/errors/zookeeper_required'
-  raise Solr::Errors::ZookeeperRequired
-end
+
 
 module Solr
   module Cloud
     class Configuration
-      attr_reader :zookeeper_url, :collections, :collection_states,
-                  :zookeeper_auth_user, :zookeeper_auth_password
+      attr_reader :zookeeper, :collections, :collection_states
 
       def self.configure(opts)
         configuration = new(opts)
@@ -17,11 +11,9 @@ module Solr
         configuration
       end
 
-      def initialize(zookeeper_url:, collections:, zookeeper_auth_user: nil, zookeeper_auth_password: nil)
-        @zookeeper_url = zookeeper_url
+      def initialize(zookeeper:, collections:)
+        @zookeeper = zookeeper
         @collections = collections
-        @zookeeper_auth_user = zookeeper_auth_user
-        @zookeeper_auth_password = zookeeper_auth_password
         @collection_states = {}
       end
 
@@ -45,10 +37,10 @@ module Solr
         shards = collection_states.dig(collection.to_s, 'shards')
         return unless shards
         shard_replicas = shards[shard.to_s]
-
-        shard_replicas.select do |replica|
+        leader_replica = shard_replicas['replicas'].detect do |_, replica|
           replica['state'] == 'active' && replica['leader'] == 'true'
-        end.first['base_url']
+        end
+        leader_replica.last['base_url'] if leader_replica
       end
 
       def watch_solr_collections_state
@@ -69,20 +61,9 @@ module Solr
 
       def get_collection_state(collection_name, watch: true)
         collection_state_znode = collection_state_znode_path(collection_name)
-        znode_data = zookeeper.get(collection_state_znode, watch: watch).first
+        znode_data = zookeeper.get(collection_state_znode, watch: watch)
         return unless znode_data
         @collection_states[collection_name.to_s] = JSON.parse(znode_data)[collection_name.to_s]
-      end
-
-      def zookeeper
-        @zookeeper ||= begin
-          zk = ZK.new(zookeeper_url)
-          if zookeeper_auth_user && zookeeper_auth_password
-            auth_cert = "#{zookeeper_auth_user}:#{zookeeper_auth_password}"
-            zk.add_auth(scheme: 'digest', cert: auth_cert)
-          end
-          zk
-        end
       end
 
       def collection_state_znode_path(collection_name)

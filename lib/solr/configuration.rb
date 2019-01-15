@@ -62,7 +62,6 @@ module Solr
       end
     end
 
-
     def core_name_from_solr_url_env
       full_solr_core_uri = URI.parse(ENV['SOLR_URL'])
       core_name = full_solr_core_uri.path.gsub('/solr', '').delete('/')

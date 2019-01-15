@@ -64,9 +64,6 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
     unicode-display_width (1.4.0)
-    zk (1.9.6)
-      zookeeper (~> 1.4.0)
-    zookeeper (1.4.11)
 
 PLATFORMS
   ruby
@@ -81,7 +78,6 @@ DEPENDENCIES
   rubocop
   simplecov
   solrb!
-  zk
 
 BUNDLED WITH
    1.16.6
