@@ -22,10 +22,6 @@ module Solr
       end
 
       def call
-        unless solr_urls && solr_urls.any?
-          raise Solr::Errors::NoActiveSolrNodesError
-        end
-
         solr_urls.each do |node_url|
           request_url = build_request_url(url: node_url,
                                           path: request.path,
@@ -46,7 +42,13 @@ module Solr
       private
 
       def solr_urls
-        @solr_urls ||= Solr.cloud_enabled? ? solr_cloud_collection_urls : [Solr.current_core_config.url]
+        @solr_urls ||= begin
+          urls = Solr.cloud_enabled? ? solr_cloud_collection_urls : [Solr.current_core_config.url]
+          unless urls && urls.any?
+            raise Solr::Errors::NoActiveSolrNodesError
+          end
+          urls
+        end
       end
 
       def solr_cloud_collection_urls
