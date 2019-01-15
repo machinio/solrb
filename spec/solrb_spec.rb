@@ -11,7 +11,7 @@ RSpec.describe Solr do
 
   describe '.with_core' do
     it 'uses passed core' do
-      Solr.with_core(:'some-core') do
+      Solr.with_core(:'some-core') do # This should fail, this core isn't defined
         expect(Solr.current_core_config.name).to eq(:'some-core')
       end
     end
@@ -32,8 +32,8 @@ RSpec.describe Solr do
       end
 
       specify do
-        Solr.with_core(:'some-core-3') do
-          expect(Solr.current_core_config.name).to eq(:'some-core-3')
+        Solr.with_core(:'test-core-3') do
+          expect(Solr.current_core_config.name).to eq(:'test-core-3')
         end
       end
     end

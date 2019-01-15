@@ -19,7 +19,7 @@ module Solr
       private
 
       def build_http_request(commit)
-        Solr::Request::HttpRequest.new(path: PATH, body: documents.to_json, url_params: { commit: commit }, method: :post)
+        Solr::Request::HttpRequest.new(path: PATH, body: documents, url_params: { commit: commit }, method: :post)
       end
     end
   end

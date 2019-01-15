@@ -1,4 +1,6 @@
-require 'solr/request/default_solr_node_selector'
+require 'solr/request/default_node_selection_strategy'
+require 'solr/errors/solr_query_error'
+require 'solr/errors/solr_connection_failed_error'
 
 module Solr
   module Request
@@ -6,7 +8,7 @@ module Solr
     class Runner
       include Solr::Support::UrlHelper
 
-      attr_reader :request, :response_parser, :solr_node_selector
+      attr_reader :request, :response_parser, :node_selection_strategy
 
       def self.call(opts)
         new(opts).call
@@ -16,17 +18,16 @@ module Solr
                      node_selection_strategy: Solr::Request::DefaultNodeSelectionStrategy)
         @request = request
         @response_parser = response_parser
-        @solr_node_selector = solr_node_selector
+        @node_selection_strategy = node_selection_strategy
       end
 
       def call
-        unless solr_nodes_urls && solr_nodes_urls.any?
+        unless solr_urls && solr_urls.any?
           raise Solr::Errors::NoActiveSolrNodesError
         end
 
-        solr_nodes_urls.each do |node_url|
+        solr_urls.each do |node_url|
           request_url = build_request_url(url: node_url,
-                                          collection_name: collection_name,
                                           path: request.path,
                                           url_params: request.url_params)
           begin
@@ -39,13 +40,21 @@ module Solr
           end
         end
 
-        raise Solr::Errors::ClusterConnectionFailedError
+        raise Solr::Errors::SolrConnectionFailedError.new(solr_urls)
       end
 
       private
 
-      def solr_nodes_urls
-        @solr_nodes_urls ||= node_selection_strategy.call(collection_name)
+      def solr_urls
+        @solr_urls ||= Solr.cloud_enabled? ? solr_cloud_collection_urls : [Solr.current_core_config.url]
+      end
+
+      def solr_cloud_collection_urls
+        urls = node_selection_strategy.call(collection_name)
+        return unless urls
+        urls.map do |url|
+          File.join(url, collection_name.to_s)
+        end
       end
 
       def collection_name

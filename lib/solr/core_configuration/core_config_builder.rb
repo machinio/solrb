@@ -3,7 +3,7 @@ module Solr
     class CoreConfigBuilder
       attr_reader :name, :dynamic_fields, :fields_params, :default
 
-      def initialize(name: nil, default:)
+      def initialize(name:, default:)
         @name = name
         @default = default
         @dynamic_fields = {}

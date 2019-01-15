@@ -1,3 +1,8 @@
+require 'solr/delete/request'
+require 'solr/commit/request'
+require 'solr/query/request'
+require 'solr/data_import/request'
+
 module Solr
   module Commands
     def commit

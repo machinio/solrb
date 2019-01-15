@@ -4,6 +4,7 @@ require 'solr/core_configuration/core_config'
 require 'solr/core_configuration/core_config_builder'
 require 'solr/errors/solr_url_not_defined_error'
 require 'solr/errors/ambiguous_core_error'
+require 'solr/errors/could_not_infer_implicit_core_name'
 
 module Solr
   class Configuration
@@ -61,7 +62,20 @@ module Solr
       end
     end
 
+
+    def core_name_from_solr_url_env
+      full_solr_core_uri = URI.parse(ENV['SOLR_URL'])
+      core_name = full_solr_core_uri.path.gsub('/solr', '').delete('/')
+
+      if !core_name || core_name == ''
+        raise Solr::Errors::CouldNotInferImplicitCoreName
+      end
+
+      core_name
+    end
+
     def build_env_url_core_config(name: nil)
+      name ||= core_name_from_solr_url_env
       Solr::CoreConfiguration::EnvUrlCoreConfig.new(name: name)
     end
 

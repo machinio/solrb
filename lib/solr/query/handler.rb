@@ -7,6 +7,10 @@ module Solr
     class Handler
       attr_reader :query, :page, :page_size
 
+      def self.call(opts)
+        new(opts).call
+      end
+
       def initialize(query:, page:, page_size:)
         @query = query
         @page = page

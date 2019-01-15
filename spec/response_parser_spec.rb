@@ -1,4 +1,4 @@
-RSpec.describe Solr::Response do
+RSpec.describe Solr::Response::Parser do
   it 'parses 400 (bad request)' do
     body = <<~RESPONSE_BODY
       {

@@ -64,7 +64,7 @@ RSpec.describe Solr::Configuration do
       end
     end
 
-    it 'raises exception' do
+    it 'gets the core name from ENV config' do
       expect(Solr.configuration.cores.keys).to eq([nil])
       core = Solr.configuration.default_core_config
       expect(core.url).to eq(ENV['SOLR_URL'])

@@ -63,19 +63,19 @@ RSpec.describe Solr::Cloud::Configuration do
     end
   end
 
-  describe '.leader_node_for' do
-    let(:expected_urls) { 'http://192.168.1.193:7575/solr' }
+  # describe '.leader_node_for' do
+  #   let(:expected_urls) { 'http://192.168.1.193:7575/solr' }
 
-    subject { described_class.new(zookeeper_url: 'localhost:2181', collections: [:en]) }
+  #   subject { described_class.new(zookeeper_url: 'localhost:2181', collections: [:en]) }
 
-    before do
-      allow(subject).to receive(:collection_states).and_return(collection_states)
-    end
+  #   before do
+  #     allow(subject).to receive(:collection_states).and_return(collection_states)
+  #   end
 
-    it 'return only active solr nodes' do
-      expect(subject.leader_node_for(collection: :en)).to eq(expected_urls)
-    end
-  end
+  #   it 'return only active solr nodes' do
+  #     expect(subject.leader_node_for(collection: :en)).to eq(expected_urls)
+  #   end
+  # end
 
   describe '.watch_solr_collections_state' do
     let(:zookeeper_instance) { double(:zookeeper_instance, register: true) }

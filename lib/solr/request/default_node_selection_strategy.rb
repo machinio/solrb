@@ -12,27 +12,7 @@ module Solr
       end
 
       def call
-        Solr.cloud_enabled? ? solr_cloud_active_nodes_urls.shuffle : [solr_url]
-      end
-
-      private
-
-      def solr_cloud_active_nodes_urls
-        Solr.cloud.active_nodes_for(collection: collection_name)
-      end
-
-      def solr_url
-        Solr.configuration.url || base_url_from_env
-      end
-
-      def base_url_from_env
-        url = ENV['SOLR_URL']
-        return unless url
-        uri = URI.parse(url)
-        base_url = "#{uri.scheme}://#{uri.host}"
-        base_url << ":#{uri.port}" if uri.port != 80
-        base_url << "/solr"
-        base_url
+        Solr.cloud.active_nodes_for(collection: collection_name).shuffle
       end
     end
   end
