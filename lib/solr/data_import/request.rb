@@ -1,3 +1,5 @@
+require 'solr/request/first_shard_leader_node_selection_strategy'
+
 module Solr
   module DataImport
     class Request
@@ -18,8 +20,7 @@ module Solr
       end
 
       def build_node_selection_strategy
-        shard = Solr.configuration.first_shard
-        Solr::Request::LeaderNodeSelectionStrategy.new(shard: shard)
+        Solr::Request::FirstShardLeaderNodeSelectionStrategy
       end
     end
   end

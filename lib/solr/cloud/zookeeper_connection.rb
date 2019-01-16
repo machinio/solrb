@@ -5,9 +5,7 @@ module Solr
     class ZookeeperConnection
       attr_reader :zookeeper_url, :zookeeper_auth_user, :zookeeper_auth_password
 
-      def initialize(zookeeper_url:, zookeeper_auth_user:, zookeeper_auth_password:)
-        raise Solr::Errors::ZookeeperRequired unless require_zk
-
+      def initialize(zookeeper_url:, zookeeper_auth_user: nil, zookeeper_auth_password: nil)
         @zookeeper_url = zookeeper_url
         @zookeeper_auth_user = zookeeper_auth_user
         @zookeeper_auth_password = zookeeper_auth_password
@@ -37,14 +35,21 @@ module Solr
       private
 
       def zookeeper_connection
+        @zookeeper_connection ||= build_zookeeper_connection
+      end
+
+      def build_zookeeper_connection
         raise 'You must provide a ZooKeeper URL to enable solr cloud mode' unless zookeeper_url
-        @zookeeper_connection ||= begin
-          zk = ZK.new(zookeeper_url)
-          if zookeeper_auth_user && zookeeper_auth_password
-            auth_cert = "#{zookeeper_auth_user}:#{zookeeper_auth_password}"
-            zk.add_auth(scheme: 'digest', cert: auth_cert)
-          end
-          zk
+        raise Solr::Errors::ZookeeperRequired unless require_zk
+
+        zk = ZK.new(zookeeper_url)
+        zk.add_auth(scheme: 'digest', cert: zookeeper_auth) if zookeeper_auth
+        zk
+      end
+
+      def zookeeper_auth
+        if zookeeper_auth_user && zookeeper_auth_password
+          "#{zookeeper_auth_user}:#{zookeeper_auth_password}"
         end
       end
 

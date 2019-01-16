@@ -1,7 +1,6 @@
-RSpec.describe Solr::Cloud::Configuration do
-  # This looks weird but it is how zk returns the collection state data: A json string inside an array
+RSpec.describe Solr::Cloud::ZookeeperConnection do
   let(:collection_states) do
-    [{'en' =>
+    [{'test-collection' =>
       {'pullReplicas' => '0',
        'replicationFactor' => '2',
        'shards' =>
@@ -49,43 +48,35 @@ RSpec.describe Solr::Cloud::Configuration do
        'nrtReplicas' => '2',
        'tlogReplicas' => '0'}}.to_json]
   end
+  let(:test_collection_state) { JSON.parse(collection_states.first)['test-collection'] }
+  let(:zookeeper) { double(:zookeeper, register: true, get: collection_states) }
 
-  describe '.active_nodes_for' do
-    let(:expected_urls) { ['http://192.168.1.193:8983/solr', 'http://192.168.1.193:7574/solr', 'http://192.168.1.193:7575/solr'] }
-    let(:zookeeper_instance) { double(:zookeeper_instance, register: true) }
+  before do
+    allow_any_instance_of(described_class).to receive(:zookeeper_connection).and_return(zookeeper)
+  end
 
-    subject { described_class.configure(zookeeper: zookeeper_instance, collections: [:en]) }
+  subject { described_class.new(zookeeper_url: 'localhost:2181') }
 
-    before do
-      allow(zookeeper_instance).to receive(:get).and_return(collection_states)
+  describe '.watch_collection_state' do
+    it 'register a callback on zookeeper' do
+      expect(zookeeper).to receive(:register).with('/collections/test-collection/state.json')
+      subject.watch_collection_state('test-collection') { |_| }
     end
 
-    it 'return only active solr nodes' do
-      expect(subject.active_nodes_for(collection: :en)).to eq(expected_urls)
+    it 'yields the collection state' do
+      expect { |b| subject.watch_collection_state('test-collection', &b) }.to yield_with_args(test_collection_state)
     end
   end
 
-  describe '.leader_replica_node_for' do
-    let(:expected_urls) { 'http://192.168.1.193:7574/solr' }
-    let(:zookeeper_instance) { double(:zookeeper_instance, register: true) }
-
-    subject { described_class.configure(zookeeper: zookeeper_instance, collections: [:en]) }
-
-    before do
-      allow(zookeeper_instance).to receive(:get).and_return(collection_states)
-    end
-
-    it 'return only active solr nodes' do
-      expect(subject.leader_replica_node_for(collection: :en, shard: 'shard1')).to eq(expected_urls)
+  describe '.get_collection_state' do
+    it 'returns the collection state' do
+      expect(subject.get_collection_state('test-collection')).to eq(test_collection_state)
     end
   end
 
-  describe '.watch_solr_collections_state' do
-    let(:zookeeper_instance) { double(:zookeeper_instance, register: true) }
-
-    it 'watches zookeeper znodes for all defined collections' do
-      expect(zookeeper_instance).to receive(:get).with('/collections/en/state.json', watch: true).and_return(['{}'])
-      described_class.configure(zookeeper: zookeeper_instance, collections: [:en])
+  describe '.collection_state_znode_path' do
+    it 'returns collection znode path' do
+      expect(subject.collection_state_znode_path(:collection)).to eq('/collections/collection/state.json')
     end
   end
 end

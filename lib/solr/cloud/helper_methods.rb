@@ -12,7 +12,7 @@ module Solr
       end
 
       def shards_for(collection:)
-        collections_state_manager.leader_replica_node_for(collection: collection, shard: shard)
+        collections_state_manager.shards_for(collection: collection)
       end
 
       def cloud_enabled?

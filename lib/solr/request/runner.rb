@@ -1,6 +1,7 @@
 require 'solr/request/default_node_selection_strategy'
 require 'solr/errors/solr_query_error'
 require 'solr/errors/solr_connection_failed_error'
+require 'solr/errors/no_active_solr_nodes_error'
 
 module Solr
   module Request
@@ -15,10 +16,12 @@ module Solr
       end
 
       def initialize(request:,
-                     node_selection_strategy: Solr::Request::DefaultNodeSelectionStrategy)
+                     node_selection_strategy: Solr::Request::DefaultNodeSelectionStrategy,
+                     solr_connection: Solr::Connection)
         @request = request
         @response_parser = response_parser
         @node_selection_strategy = node_selection_strategy
+        @solr_connection = solr_connection
       end
 
       def call
@@ -27,7 +30,7 @@ module Solr
                                           path: request.path,
                                           url_params: request.url_params)
           begin
-            raw_response = Solr::Connection.call(url: request_url, method: request.method, body: request.body)
+            raw_response = @solr_connection.call(url: request_url.to_s, method: request.method, body: request.body)
             solr_response = Solr::Response::Parser.call(raw_response)
             raise Solr::Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
             return solr_response
