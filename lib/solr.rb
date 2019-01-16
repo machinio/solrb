@@ -13,16 +13,18 @@ require 'solr/request/runner'
 require 'solr/query/request'
 require 'solr/indexing/document'
 require 'solr/indexing/request'
-require 'solr/cloud/configuration'
+
+require 'solr/cloud/helper_methods'
 require 'solr/commands'
 
 module Solr
   class << self
     include Solr::Commands
+    include Solr::Cloud::HelperMethods
 
     CURRENT_CORE_CONFIG_VARIABLE_NAME = :solrb_current_core_config
 
-    attr_accessor :configuration, :cloud
+    attr_accessor :configuration
 
     Solr.configuration = Configuration.new
 
@@ -59,32 +61,6 @@ module Solr
       else
         yield if block_given?
       end
-    end
-
-    def cloud_enabled?
-      !cloud.nil?
-    end
-
-    def enable_solr_cloud
-      raise 'You must provide a ZooKeeper URL to enable solr cloud mode' if configuration.zookeeper_url.nil?
-      @cloud = Solr::Cloud::Configuration.configure(zookeeper: build_zookeeper,
-                                                    collections: configuration.cores.keys)
-    end
-
-    def build_zookeeper
-      begin
-        require 'zk'
-      rescue LoadError
-        require 'solr/errors/zookeeper_required'
-        raise Solr::Errors::ZookeeperRequired
-      end
-
-      zk = ZK.new(zookeeper_url)
-      if zookeeper_auth_user && zookeeper_auth_password
-        auth_cert = "#{zookeeper_auth_user}:#{zookeeper_auth_password}"
-        zk.add_auth(scheme: 'digest', cert: auth_cert)
-      end
-      zk
     end
   end
 end

@@ -22,7 +22,7 @@ module Solr
       end
 
       def solr_cloud_url
-        File.join(Solr.cloud.active_nodes_for(collection: current_core.name.to_s).first, current_core.name.to_s)
+        File.join(Solr.active_nodes_for(collection: current_core.name.to_s).first, current_core.name.to_s)
       end
 
       def current_core

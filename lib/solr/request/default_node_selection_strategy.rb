@@ -12,7 +12,7 @@ module Solr
       end
 
       def call
-        Solr.cloud.active_nodes_for(collection: collection_name).shuffle
+        Solr.active_nodes_for(collection: collection_name).shuffle
       end
     end
   end

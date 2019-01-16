@@ -19,11 +19,11 @@ module Solr
         shards_info = shards_for(collection: collection)
         return unless shards_info
         first_shard_name = shards_info.keys.sort.first
-        Solr.cloud.leader_replica_node_for(collection: collection, shard: first_shard_name)
+        Solr.leader_replica_node_for(collection: collection, shard: first_shard_name)
       end
 
       def solr_cloud_active_nodes_urls
-        Solr.cloud.active_nodes_for(collection: collection_name)
+        Solr.active_nodes_for(collection: collection_name)
       end
     end
   end

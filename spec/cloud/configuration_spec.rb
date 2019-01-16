@@ -1,6 +1,7 @@
 RSpec.describe Solr::Cloud::Configuration do
+  # This looks weird but it is how zk returns the collection state data: A json string inside an array
   let(:collection_states) do
-    {'en' =>
+    [{'en' =>
       {'pullReplicas' => '0',
        'replicationFactor' => '2',
        'shards' =>
@@ -46,7 +47,7 @@ RSpec.describe Solr::Cloud::Configuration do
        'maxShardsPerNode' => '2',
        'autoAddReplicas' => 'false',
        'nrtReplicas' => '2',
-       'tlogReplicas' => '0'}}.to_json
+       'tlogReplicas' => '0'}}.to_json]
   end
 
   describe '.active_nodes_for' do
@@ -83,7 +84,7 @@ RSpec.describe Solr::Cloud::Configuration do
     let(:zookeeper_instance) { double(:zookeeper_instance, register: true) }
 
     it 'watches zookeeper znodes for all defined collections' do
-      expect(zookeeper_instance).to receive(:get).with('/collections/en/state.json', watch: true).and_return('{}')
+      expect(zookeeper_instance).to receive(:get).with('/collections/en/state.json', watch: true).and_return(['{}'])
       described_class.configure(zookeeper: zookeeper_instance, collections: [:en])
     end
   end

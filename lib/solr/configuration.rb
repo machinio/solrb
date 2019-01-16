@@ -8,11 +8,15 @@ require 'solr/errors/could_not_infer_implicit_core_name'
 
 module Solr
   class Configuration
+    extend Forwardable
+
+    delegate [:zookeeper_url=, :zookeeper_auth_user=, :zookeeper_auth_password=] => :@cloud_configuration
+
     SOLRB_USER_AGENT_HEADER = { user_agent: "Solrb v#{Solr::VERSION}" }.freeze
 
-    attr_accessor :cores, :test_connection, :zookeeper_url, :auth_user, :auth_password,
-                  :zookeeper_auth_user, :zookeeper_auth_password
-    attr_reader :url, :faraday_options
+    attr_accessor :cores, :test_connection, :auth_user, :auth_password
+
+    attr_reader :url, :faraday_options, :cloud_configuration
 
     def initialize
       @faraday_options = {
@@ -20,6 +24,7 @@ module Solr
         headers: SOLRB_USER_AGENT_HEADER
       }
       @cores = {}
+      @cloud_configuration = Solr::Cloud::Configuration.new
     end
 
     def faraday_options=(options)
@@ -86,7 +91,7 @@ module Solr
     end
 
     def validate!
-      if !(url || zookeeper_url || ENV['SOLR_URL'])
+      if !(url || @cloud_configuration.zookeeper_url || ENV['SOLR_URL'])
         raise Solr::Errors::SolrUrlNotDefinedError
       end
     end
