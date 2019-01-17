@@ -6,14 +6,14 @@ module Solr
   end
 end
 
-module Solr::Query::Request::RunnerExtension
-  def run
+module Solr::Request::RunnerExtension
+  def call
     response = super
-    Solr::Testing.last_solr_request_params = request_params[:params]
+    Solr::Testing.last_solr_request_params = request.body ? request.body[:params] : nil
     response
   end
 end
 
-class Solr::Query::Request::Runner
-  prepend Solr::Query::Request::RunnerExtension
+class Solr::Request::Runner
+  prepend Solr::Request::RunnerExtension
 end
