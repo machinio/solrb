@@ -7,6 +7,7 @@ require 'solr/query/request/edismax_adapter'
 require 'solr/query/request/grouping'
 require 'solr/query/request/boosting'
 require 'solr/query/request/spellcheck'
+require 'solr/query/request/response_fields'
 require 'solr/query/request/sorting/field'
 require 'solr/query/request/sorting/function'
 require 'solr/query/request/field_with_boost'
@@ -21,8 +22,8 @@ module Solr
     class Request
       attr_reader :search_term
       attr_accessor :filters, :fields, :facets, :boosting, :debug_mode, :spellcheck,
-                    :limit_docs_by_field, :phrase_slop, :response_fields, :query_operator
-      attr_writer :grouping, :sorting
+                    :limit_docs_by_field, :phrase_slop, :query_operator
+      attr_writer :grouping, :sorting, :response_fields
 
       def initialize(search_term:, fields: [], filters: [])
         @search_term = search_term
@@ -45,6 +46,10 @@ module Solr
 
       def sorting
         @sorting ||= Solr::Query::Request::Sorting.none
+      end
+
+      def response_fields
+        @response_fields ||= Solr::Query::Request::ResponseFields.new
       end
     end
   end

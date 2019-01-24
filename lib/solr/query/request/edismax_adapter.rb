@@ -120,10 +120,8 @@ module Solr
         end
 
         def add_response_fields(solr_params)
-          response_fields = ['id']
-          response_fields << 'score' if debug_mode?
-          response_fields += request.response_fields if request.response_fields
-          response_fields = response_fields.map(&:to_s).uniq.join(',')
+          request.response_fields.fields << :score if debug_mode?
+          response_fields = request.response_fields.to_solr_s
           solr_params.merge(RESPONSE_FIELDS => response_fields)
         end
 
