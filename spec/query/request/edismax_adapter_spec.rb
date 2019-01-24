@@ -92,7 +92,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
         'group.field' => 'field_1',
         'group.format' => 'grouped',
         'group.limit' => 10,
-        'json.facet' => '{"field_1":{"type":"terms","field":"field_1","limit":10}}',
+        :'json.facet' => '{"field_1":{"type":"terms","field":"field_1","limit":10}}',
         boost: ['field_1'],
         debug: nil,
         defType: :edismax,
