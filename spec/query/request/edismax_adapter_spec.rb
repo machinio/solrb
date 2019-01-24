@@ -29,7 +29,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
   end
 
   context 'complex query' do
-    let(:fields) do
+    let(:query_fields) do
       [
         Solr::Query::Request::FieldWithBoost.new(field: :field_1),
         Solr::Query::Request::FieldWithBoost.new(field: :field_2, boost_magnitude: 16)
@@ -70,7 +70,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
 
     let(:request) do
       request = Solr::Query::Request.new(search_term: search_term)
-      request.fields = fields
+      request.query_fields = query_fields
       request.response_fields = [:id, :name]
       request.filters = filters
       request.facets = facets

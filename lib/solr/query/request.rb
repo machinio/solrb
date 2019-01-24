@@ -21,13 +21,13 @@ module Solr
   module Query
     class Request
       attr_reader :search_term
-      attr_accessor :filters, :fields, :facets, :boosting, :debug_mode, :spellcheck,
+      attr_accessor :filters, :query_fields, :facets, :boosting, :debug_mode, :spellcheck,
                     :limit_docs_by_field, :phrase_slop, :query_operator
       attr_writer :grouping, :sorting, :response_fields
 
-      def initialize(search_term:, fields: [], filters: [])
+      def initialize(search_term:, query_fields: [], filters: [])
         @search_term = search_term
-        @fields = fields
+        @query_fields = query_fields
         @filters = filters
       end
 

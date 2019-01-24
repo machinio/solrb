@@ -41,8 +41,8 @@ module Solr
         private
 
         def add_query_fields(solr_params)
-          fields = request.fields.map(&:to_solr_s)
-          solr_params.merge(EDISMAX_QUERY_FIELDS => fields)
+          query_fields = request.query_fields.map(&:to_solr_s)
+          solr_params.merge(EDISMAX_QUERY_FIELDS => query_fields)
         end
 
         def add_filters(solr_params)
