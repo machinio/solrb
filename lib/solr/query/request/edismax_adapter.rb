@@ -6,14 +6,15 @@ module Solr
         include Solr::Support::SchemaHelper
 
         EDISMAX_QUERY_FIELDS = :qf
-        EDISMAX_FILTER_QUERY = :fq
         EDISMAX_ADDITIVE_BOOST_FUNCTION = :bf
         EDISMAX_MULTIPLICATIVE_BOOST_FUNCTION = :boost
         EDISMAX_PHRASE_BOOST = :pf
         EDISMAX_PHRASE_SLOP = :ps
+        FILTER_QUERY = :fq
         RESPONSE_FIELDS = :fl
         RERANK_QUERY = :rq
         QUERY_OPERATOR = :'q.op'
+        JSON_FACET = :'json.facet'
 
         attr_reader :request
 
@@ -47,13 +48,13 @@ module Solr
 
         def add_filters(solr_params)
           filters = request.filters.map(&:to_solr_s)
-          solr_params.merge(EDISMAX_FILTER_QUERY => filters)
         end
-
+        
         def add_facets(solr_params)
           return solr_params if Array(request.facets).empty?
+          solr_params.merge(FILTER_QUERY => filters)
 
-          solr_params['json.facet'] = request.facets.map(&:to_solr_h).reduce(&:merge).to_json
+          solr_params[JSON_FACET] = request.facets.map(&:to_solr_h).reduce(&:merge).to_json
 
           solr_params
         end

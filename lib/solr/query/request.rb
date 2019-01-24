@@ -21,13 +21,14 @@ module Solr
   module Query
     class Request
       attr_reader :search_term
-      attr_accessor :filters, :query_fields, :facets, :boosting, :debug_mode, :spellcheck,
+      attr_accessor :filters, :query_fields, :response_fields, :facets, :boosting, :debug_mode, :spellcheck,
                     :limit_docs_by_field, :phrase_slop, :query_operator
-      attr_writer :grouping, :sorting, :response_fields
+      attr_writer :grouping, :sorting
 
-      def initialize(search_term:, query_fields: [], filters: [])
+      def initialize(search_term:, query_fields: [], response_fields: Solr::Query::Request::ResponseFields.new, filters: [])
         @search_term = search_term
         @query_fields = query_fields
+        @response_fields = response_fields
         @filters = filters
       end
 
@@ -46,10 +47,6 @@ module Solr
 
       def sorting
         @sorting ||= Solr::Query::Request::Sorting.none
-      end
-
-      def response_fields
-        @response_fields ||= Solr::Query::Request::ResponseFields.new
       end
     end
   end
