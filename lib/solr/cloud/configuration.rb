@@ -18,7 +18,7 @@ module Solr
       end
 
       def build_zookeeper_connection
-        Solr::Cloud::ZookeeperConnection.new(zookeeper_url: zookeeper_url,
+        Solr::Cloud::ZookeeperConnection.new(zookeeper_url: zookeeper_url.is_a?(Array) ? zookeeper_url.join(',') : zookeeper_url,
                                              zookeeper_auth_user: zookeeper_auth_user,
                                              zookeeper_auth_password: zookeeper_auth_password)
       end
