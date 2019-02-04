@@ -3,8 +3,8 @@ RSpec.describe Solr::Query::Request::Runner do
 
   subject do
     described_class.new(
-      page: 1,
-      page_size: 10
+      start: 0,
+      rows: 10
     )
   end
 

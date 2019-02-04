@@ -7,10 +7,10 @@ RSpec.describe Solr::Commit::Request do
     indexing_request.run(commit: false)
     filter = Solr::Query::Request::Filter.new(type: :equal, field: :id, value: id)
     query_request = Solr::Query::Request.new(search_term: '*:*', filters: [filter])
-    query_response = query_request.run(rows: 1, offset: 0)
+    query_response = query_request.run
     expect(query_response).to be_empty
     commit_response = Solr.commit
-    query_response = query_request.run(rows: 1, offset: 0)
+    query_response = query_request.run
     expect(query_response.total_count).to eq 1
   end
 end

@@ -32,11 +32,14 @@ module Solr
 
       # Runs this Solr::Request against Solr and
       # returns [Solr::Response]
-      def run(page: nil, page_size: nil, offset: nil, rows: nil)
-        solr_params = Solr::Query::Request::EdismaxAdapter.new(self).to_h
-        solr_response = Solr::Query::Request::Runner.run(page: page, page_size: page_size, rows: rows, offset: offset, solr_params: solr_params)
-        raise Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
-        Solr::Query::Response::Parser.new(request: self, solr_response: solr_response.body).to_response
+      def run_paged(page: 1, page_size: 10)
+        solr_response = Solr::Query::Request::Runner.run_paged(page: page, page_size: page_size, solr_params: solr_params)
+        parse_response(solr_response)
+      end
+
+      def run(rows: 10, start: 0)
+        solr_response = Solr::Query::Request::Runner.run(rows: rows, start: start, solr_params: solr_params)
+        parse_response(solr_response)
       end
 
       def grouping
@@ -45,6 +48,15 @@ module Solr
 
       def sorting
         @sorting ||= Solr::Query::Request::Sorting.none
+      end
+
+      def solr_params
+        @solr_params ||= Solr::Query::Request::EdismaxAdapter.new(self).to_h
+      end
+
+      def parse_response(response)
+        raise Errors::SolrQueryError, response.error_message unless response.ok?
+        Solr::Query::Response::Parser.new(request: self, solr_response: response.body).to_response
       end
     end
   end
