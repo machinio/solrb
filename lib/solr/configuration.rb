@@ -10,7 +10,7 @@ module Solr
   class Configuration
     extend Forwardable
 
-    delegate [:zookeeper_url=, :zookeeper_auth_user=, :zookeeper_auth_password=] => :@cloud_configuration
+    delegate [:zookeeper_url, :zookeeper_url=, :zookeeper_auth_user=, :zookeeper_auth_password=] => :@cloud_configuration
 
     SOLRB_USER_AGENT_HEADER = { user_agent: "Solrb v#{Solr::VERSION}" }.freeze
 

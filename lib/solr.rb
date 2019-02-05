@@ -31,6 +31,7 @@ module Solr
     def configure
       yield configuration
       configuration.validate!
+      enable_solr_cloud! unless configuration.zookeeper_url.nil?
       configuration
     end
 

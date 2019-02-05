@@ -138,9 +138,10 @@ end
 
 ## Solr Cloud
 
-To enable solr cloud mode you must define a zookeeper url on solr config block. Solrb will watch zookeeper
-to receive up-to-date information about active solr nodes. The `config.url` and `ENV['SOLR_URL']` will be
-ignored when cloud mode is active.
+To enable solr cloud mode you must define a zookeeper url on solr config block.
+In solr cloud mode you don't need to provide a solr url (`config.url` or `ENV['SOLR_URL']`).
+Solrb will watch the zookeeper state to receive up-to-date information about active solr nodes including the solr urls.
+
 
 You can also specify the ACL credentials for Zookeeper. [More Information](https://lucene.apache.org/solr/guide/7_6/zookeeper-access-control.html#ZooKeeperAccessControl-AboutZooKeeperACLs)
 
@@ -153,13 +154,13 @@ Solr.configure do |config|
 end
 ```
 
-Now you can enable solr cloud mode by calling `Solr.enable_solr_cloud`. This method will initialize the
-zookeeper connection and setup cloud mode. If you are using puma web server you must call this method
-on `on_worker_boot` callback.
+If you are using puma web server in clustered mode you must call `enable_solr_cloud!` on `on_worker_boot`
+callback to make each puma worker connect with zookeeper.
+
 
 ```ruby
 on_worker_boot do
-  Solr.enable_solr_cloud
+  Solr.enable_solr_cloud!
 end
 ```
 

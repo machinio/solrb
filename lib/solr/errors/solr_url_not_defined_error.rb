@@ -13,7 +13,7 @@ module Solr
         and solrb will automatically get the solr urls from ZK:
 
         Solr.configure do |config|
-          config.zookeeper_url = "localhost:2181,localhost:2182,localhost:2183"
+          config.zookeeper_url = ["localhost:2181","localhost:2182","localhost:2183"]
         end
 
         For more information please check the solrb README file.
