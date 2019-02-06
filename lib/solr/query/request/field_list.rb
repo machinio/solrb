@@ -1,7 +1,7 @@
 module Solr
   module Query
     class Request
-      class ResponseFields
+      class FieldList
         include Solr::Support::SchemaHelper
 
         MANDATORY_FIELDS = %i[id].freeze

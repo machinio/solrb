@@ -25,7 +25,7 @@ module Solr
         def to_h
           solr_params = { q: request.search_term, defType: :edismax }
           solr_params = add_query_fields(solr_params)
-          solr_params = add_response_fields(solr_params)
+          solr_params = add_field_list(solr_params)
           solr_params = add_filters(solr_params)
           solr_params = add_facets(solr_params)
           solr_params = add_boosting(solr_params)
@@ -118,10 +118,10 @@ module Solr
           solr_params
         end
 
-        def add_response_fields(solr_params)
-          request.response_fields.fields << :score if debug_mode?
-          response_fields = request.response_fields.to_solr_s
-          solr_params[RESPONSE_FIELDS] = response_fields
+        def add_field_list(solr_params)
+          request.field_list.fields << :score if debug_mode?
+          field_list = request.field_list.to_solr_s
+          solr_params[RESPONSE_FIELDS] = field_list
           solr_params
         end
 

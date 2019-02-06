@@ -36,8 +36,8 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
       ]
     end
 
-    let(:response_fields) do
-      Solr::Query::Request::ResponseFields.new(fields: [:name])
+    let(:field_list) do
+      Solr::Query::Request::FieldList.new(fields: [:name])
     end
 
     let(:filters) do
@@ -75,7 +75,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
     let(:request) do
       request = Solr::Query::Request.new(search_term: search_term)
       request.query_fields = query_fields
-      request.response_fields = response_fields
+      request.field_list = field_list
       request.filters = filters
       request.facets = facets
       request.boosting = boosting

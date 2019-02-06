@@ -309,8 +309,8 @@ Example of usage:
   ]
   request = Solr::Query::Request.new(search_term: 'term', fields: fields)
   # Solr::Query::Request will return only :id field by default.
-  # Specify additional return fields (fl param) by setting the request response_fields
-  request.response_fields = [:name, :category]
+  # Specify additional return fields (fl param) by setting the request field_list
+  request.field_list = [:name, :category]
   request.run(page: 1, page_size: 10)
 ```
 

@@ -1,4 +1,4 @@
-RSpec.describe Solr::Query::Request::ResponseFields do
+RSpec.describe Solr::Query::Request::FieldList do
   describe '.to_solr_s' do
     let(:fields) { [:name, :title] }
 

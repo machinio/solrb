@@ -7,7 +7,7 @@ require 'solr/query/request/edismax_adapter'
 require 'solr/query/request/grouping'
 require 'solr/query/request/boosting'
 require 'solr/query/request/spellcheck'
-require 'solr/query/request/response_fields'
+require 'solr/query/request/field_list'
 require 'solr/query/request/sorting/field'
 require 'solr/query/request/sorting/function'
 require 'solr/query/request/field_with_boost'
@@ -21,14 +21,14 @@ module Solr
   module Query
     class Request
       attr_reader :search_term
-      attr_accessor :filters, :query_fields, :response_fields, :facets, :boosting, :debug_mode, :spellcheck,
+      attr_accessor :filters, :query_fields, :field_list, :facets, :boosting, :debug_mode, :spellcheck,
                     :limit_docs_by_field, :phrase_slop, :query_operator
       attr_writer :grouping, :sorting
 
-      def initialize(search_term:, query_fields: [], response_fields: Solr::Query::Request::ResponseFields.new, filters: [])
+      def initialize(search_term:, query_fields: [], field_list: Solr::Query::Request::FieldList.new, filters: [])
         @search_term = search_term
         @query_fields = query_fields
-        @response_fields = response_fields
+        @field_list = field_list
         @filters = filters
       end
 
