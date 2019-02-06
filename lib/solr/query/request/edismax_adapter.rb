@@ -11,7 +11,7 @@ module Solr
         EDISMAX_PHRASE_BOOST = :pf
         EDISMAX_PHRASE_SLOP = :ps
         FILTER_QUERY = :fq
-        RESPONSE_FIELDS = :fl
+        FIELD_LIST = :fl
         RERANK_QUERY = :rq
         QUERY_OPERATOR = :'q.op'
         JSON_FACET = :'json.facet'
@@ -121,7 +121,7 @@ module Solr
         def add_field_list(solr_params)
           request.field_list.fields << :score if debug_mode?
           field_list = request.field_list.to_solr_s
-          solr_params[RESPONSE_FIELDS] = field_list
+          solr_params[FIELD_LIST] = field_list
           solr_params
         end
 
