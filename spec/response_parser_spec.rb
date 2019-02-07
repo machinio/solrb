@@ -1,4 +1,4 @@
-RSpec.describe Solr::Response do
+RSpec.describe Solr::Response::Parser do
   it 'parses 400 (bad request)' do
     body = <<~RESPONSE_BODY
       {
@@ -13,7 +13,7 @@ RSpec.describe Solr::Response do
           "code":400}}
     RESPONSE_BODY
     raw_response = double(status: 400, reason_phrase: 'Bad Request', body: body)
-    res = described_class.from_raw_response(raw_response)
+    res = described_class.call(raw_response)
     expect(res).not_to be_ok
     expect(res).to be_error
     expect(res.status).to eq 400
@@ -36,7 +36,7 @@ RSpec.describe Solr::Response do
       </html>
     RESPONSE_BODY
     raw_response = double(status: 404, reason_phrase: 'Not Found', body: body)
-    res = described_class.from_raw_response(raw_response)
+    res = described_class.call(raw_response)
     expect(res).not_to be_ok
     expect(res).to be_error
     expect(res.status).to eq 404

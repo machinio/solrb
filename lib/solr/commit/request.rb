@@ -1,14 +1,11 @@
 module Solr
   module Commit
     class Request
-      include Solr::Support::ConnectionHelper
       PATH = '/update'.freeze
 
       def run
-        # the way to do commit message in SOLR is to send an empty 
-        # request with ?commit=true in the URL.
-        raw_response = connection(PATH, commit: true).post
-        Solr::Response.from_raw_response(raw_response)
+        http_request = Solr::Request::HttpRequest.new(path: PATH, url_params: { commit: true }, method: :post)
+        Solr::Request::Runner.call(request: http_request)
       end
     end
   end

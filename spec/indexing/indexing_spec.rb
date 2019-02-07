@@ -56,7 +56,7 @@ RSpec.describe Solr::Indexing do
         it 'raises an error on multiple indices without explicit core param' do
           doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
           req = Solr::Indexing::Request.new([doc1])
-          expect { req.run(commit: true) }.to raise_error(Errors::AmbiguousCoreError)
+          expect { req.run(commit: true) }.to raise_error(Solr::Errors::AmbiguousCoreError)
         end
 
         it 'accepts explicit core param' do

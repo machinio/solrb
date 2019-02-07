@@ -12,9 +12,7 @@ require 'solr/query/request/sorting/function'
 require 'solr/query/request/field_with_boost'
 require 'solr/query/request/or_filter'
 require 'solr/query/request/and_filter'
-require 'solr/query/request/runner'
-require 'solr/query/response'
-require 'solr/errors/solr_query_error'
+require 'solr/query/handler'
 
 module Solr
   module Query
@@ -30,13 +28,8 @@ module Solr
         @filters = filters
       end
 
-      # Runs this Solr::Request against Solr and
-      # returns [Solr::Response]
       def run(page: 1, page_size: 10)
-        solr_params = Solr::Query::Request::EdismaxAdapter.new(self).to_h
-        solr_response = Solr::Query::Request::Runner.run(page: page, page_size: page_size, solr_params: solr_params)
-        raise Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
-        Solr::Query::Response::Parser.new(request: self, solr_response: solr_response.body).to_response
+        Solr::Query::Handler.call(query: self, page: page, page_size: page_size)
       end
 
       def grouping
@@ -45,6 +38,10 @@ module Solr
 
       def sorting
         @sorting ||= Solr::Query::Request::Sorting.none
+      end
+
+      def to_h
+        Solr::Query::Request::EdismaxAdapter.new(self).to_h
       end
     end
   end
