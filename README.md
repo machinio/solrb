@@ -39,14 +39,14 @@ Object-Oriented approach to Solr in Ruby.
 Add `solrb` to your Gemfile:
 
 ```ruby
-gem solrb
+gem 'solrb'
 ```
 
 If you are going to use solrb with solr cloud:
 
 ```ruby
-gem zk # required for solrb solr-cloud integration
-gem solrb
+gem 'zk' # required for solrb solr-cloud integration
+gem 'solrb'
 ```
 
 # Configuration
