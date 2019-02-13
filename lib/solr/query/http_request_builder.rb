@@ -5,16 +5,16 @@ module Solr
     class HttpRequestBuilder
       PATH = '/select'.freeze
 
-      attr_reader :query, :page, :page_size
+      attr_reader :query, :start, :rows
 
       def self.call(opts)
         new(opts).call
       end
 
-      def initialize(query:, page:, page_size:)
+      def initialize(query:, start:, rows:)
         @query = query
-        @page = page
-        @page_size = page_size
+        @rows = rows
+        @start = start
       end
 
       def call
@@ -27,13 +27,7 @@ module Solr
 
       # 🏋️
       def build_body
-        @request_params ||= { params: solr_params.merge(wt: :json, rows: page_size.to_i, start: start) }
-      end
-
-      def start
-        start_page = page.to_i - 1
-        start_page = start_page < 1 ? 0 : start_page
-        start_page * page_size
+        @request_params ||= { params: solr_params.merge(wt: :json, rows: rows, start: start) }
       end
 
       def solr_params

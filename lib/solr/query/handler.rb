@@ -5,20 +5,20 @@ require 'solr/query/http_request_builder'
 module Solr
   module Query
     class Handler
-      attr_reader :query, :page, :page_size
+      attr_reader :query, :rows, :start
 
       def self.call(opts)
         new(opts).call
       end
 
-      def initialize(query:, page:, page_size:)
+      def initialize(query:, rows:, start:)
         @query = query
-        @page = page
-        @page_size = page_size
+        @rows = rows
+        @start = start
       end
 
       def call
-        http_request = Solr::Query::HttpRequestBuilder.call(query: query, page: page, page_size: page_size)
+        http_request = Solr::Query::HttpRequestBuilder.call(query: query, start: start, rows: rows)
         solr_response = Solr::Request::Runner.call(request: http_request)
         Solr::Query::Response::Parser.new(request: query, solr_response: solr_response.body).to_response
       end
