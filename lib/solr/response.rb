@@ -7,10 +7,6 @@ module Solr
   class Response
     OK = 'OK'.freeze
 
-    def self.from_raw_response(response)
-      Solr::Response::Parser.new(response).parse
-    end
-
     attr_reader :header, :http_status, :solr_error, :body
 
     def initialize(header:, http_status: HttpStatus.ok, solr_error: SolrError.none, body: {})

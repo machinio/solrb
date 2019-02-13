@@ -12,9 +12,7 @@ require 'solr/query/request/sorting/function'
 require 'solr/query/request/field_with_boost'
 require 'solr/query/request/or_filter'
 require 'solr/query/request/and_filter'
-require 'solr/query/request/runner'
-require 'solr/query/response'
-require 'solr/errors/solr_query_error'
+require 'solr/query/handler'
 
 module Solr
   module Query
@@ -30,16 +28,8 @@ module Solr
         @filters = filters
       end
 
-      # Runs this Solr::Request against Solr and
-      # returns [Solr::Response]
-      def run_paged(page: 1, page_size: 10)
-        solr_response = Solr::Query::Request::Runner.run_paged(page: page, page_size: page_size, solr_params: solr_params)
-        parse_response(solr_response)
-      end
-
-      def run(rows: 10, start: 0)
-        solr_response = Solr::Query::Request::Runner.run(rows: rows, start: start, solr_params: solr_params)
-        parse_response(solr_response)
+      def run(page: 1, page_size: 10)
+        Solr::Query::Handler.call(query: self, page: page, page_size: page_size)
       end
 
       def grouping
@@ -50,13 +40,8 @@ module Solr
         @sorting ||= Solr::Query::Request::Sorting.none
       end
 
-      def solr_params
-        @solr_params ||= Solr::Query::Request::EdismaxAdapter.new(self).to_h
-      end
-
-      def parse_response(response)
-        raise Errors::SolrQueryError, response.error_message unless response.ok?
-        Solr::Query::Response::Parser.new(request: self, solr_response: response.body).to_response
+      def to_h
+        Solr::Query::Request::EdismaxAdapter.new(self).to_h
       end
     end
   end

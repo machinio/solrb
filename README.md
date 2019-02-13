@@ -7,15 +7,15 @@ Solrb
 
 Object-Oriented approach to Solr in Ruby.
 
-Installation: `gem install solrb`
-
 ## Table of contents
 
-
+* [Installation](#installation)
 * [Configuration](#configuration)
   * [Setting Solr URL via environment variable](#setting-solr-url-via-environment-variable)
   * [Single core configuration](#single-core-configuration)
   * [Multiple core configuration](#multiple-core-configuration)
+  * [Solr Cloud](#solr-cloud)
+  * [Basic Authentication](#basic-authentication)
 * [Indexing](#indexing)
 * [Querying](#querying)
   * [Simple Query](#simple-query)
@@ -34,6 +34,20 @@ Installation: `gem install solrb`
 * [Running specs](#running-specs)
 
 
+# Installation
+
+Add `solrb` to your Gemfile:
+
+```ruby
+gem 'solrb'
+```
+
+If you are going to use solrb with solr cloud:
+
+```ruby
+gem 'zk' # required for solrb solr-cloud integration
+gem 'solrb'
+```
 
 # Configuration
 
@@ -122,6 +136,45 @@ end
 ...
 ```
 
+## Solr Cloud
+
+To enable solr cloud mode you must define a zookeeper url on solr config block.
+In solr cloud mode you don't need to provide a solr url (`config.url` or `ENV['SOLR_URL']`).
+Solrb will watch the zookeeper state to receive up-to-date information about active solr nodes including the solr urls.
+
+
+You can also specify the ACL credentials for Zookeeper. [More Information](https://lucene.apache.org/solr/guide/7_6/zookeeper-access-control.html#ZooKeeperAccessControl-AboutZooKeeperACLs)
+
+
+```ruby
+Solr.configure do |config|
+  config.zookeeper_urls = ['localhost:2181', 'localhost:2182', 'localhost:2183']
+  config.zookeeper_auth_user = 'zk_acl_user'
+  config.zookeeper_auth_password = 'zk_acl_password'
+end
+```
+
+If you are using puma web server in clustered mode you must call `enable_solr_cloud!` on `on_worker_boot`
+callback to make each puma worker connect with zookeeper.
+
+
+```ruby
+on_worker_boot do
+  Solr.enable_solr_cloud!
+end
+```
+
+## Basic Authentication
+
+Basic authentication is supported by solrb. You can enable it by providing `auth_user` and `auth_password`
+on the config block.
+
+```ruby
+Solr.configure do |config|
+  config.auth_user = 'user'
+  config.auth_password = 'password'
+end
+```
 
 # Indexing
 

@@ -1,7 +1,6 @@
 module Solr
   module Delete
     class Request
-      include Solr::Support::ConnectionHelper
       using Solr::Support::HashExtensions
 
       PATH = '/update'.freeze
@@ -14,12 +13,15 @@ module Solr
       end
 
       def run(commit: false)
-        # need to think how to move out commit data from the connection, it doesn't belong there
-        raw_response = connection(PATH, commit: commit).post_as_json(delete_command)
-        Solr::Response.from_raw_response(raw_response)
+        http_request = build_http_request(commit)
+        Solr::Request::Runner.call(request: http_request)
       end
 
       private
+
+      def build_http_request(commit)
+        Solr::Request::HttpRequest.new(path: PATH, body: delete_command, url_params: { commit: commit }, method: :post)
+      end
 
       def validate_delete_options!(options)
         options = options.deep_symbolize_keys

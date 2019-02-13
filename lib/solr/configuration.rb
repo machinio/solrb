@@ -4,13 +4,19 @@ require 'solr/core_configuration/core_config'
 require 'solr/core_configuration/core_config_builder'
 require 'solr/errors/solr_url_not_defined_error'
 require 'solr/errors/ambiguous_core_error'
+require 'solr/errors/could_not_infer_implicit_core_name'
 
 module Solr
   class Configuration
+    extend Forwardable
+
+    delegate [:zookeeper_url, :zookeeper_url=, :zookeeper_auth_user=, :zookeeper_auth_password=] => :@cloud_configuration
+
     SOLRB_USER_AGENT_HEADER = { user_agent: "Solrb v#{Solr::VERSION}" }.freeze
 
-    attr_accessor :cores, :test_connection
-    attr_reader :url, :faraday_options
+    attr_accessor :cores, :test_connection, :auth_user, :auth_password
+
+    attr_reader :url, :faraday_options, :cloud_configuration
 
     def initialize
       @faraday_options = {
@@ -18,6 +24,7 @@ module Solr
         headers: SOLRB_USER_AGENT_HEADER
       }
       @cores = {}
+      @cloud_configuration = Solr::Cloud::Configuration.new
     end
 
     def faraday_options=(options)
@@ -41,7 +48,7 @@ module Solr
     def default_core_config
       defined_default_core_config = cores.values.detect(&:default?)
       return defined_default_core_config if defined_default_core_config
-      raise Errors::AmbiguousCoreError if cores.count > 1
+      raise Solr::Errors::AmbiguousCoreError if cores.count > 1
       cores.values.first || build_env_url_core_config
     end
 
@@ -60,7 +67,19 @@ module Solr
       end
     end
 
+    def core_name_from_solr_url_env
+      full_solr_core_uri = URI.parse(ENV['SOLR_URL'])
+      core_name = full_solr_core_uri.path.gsub('/solr', '').delete('/')
+
+      if !core_name || core_name == ''
+        raise Solr::Errors::CouldNotInferImplicitCoreName
+      end
+
+      core_name
+    end
+
     def build_env_url_core_config(name: nil)
+      name ||= core_name_from_solr_url_env
       Solr::CoreConfiguration::EnvUrlCoreConfig.new(name: name)
     end
 
@@ -68,6 +87,12 @@ module Solr
       return unless default
       if cores.any? { |name, core_config| core_config.default? }
         raise ArgumentError, 'Only one default core can be specified'
+      end
+    end
+
+    def validate!
+      if !(url || @cloud_configuration.zookeeper_url || ENV['SOLR_URL'])
+        raise Solr::Errors::SolrUrlNotDefinedError
       end
     end
   end
