@@ -199,9 +199,9 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ## Simple Query
 
 ```ruby
-  field = Solr::Query::Request::FieldWithBoost.new(field: :name)
+  query_field = Solr::Query::Request::FieldWithBoost.new(field: :name)
 
-  request = Solr::Query::Request.new(search_term: 'term', fields: [field])
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: [query_field])
   request.run(page: 1, page_size: 10)
 ```
 ## Querying multiple cores
@@ -211,7 +211,7 @@ For multi-core configuration use `Solr.with_core` block:
 ```ruby
 Solr.with_core(:models) do
   Solr.delete_by_id(3242343)
-  Solr::Query::Request.new(search_term: 'term', fields: fields)
+  Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   Solr::Indexing::Request.new(documents: [doc])
 end
 ```
@@ -219,24 +219,24 @@ end
 ## Query with field boost
 
 ```ruby
-  fields = [
+  query_fields = [
     # Use boost_magnitude argument to apply boost to a specific field that you query
     Solr::Query::Request::FieldWithBoost.new(field: :name, boost_magnitude: 16),
     Solr::Query::Request::FieldWithBoost.new(field: :title)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.run(page: 1, page_size: 10)
 ```
 
 ## Query with filtering
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :title)
   ]
   filters = [Solr::Query::Request::Filter.new(type: :equal, field: :title, value: 'A title')]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields, filters: filters)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields, filters: filters)
   request.run(page: 1, page_size: 10)
 ```
 
@@ -262,12 +262,12 @@ end
 ## Query with sorting
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :title)
   ]
   sort_fields = [Solr::Query::Request::Sorting::Field.new(name: :name, direction: :asc)]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.sorting = Solr::Query::Request::Sorting.new(fields: sort_fields)
   request.run(page: 1, page_size: 10)
 ```
@@ -275,14 +275,14 @@ end
 Default sorting logic is following: nulls last, not-nulls first.
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name)
   ]
   sort_fields = [
     Solr::Query::Request::Sorting::Field.new(name: :is_featured, direction: :desc),
     Solr::Query::Request::Sorting::Function.new(function: "score desc")
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.sorting = Solr::Query::Request::Sorting.new(fields: sort_fields)
   request.run(page: 1, page_size: 10)
 ```
@@ -290,11 +290,11 @@ Default sorting logic is following: nulls last, not-nulls first.
 ## Query with grouping
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.grouping = Solr::Query::Request::Grouping.new(field: :category, limit: 10)
   request.run(page: 1, page_size: 10)
 ```
@@ -302,11 +302,11 @@ Default sorting logic is following: nulls last, not-nulls first.
 ## Query with facets
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.facets = [Solr::Query::Request::Facet.new(type: :terms, field: :category, options: { limit: 10 })]
   request.run(page: 1, page_size: 10)
 ```
@@ -314,11 +314,11 @@ Default sorting logic is following: nulls last, not-nulls first.
 ## Query with boosting functions
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.boosting = Solr::Query::Request::Boosting.new(
     multiplicative_boost_functions: [Solr::Query::Request::Boosting::RankingFieldBoostFunction.new(field: :name)],
     phrase_boosts: [Solr::Query::Request::Boosting::PhraseProximityBoost.new(field: :category, boost_magnitude: 4)]
@@ -356,11 +356,11 @@ Example of usage:
 
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   # Solr::Query::Request will return only :id field by default.
   # Specify additional return fields (fl param) by setting the request field_list
   request.field_list = [:name, :category]
