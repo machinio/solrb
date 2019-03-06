@@ -19,7 +19,7 @@ RSpec.describe Solr::Configuration do
         Solr.configure do |config|
           config.url = nil
         end
-      end.to raise_error(ArgumentError)
+      end.to_not raise_error
     end
   end
 
