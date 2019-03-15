@@ -34,11 +34,7 @@ module Solr
     end
 
     def url=(value)
-      if value.nil?
-        raise ArgumentError, "Configuration error: Solr URL can't be nil"
-      else
-        @url = value
-      end
+      @url = value
     end
 
     def core_config_by_name(core)
