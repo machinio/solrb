@@ -421,8 +421,8 @@ If you want to run it locally, you can either use  [CircleCI CLI](https://circle
 or do a completely manual setup (for up-to-date steps see circleci config)
 
 ```sh
-docker pull solr:7.4.0
-docker run -it --name test-solr -p 8983:8983/tcp -t solr:7.4.0
+docker pull solr:7.7.1
+docker run -it --name test-solr -p 8983:8983/tcp -t solr:7.7.1
 # create a core
 curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
 # disable field guessing

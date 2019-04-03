@@ -1,4 +1,5 @@
 require 'solr/request/http_request'
+require 'solr/request/leader_node_selection_strategy'
 
 module Solr
   module Indexing
@@ -11,9 +12,10 @@ module Solr
         @documents = documents
       end
 
-      def run(commit: false)
+      def run(commit: false, options: {})
         http_request = build_http_request(commit)
-        Solr::Request::Runner.call(request: http_request)
+        runner_options = { node_selection_strategy: Solr::Request::LeaderNodeSelectionStrategy }
+        Solr::Request::Runner.call(request: http_request, **runner_options.merge(options))
       end
 
       private

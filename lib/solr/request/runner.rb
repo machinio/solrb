@@ -56,10 +56,7 @@ module Solr
 
       def solr_cloud_collection_urls
         urls = node_selection_strategy.call(collection_name)
-        return unless urls
-        urls.map do |url|
-          File.join(url, collection_name.to_s)
-        end
+        urls&.map { |u| File.join(u, collection_name.to_s) }
       end
 
       def collection_name
