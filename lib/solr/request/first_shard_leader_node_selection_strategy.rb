@@ -2,8 +2,6 @@ module Solr
   module Request
     class FirstShardLeaderNodeSelectionStrategy < NodeSelectionStrategy
       def call
-        return [solr_url] unless Solr.cloud_enabled?
-
         leader = first_shard_leader_replica_node_for(collection: collection_name)
         replicas = solr_cloud_active_nodes_urls.shuffle
         ([leader] + replicas).flatten.uniq

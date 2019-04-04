@@ -5,8 +5,9 @@ require 'solr/data_import/request'
 
 module Solr
   module Commands
-    def commit(runner_options: nil)
-      Solr::Commit::Request.new.run(runner_options: runner_options)
+    def commit(open_searcher: true, runner_options: nil)
+      Solr::Commit::Request.new.run(open_searcher: open_searcher,
+                                    runner_options: runner_options)
     end
 
     def delete_by_id(id, commit: false, runner_options: nil)
