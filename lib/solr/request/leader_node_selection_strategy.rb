@@ -1,18 +1,8 @@
 module Solr
   module Request
-    class LeaderNodeSelectionStrategy
-      def self.call(collection_name)
-        new(collection_name).call
-      end
-
-      def initialize(collection_name)
-        @collection_name = collection_name
-      end
-
+    class LeaderNodeSelectionStrategy < NodeSelectionStrategy
       def call
-        return [solr_url] unless Solr.cloud_enabled?
-
-        [leader_replica_node_for(collection: @collection_name)]
+        [leader_replica_node_for(collection: collection_name)]
       end
 
       private

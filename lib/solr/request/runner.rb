@@ -1,4 +1,7 @@
+require 'solr/request/node_selection_strategy'
 require 'solr/request/default_node_selection_strategy'
+require 'solr/request/first_shard_leader_node_selection_strategy'
+require 'solr/request/leader_node_selection_strategy'
 require 'solr/errors/solr_query_error'
 require 'solr/errors/solr_connection_failed_error'
 require 'solr/errors/no_active_solr_nodes_error'

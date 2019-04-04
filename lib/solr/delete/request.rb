@@ -12,15 +12,23 @@ module Solr
         @delete_command = { delete: options }
       end
 
-      def run(commit: false)
+      def run(commit: false, runner_options: nil)
         http_request = build_http_request(commit)
-        Solr::Request::Runner.call(request: http_request)
+        options = default_runner_options.merge(runner_options || {})
+        Solr::Request::Runner.call(request: http_request, **options)
       end
 
       private
 
+      def default_runner_options
+        { node_selection_strategy: Solr::Request::LeaderNodeSelectionStrategy }
+      end
+
       def build_http_request(commit)
-        Solr::Request::HttpRequest.new(path: PATH, body: delete_command, url_params: { commit: commit }, method: :post)
+        Solr::Request::HttpRequest.new(path: PATH,
+                                       body: delete_command,
+                                       url_params: { commit: commit },
+                                       method: :post)
       end
 
       def validate_delete_options!(options)

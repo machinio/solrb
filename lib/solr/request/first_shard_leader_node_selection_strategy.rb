@@ -1,18 +1,10 @@
 module Solr
   module Request
-    class FirstShardLeaderNodeSelectionStrategy
-      def self.call(collection_name)
-        new(collection_name).call
-      end
-
-      def initialize(collection_name)
-        @collection_name = collection_name
-      end
-
+    class FirstShardLeaderNodeSelectionStrategy < NodeSelectionStrategy
       def call
-        return [solr_url] unless Solr.cloud_enabled?
-
-        ([first_shard_leader_replica_node_for(collection: @collection_name)] + solr_cloud_active_nodes_urls.shuffle).flatten.uniq
+        leader = first_shard_leader_replica_node_for(collection: collection_name)
+        replicas = solr_cloud_active_nodes_urls.shuffle
+        ([leader] + replicas).flatten.uniq
       end
 
       private
@@ -25,7 +17,7 @@ module Solr
       end
 
       def solr_cloud_active_nodes_urls
-        Solr.active_nodes_for(collection: @collection_name)
+        Solr.active_nodes_for(collection: collection_name)
       end
     end
   end
