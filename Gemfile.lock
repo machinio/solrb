@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    solrb (0.2.1)
+    solrb (0.2.2)
       addressable
       faraday
 
