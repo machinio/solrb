@@ -28,6 +28,7 @@ module Solr
       end
 
       def call
+        solr_url_errors = {}
         solr_urls.each do |node_url|
           request_url = build_request_url(url: node_url,
                                           path: request.path,
@@ -38,11 +39,12 @@ module Solr
             raise Solr::Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
             return solr_response
           rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Errno::EADDRNOTAVAIL => e
+            solr_url_errors[node_url] = e.message
             # Try next node
           end
         end
 
-        raise Solr::Errors::SolrConnectionFailedError.new(solr_urls)
+        raise Solr::Errors::SolrConnectionFailedError.new(solr_url_errors)
       end
 
       private

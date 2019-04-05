@@ -1,10 +1,11 @@
 module Solr
   module Errors
     class SolrConnectionFailedError < StandardError
-      def initialize(solr_urls)
+      def initialize(solr_url_errors)
+        urls_message = solr_url_errors.map { |url, error| "#{url} - #{error}" }.join("\n")
         message = <<~MESSAGE
           Could not connect to any available solr instance:
-          #{solr_urls.join(', ')}
+          #{urls_message}
         MESSAGE
         super(message)
       end
