@@ -39,7 +39,7 @@ module Solr
             raise Solr::Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
             return solr_response
           rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Errno::EADDRNOTAVAIL => e
-            solr_url_errors[node_url] = e.message
+            solr_url_errors[node_url] = "#{e.class.name} - #{e.message}"
             # Try next node
           end
         end
