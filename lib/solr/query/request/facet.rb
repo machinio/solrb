@@ -17,7 +17,8 @@ module Solr
                     :subfacets,
                     :gap,
                     :lower_bound,
-                    :upper_bound
+                    :upper_bound,
+                    :domain
 
         def initialize(field:, type:, name: nil, value: nil, filters: [], subfacets: [], options: {})
           if options[:limit].nil? && type == TERMS_TYPE
@@ -38,6 +39,7 @@ module Solr
           @gap         = options[:gap]
           @lower_bound = options[:lower_bound]
           @upper_bound = options[:upper_bound]
+          @domain      = options[:domain]
         end
 
         def to_solr_h
@@ -58,7 +60,8 @@ module Solr
               facet: subfacets.map(&:to_solr_h).reduce(&:merge),
               gap: gap,
               start: lower_bound,
-              end: upper_bound
+              end: upper_bound,
+              domain: domain
             }.compact
           }
         end
