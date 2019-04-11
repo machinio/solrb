@@ -11,13 +11,14 @@ RSpec.describe Solr::Query::Request::Facet do
             type: :terms,
             field: 'field_1',
             limit: 10
+            domain: { filter: 'field_2:("value_2")' }
           }
         }
       end
 
       let(:type) { :terms }
       let(:field) { :field_1 }
-      let(:options) { { limit: 10 } }
+      let(:options) { { limit: 10, domain: { filter: 'field_2:("value_2")' } } }
 
       it { is_expected.to eq(result) }
     end
