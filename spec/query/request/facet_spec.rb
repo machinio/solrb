@@ -10,7 +10,7 @@ RSpec.describe Solr::Query::Request::Facet do
           field_1: {
             type: :terms,
             field: 'field_1',
-            limit: 10
+            limit: 10,
             domain: { filter: 'field_2:("value_2")' }
           }
         }
