@@ -5,8 +5,9 @@ require 'solr/data_import/request'
 
 module Solr
   module Commands
-    def commit(open_searcher: true, runner_options: nil)
-      Solr::Commit::Request.new.run(open_searcher: open_searcher,
+    def commit(open_searcher: true, optimize: false, runner_options: nil)
+      Solr::Commit::Request.new.run(optimize: optimize,
+                                    open_searcher: open_searcher,
                                     runner_options: runner_options)
     end
 
