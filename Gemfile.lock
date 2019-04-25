@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    solrb (0.2.3)
+    solrb (0.2.5)
       addressable
       faraday
 
@@ -80,4 +80,4 @@ DEPENDENCIES
   solrb!
 
 BUNDLED WITH
-   1.16.6
+   1.17.3

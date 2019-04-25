@@ -16,12 +16,16 @@ require 'solr/indexing/document'
 require 'solr/indexing/request'
 
 require 'solr/cloud/helper_methods'
+require 'solr/master_slave/helper_methods'
+require 'solr/helper_methods'
 require 'solr/commands'
 
 module Solr
   class << self
     include Solr::Commands
     include Solr::Cloud::HelperMethods
+    include Solr::MasterSlave::HelperMethods
+    include Solr::HelperMethods
 
     CURRENT_CORE_CONFIG_VARIABLE_NAME = :solrb_current_core_config
 
@@ -33,6 +37,7 @@ module Solr
       yield configuration
       configuration.validate!
       enable_solr_cloud! unless configuration.zookeeper_url.nil?
+      enable_master_slave! unless configuration.master_url.nil?
       configuration
     end
 

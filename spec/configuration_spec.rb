@@ -174,4 +174,23 @@ RSpec.describe Solr::Configuration do
       end
     end
   end
+
+  context 'set master url and slave url, disable_read_from_master on config block' do
+    let(:master_url) { 'http://localhost:8983/solr/' }
+    let(:slave_url) { 'http://localhost:8984/solr/' }
+
+    before do
+      Solr.configure do |config|
+        config.master_url = master_url
+        config.slave_url = slave_url
+        config.disable_read_from_master = true
+      end
+    end
+
+    it 'uses the settings' do
+      expect(Solr.configuration.master_url).to eq(master_url)
+      expect(Solr.configuration.slave_url).to eq(slave_url)
+      expect(Solr.configuration.disable_read_from_master).to eq(true)
+    end
+  end
 end
