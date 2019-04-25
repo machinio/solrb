@@ -164,6 +164,30 @@ on_worker_boot do
 end
 ```
 
+## Master-slave
+
+To enable master-slave mode you must define a master url and slave url on solr config block.
+In solr master-slave mode you don't need to provide a solr url (`config.url` or `ENV['SOLR_URL']`).
+
+```ruby
+Solr.configure do |config|
+  config.master_url = 'localhost:8983'
+  config.slave_url = 'localhost:8984'
+  # Disable select queries from master:
+  config.disable_read_from_master = true
+end
+```
+
+If you are using puma web server in clustered mode you must call `enable_master_slave!` on `on_worker_boot`
+callback to make each puma worker connect with zookeeper.
+
+
+```ruby
+on_worker_boot do
+  Solr.enable_master_slave!
+end
+```
+
 ## Basic Authentication
 
 Basic authentication is supported by solrb. You can enable it by providing `auth_user` and `auth_password`

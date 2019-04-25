@@ -3,7 +3,7 @@ require 'solr/cloud/configuration'
 module Solr
   module Cloud
     module HelperMethods
-      def active_nodes_for(collection:)
+      def cloud_active_nodes_for(collection:)
         collections_state_manager.active_nodes_for(collection: collection)
       end
 

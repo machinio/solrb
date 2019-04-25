@@ -21,7 +21,13 @@ module Solr
       private
 
       def default_runner_options
-        { node_selection_strategy: Solr::Request::LeaderNodeSelectionStrategy }
+        if Solr.cloud_enabled?
+          { node_selection_strategy: Solr::Request::Cloud::LeaderNodeSelectionStrategy }
+        elsif Solr.master_slave_enabled?
+          { node_selection_strategy: Solr::Request::MasterSlave::MasterNodeSelectionStrategy }
+        else
+          {}
+        end
       end
     end
   end
