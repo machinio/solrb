@@ -89,7 +89,10 @@ module Solr
     end
 
     def validate!
-      if !(url || @cloud_configuration.zookeeper_url || ENV['SOLR_URL'])
+      if !(url ||
+           @cloud_configuration.zookeeper_url ||
+           (@master_slave_configuration.master_url && @master_slave_configuration.slave_url) ||
+           ENV['SOLR_URL'])
         raise Solr::Errors::SolrUrlNotDefinedError
       end
     end
