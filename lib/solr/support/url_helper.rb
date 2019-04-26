@@ -18,11 +18,16 @@ module Solr
       end
 
       def core_url
-        Solr.cloud_enabled? ? solr_cloud_url : current_core.uri
+        if Solr.cloud_enabled? || Solr.master_slave_enabled?
+          solr_cloud_or_master_slave_url
+        else
+          current_core.uri
+        end
       end
 
-      def solr_cloud_url
-        File.join(Solr.active_nodes_for(collection: current_core.name.to_s).first, current_core.name.to_s)
+      def solr_cloud_or_master_slave_url
+        url = Solr.active_nodes_for(collection: current_core.name.to_s).first
+        File.join(url, current_core.name.to_s)
       end
 
       def current_core
