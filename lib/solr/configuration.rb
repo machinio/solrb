@@ -11,12 +11,13 @@ module Solr
     extend Forwardable
 
     delegate [:zookeeper_url, :zookeeper_url=, :zookeeper_auth_user=, :zookeeper_auth_password=] => :@cloud_configuration
+    delegate [:master_url, :master_url=, :slave_url, :slave_url=, :disable_read_from_master, :disable_read_from_master=] => :@master_slave_configuration
 
     SOLRB_USER_AGENT_HEADER = { user_agent: "Solrb v#{Solr::VERSION}" }.freeze
 
     attr_accessor :cores, :test_connection, :auth_user, :auth_password
 
-    attr_reader :url, :faraday_options, :cloud_configuration
+    attr_reader :url, :faraday_options, :cloud_configuration, :master_slave_configuration
 
     def initialize
       @faraday_options = {
@@ -25,6 +26,7 @@ module Solr
       }
       @cores = {}
       @cloud_configuration = Solr::Cloud::Configuration.new
+      @master_slave_configuration = Solr::MasterSlave::Configuration.new
     end
 
     def faraday_options=(options)
@@ -34,11 +36,7 @@ module Solr
     end
 
     def url=(value)
-      if value.nil?
-        raise ArgumentError, "Configuration error: Solr URL can't be nil"
-      else
-        @url = value
-      end
+      @url = value
     end
 
     def core_config_by_name(core)
@@ -91,7 +89,10 @@ module Solr
     end
 
     def validate!
-      if !(url || @cloud_configuration.zookeeper_url || ENV['SOLR_URL'])
+      if !(url ||
+           @cloud_configuration.zookeeper_url ||
+           (@master_slave_configuration.master_url && @master_slave_configuration.slave_url) ||
+           ENV['SOLR_URL'])
         raise Solr::Errors::SolrUrlNotDefinedError
       end
     end

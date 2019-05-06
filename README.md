@@ -164,6 +164,30 @@ on_worker_boot do
 end
 ```
 
+## Master-slave
+
+To enable master-slave mode you must define a master url and slave url on solr config block.
+In solr master-slave mode you don't need to provide a solr url (`config.url` or `ENV['SOLR_URL']`).
+
+```ruby
+Solr.configure do |config|
+  config.master_url = 'localhost:8983'
+  config.slave_url = 'localhost:8984'
+  # Disable select queries from master:
+  config.disable_read_from_master = true
+end
+```
+
+If you are using puma web server in clustered mode you must call `enable_master_slave!` on `on_worker_boot`
+callback to make each puma worker connect with zookeeper.
+
+
+```ruby
+on_worker_boot do
+  Solr.enable_master_slave!
+end
+```
+
 ## Basic Authentication
 
 Basic authentication is supported by solrb. You can enable it by providing `auth_user` and `auth_password`
@@ -199,9 +223,9 @@ doc = Solr::Indexing::Document.new(id: 5, name: 'John')
 ## Simple Query
 
 ```ruby
-  field = Solr::Query::Request::FieldWithBoost.new(field: :name)
+  query_field = Solr::Query::Request::FieldWithBoost.new(field: :name)
 
-  request = Solr::Query::Request.new(search_term: 'term', fields: [field])
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: [query_field])
   request.run(page: 1, page_size: 10)
 ```
 ## Querying multiple cores
@@ -211,7 +235,7 @@ For multi-core configuration use `Solr.with_core` block:
 ```ruby
 Solr.with_core(:models) do
   Solr.delete_by_id(3242343)
-  Solr::Query::Request.new(search_term: 'term', fields: fields)
+  Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   Solr::Indexing::Request.new(documents: [doc])
 end
 ```
@@ -219,24 +243,24 @@ end
 ## Query with field boost
 
 ```ruby
-  fields = [
+  query_fields = [
     # Use boost_magnitude argument to apply boost to a specific field that you query
     Solr::Query::Request::FieldWithBoost.new(field: :name, boost_magnitude: 16),
     Solr::Query::Request::FieldWithBoost.new(field: :title)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.run(page: 1, page_size: 10)
 ```
 
 ## Query with filtering
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :title)
   ]
   filters = [Solr::Query::Request::Filter.new(type: :equal, field: :title, value: 'A title')]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields, filters: filters)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields, filters: filters)
   request.run(page: 1, page_size: 10)
 ```
 
@@ -262,12 +286,12 @@ end
 ## Query with sorting
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :title)
   ]
   sort_fields = [Solr::Query::Request::Sorting::Field.new(name: :name, direction: :asc)]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.sorting = Solr::Query::Request::Sorting.new(fields: sort_fields)
   request.run(page: 1, page_size: 10)
 ```
@@ -275,14 +299,14 @@ end
 Default sorting logic is following: nulls last, not-nulls first.
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name)
   ]
   sort_fields = [
     Solr::Query::Request::Sorting::Field.new(name: :is_featured, direction: :desc),
     Solr::Query::Request::Sorting::Function.new(function: "score desc")
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.sorting = Solr::Query::Request::Sorting.new(fields: sort_fields)
   request.run(page: 1, page_size: 10)
 ```
@@ -290,11 +314,11 @@ Default sorting logic is following: nulls last, not-nulls first.
 ## Query with grouping
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.grouping = Solr::Query::Request::Grouping.new(field: :category, limit: 10)
   request.run(page: 1, page_size: 10)
 ```
@@ -302,11 +326,11 @@ Default sorting logic is following: nulls last, not-nulls first.
 ## Query with facets
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.facets = [Solr::Query::Request::Facet.new(type: :terms, field: :category, options: { limit: 10 })]
   request.run(page: 1, page_size: 10)
 ```
@@ -314,11 +338,11 @@ Default sorting logic is following: nulls last, not-nulls first.
 ## Query with boosting functions
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.boosting = Solr::Query::Request::Boosting.new(
     multiplicative_boost_functions: [Solr::Query::Request::Boosting::RankingFieldBoostFunction.new(field: :name)],
     phrase_boosts: [Solr::Query::Request::Boosting::PhraseProximityBoost.new(field: :category, boost_magnitude: 4)]
@@ -356,14 +380,14 @@ Example of usage:
 
 
 ```ruby
-  fields = [
+  query_fields = [
     Solr::Query::Request::FieldWithBoost.new(field: :name),
     Solr::Query::Request::FieldWithBoost.new(field: :category)
   ]
-  request = Solr::Query::Request.new(search_term: 'term', fields: fields)
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   # Solr::Query::Request will return only :id field by default.
-  # Specify additional return fields (fl param) by setting the request response_fields
-  request.response_fields = [:name, :category]
+  # Specify additional return fields (fl param) by setting the request field_list
+  request.field_list = [:name, :category]
   request.run(page: 1, page_size: 10)
 ```
 
@@ -421,8 +445,8 @@ If you want to run it locally, you can either use  [CircleCI CLI](https://circle
 or do a completely manual setup (for up-to-date steps see circleci config)
 
 ```sh
-docker pull solr:7.4.0
-docker run -it --name test-solr -p 8983:8983/tcp -t solr:7.4.0
+docker pull solr:7.7.1
+docker run -it --name test-solr -p 8983:8983/tcp -t solr:7.7.1
 # create a core
 curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
 # disable field guessing

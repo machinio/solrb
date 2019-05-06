@@ -10,12 +10,12 @@ RSpec.describe Solr::Query::Request do
   end
 
   let(:search_term) { 'solrb' }
-  let(:fields) do
+  let(:query_fields) do
     [Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en)]
   end
 
   subject do
-    Solr::Query::Request.new(search_term: search_term, fields: fields)
+    Solr::Query::Request.new(search_term: search_term, query_fields: query_fields)
   end
 
   it 'searches' do

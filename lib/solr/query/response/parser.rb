@@ -72,7 +72,8 @@ module Solr
         def parse_regular_documents
           solr_response['response']['docs'].map do |d|
             debug_info = solr_response.dig('debug', 'explain', d['id'])
-            Document.new(id: d['id'], score: d['score'], debug_info: debug_info)
+            fields = d.dup.delete_if { |k, v| %w[id score].include?(k) }
+            Document.new(id: d['id'], score: d['score'], debug_info: debug_info, fields: fields)
           end
         end
 
@@ -82,8 +83,9 @@ module Solr
               next unless doc
               debug_info = solr_response.dig('debug', 'explain', doc['id'])
               group_information = Document::GroupInformation.new(key: solr_grouping_field, value: group['groupValue'])
+              fields = doc.dup.delete_if { |k, v| %w[id score].include?(k) }
               Document.new(id: doc['id'], score: doc['score'],
-                           debug_info: debug_info, group: group_information)
+                           debug_info: debug_info, group: group_information, fields: fields)
             end
           end.flatten.compact
         end

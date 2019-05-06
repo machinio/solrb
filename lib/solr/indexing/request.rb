@@ -1,5 +1,3 @@
-require 'solr/request/http_request'
-
 module Solr
   module Indexing
     class Request
@@ -11,12 +9,23 @@ module Solr
         @documents = documents
       end
 
-      def run(commit: false)
+      def run(commit: false, runner_options: nil)
         http_request = build_http_request(commit)
-        Solr::Request::Runner.call(request: http_request)
+        options = default_runner_options.merge(runner_options || {})
+        Solr::Request::Runner.call(request: http_request, **options)
       end
 
       private
+
+      def default_runner_options
+        if Solr.cloud_enabled?
+          { node_selection_strategy: Solr::Request::Cloud::LeaderNodeSelectionStrategy }
+        elsif Solr.master_slave_enabled?
+          { node_selection_strategy: Solr::Request::MasterSlave::MasterNodeSelectionStrategy }
+        else
+          {}
+        end
+      end
 
       def build_http_request(commit)
         Solr::Request::HttpRequest.new(path: PATH, body: documents, url_params: { commit: commit }, method: :post)
