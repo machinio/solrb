@@ -30,8 +30,11 @@ module Solr
         @filters = filters
       end
 
-      def run(page: 1, page_size: 10)
-        Solr::Query::Handler.call(query: self, page: page, page_size: page_size)
+      def run(page: nil, start: nil, rows: nil, page_size: nil)
+        rows ||= page_size
+        return run_paged(page: page, page_size: rows) if page && rows
+        return run_start(start: start, rows: rows) if start && rows
+        raise ArgumentError, 'You must specify either page/rows or start/rows arguments'
       end
 
       def grouping
@@ -44,6 +47,20 @@ module Solr
 
       def to_h
         Solr::Query::Request::EdismaxAdapter.new(self).to_h
+      end
+
+      private
+
+      def run_paged(page: 1, page_size: 10)
+        start_page = page.to_i - 1
+        start_page = start_page < 1 ? 0 : start_page
+        start = start_page * page_size
+
+        Solr::Query::Handler.call(query: self, start: start, rows: page_size)
+      end
+
+      def run_start(rows: 10, start: 0)
+        Solr::Query::Handler.call(query: self, start: start, rows: rows)
       end
     end
   end
