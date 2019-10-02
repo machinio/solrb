@@ -55,6 +55,22 @@ RSpec.describe Solr::Configuration do
     end
   end
 
+  context 'set faraday_configure' do
+    before do
+      Solr.configure do |config|
+        config.faraday_configure = Proc.new do |f|
+          f.adapter :net_http do |http|
+            http.idle_timeout = 150
+          end
+        end
+      end
+    end
+
+    it 'uses the set faraday_configure' do
+      expect(Solr.configuration.faraday_configure).to be_a(Proc)
+    end
+  end
+
   context 'core name in ENV variable' do
     before do
       Solr.configure do |config|
