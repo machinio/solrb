@@ -3,9 +3,9 @@ module Solr
   class Connection
     INSTRUMENT_KEY = 'request.solrb'.freeze
 
-    def initialize(url, faraday_options: Solr.configuration.faraday_options, faraday_configure: Solr.configuration.faraday_configure)
+    def initialize(url, faraday_options: Solr.configuration.faraday_options, faraday_configuration: Solr.configuration.faraday_configuration)
       # Allow mock the connection for testing
-      @raw_connection = Solr.configuration.test_connection || build_faraday_connection(url, faraday_options, faraday_configure)
+      @raw_connection = Solr.configuration.test_connection || build_faraday_connection(url, faraday_options, faraday_configuration)
       freeze
     end
 
@@ -29,8 +29,8 @@ module Solr
 
     private
 
-    def build_faraday_connection(url, faraday_options, faraday_configure)
-      connection = Faraday.new(url, faraday_options, &faraday_configure)
+    def build_faraday_connection(url, faraday_options, faraday_configuration)
+      connection = Faraday.new(url, faraday_options, &faraday_configuration)
       if Solr.configuration.auth_user && Solr.configuration.auth_password
         connection.basic_auth(Solr.configuration.auth_user, Solr.configuration.auth_password)
       end

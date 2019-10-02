@@ -55,10 +55,10 @@ RSpec.describe Solr::Configuration do
     end
   end
 
-  context 'set faraday_configure' do
+  context 'set faraday_configuration' do
     before do
       Solr.configure do |config|
-        config.faraday_configure = Proc.new do |f|
+        config.faraday_configure do |f|
           f.adapter :net_http do |http|
             http.idle_timeout = 150
           end
@@ -66,8 +66,8 @@ RSpec.describe Solr::Configuration do
       end
     end
 
-    it 'uses the set faraday_configure' do
-      expect(Solr.configuration.faraday_configure).to be_a(Proc)
+    it 'uses the set faraday_configuration' do
+      expect(Solr.configuration.faraday_configuration).to be_a(Proc)
     end
   end
 

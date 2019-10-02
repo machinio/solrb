@@ -17,14 +17,14 @@ module Solr
 
     attr_accessor :cores, :test_connection, :auth_user, :auth_password
 
-    attr_reader :url, :faraday_options, :faraday_configure, :cloud_configuration, :master_slave_configuration
+    attr_reader :url, :faraday_options, :faraday_configuration, :cloud_configuration, :master_slave_configuration
 
     def initialize
       @faraday_options = {
         request: { timeout: 2, open_timeout: 8 },
         headers: SOLRB_USER_AGENT_HEADER
       }
-      @faraday_configure = nil
+      @faraday_configuration = nil
       @cores = {}
       @cloud_configuration = Solr::Cloud::Configuration.new
       @master_slave_configuration = Solr::MasterSlave::Configuration.new
@@ -36,8 +36,8 @@ module Solr
       @faraday_options = options
     end
 
-    def faraday_configure=(block)
-      @faraday_configure = block
+    def faraday_configure(&block)
+      @faraday_configuration = block
     end
 
     def url=(value)
