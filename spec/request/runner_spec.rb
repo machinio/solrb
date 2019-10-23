@@ -61,5 +61,20 @@ RSpec.describe Solr::Request::Runner do
         expect { subject.call }.to raise_error(Solr::Errors::NoActiveSolrNodesError)
       end
     end
+
+    context 'override url set' do
+      let(:url) { 'http://override:8983/solr' }
+
+      it 'calls solr connection' do
+        Solr.with_node_url(url) do
+          Solr.with_core(:fakecore) do
+            expect(solr_connection).to receive(:call).with(url: 'http://override:8983/solr/fakecore/select',
+                                                          method: :get,
+                                                          body: '{ "some_json_key": "some_json_value" }')
+            subject.call
+          end
+        end
+      end
+    end
   end
 end

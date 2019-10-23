@@ -52,7 +52,9 @@ module Solr
 
       def solr_urls
         @solr_urls ||= begin
-          urls = if Solr.cloud_enabled? || Solr.master_slave_enabled?
+          urls = if Solr.node_url_override
+            [File.join(Solr.node_url_override, collection_name.to_s)]
+          elsif Solr.cloud_enabled? || Solr.master_slave_enabled?
             solr_collection_urls
           else
             [Solr.current_core_config.url]

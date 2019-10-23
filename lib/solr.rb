@@ -28,6 +28,7 @@ module Solr
     include Solr::HelperMethods
 
     CURRENT_CORE_CONFIG_VARIABLE_NAME = :solrb_current_core_config
+    SOLR_NODE_URL_OVERRIDE_CONFIG = :solrb_node_url_override_config
 
     attr_accessor :configuration
 
@@ -55,6 +56,17 @@ module Solr
       yield
     ensure
       Thread.current[CURRENT_CORE_CONFIG_VARIABLE_NAME] = old_core_config
+    end
+
+    def with_node_url(url)
+      Thread.current[SOLR_NODE_URL_OVERRIDE_CONFIG] = url
+      yield
+    ensure
+      Thread.current[SOLR_NODE_URL_OVERRIDE_CONFIG] = nil
+    end
+
+    def node_url_override
+      Thread.current[SOLR_NODE_URL_OVERRIDE_CONFIG]
     end
 
     def solr_url(path = '')
