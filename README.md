@@ -188,6 +188,17 @@ on_worker_boot do
 end
 ```
 
+## Force node URL
+
+You can force solrb to use a specific node URL with the `with_node_url` method:
+
+```ruby
+Solr.with_node_url('http://localhost:9000') do
+  Solr::Query::Request.new(search_term: 'example', query_fields: query_fields).run
+end
+```
+
+
 ## Basic Authentication
 
 Basic authentication is supported by solrb. You can enable it by providing `auth_user` and `auth_password`
