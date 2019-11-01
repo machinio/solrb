@@ -1,7 +1,7 @@
 module Solr
   module MasterSlave
     module NodesGrayList
-      class InMemoryPolicy
+      class InMemory
         attr_reader :gray_list, :removal_period
 
         DEFAULT_REMOVAL_PERIOD = 5 * 60 # 5 minutes in seconds
@@ -19,21 +19,21 @@ module Solr
           gray_list.delete(url)
         end
 
-        def active?(url)
+        def added?(url)
           added_at = gray_list[url]
-          return true unless added_at
+          return false unless added_at
 
           if added_at + removal_period < Time.now.utc
-            false
+            true
           else
             remove(url)
-            true
+            false
           end
         end
 
-        def filter_active(urls)
+        def select_active(urls)
           urls = Array(urls)
-          active_urls = urls.select(&method(:active?))
+          active_urls = urls.reject(&method(:added?))
           active_urls.any? ? active_urls : urls
         end
       end

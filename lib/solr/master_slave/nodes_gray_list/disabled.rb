@@ -1,18 +1,18 @@
 module Solr
   module MasterSlave
     module NodesGrayList
-      class DisabledPolicy
+      class Disabled
         def add(_)
         end
 
         def remove(_)
         end
 
-        def active?(_)
+        def added?(_)
           true
         end
 
-        def filter_active(urls)
+        def select_active(urls)
           urls
         end
       end

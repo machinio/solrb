@@ -41,7 +41,7 @@ module Solr
             return solr_response
           rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Errno::EADDRNOTAVAIL => e
             if Solr.master_slave_enabled?
-              Solr.configuration.nodes_gray_list_policy.add(node_url)
+              Solr.configuration.nodes_gray_list.add(node_url)
             end
             solr_url_errors[node_url] = "#{e.class.name} - #{e.message}"
             # Try next node

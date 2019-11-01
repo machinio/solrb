@@ -13,7 +13,7 @@ module Solr
 
     delegate [:zookeeper_url, :zookeeper_url=, :zookeeper_auth_user=, :zookeeper_auth_password=] => :@cloud_configuration
     delegate [:master_url, :master_url=, :slave_url, :slave_url=, :disable_read_from_master,
-      :disable_read_from_master=, :nodes_gray_list_policy, :nodes_gray_list_policy=] => :@master_slave_configuration
+      :disable_read_from_master=, :nodes_gray_list, :nodes_gray_list=] => :@master_slave_configuration
 
     SOLRB_USER_AGENT_HEADER = { user_agent: "Solrb v#{Solr::VERSION}" }.freeze
 
