@@ -19,11 +19,11 @@ module Solr
           gray_list.delete(url)
         end
 
-        def removed?(url)
-          removed_at = gray_list[url]
-          return false unless removed_at
+        def active?(url)
+          added_at = gray_list[url]
+          return true unless added_at
 
-          if removed_at + removal_period < Time.now.utc
+          if added_at + removal_period < Time.now.utc
             false
           else
             remove(url)
@@ -32,7 +32,7 @@ module Solr
         end
 
         def filter_active(urls)
-          active_urls = urls.reject(&method(:removed?))
+          active_urls = urls.select(&method(:active?))
           active_urls.any? ? active_urls : urls
         end
       end

@@ -8,8 +8,8 @@ module Solr
         def remove(_)
         end
 
-        def removed?(_)
-          false
+        def active?(_)
+          true
         end
 
         def filter_active(urls)
