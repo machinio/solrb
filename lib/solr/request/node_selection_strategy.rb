@@ -14,6 +14,12 @@ module Solr
       def call
         raise "Not implemented"
       end
+
+      private
+
+      def map_urls_to_collections(urls)
+        urls&.map { |u| File.join(u, collection_name.to_s) }
+      end
     end
   end
 end

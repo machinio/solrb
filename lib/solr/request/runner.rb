@@ -40,6 +40,9 @@ module Solr
             raise Solr::Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
             return solr_response
           rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Errno::EADDRNOTAVAIL => e
+            if Solr.master_slave_enabled?
+              Solr.configuration.nodes_gray_list_policy.add(node_url)
+            end
             solr_url_errors[node_url] = "#{e.class.name} - #{e.message}"
             # Try next node
           end
@@ -55,7 +58,7 @@ module Solr
           urls = if Solr.node_url_override
             [File.join(Solr.node_url_override, collection_name.to_s)]
           elsif Solr.cloud_enabled? || Solr.master_slave_enabled?
-            solr_collection_urls
+            node_selection_strategy.call(collection_name)
           else
             [Solr.current_core_config.url]
           end
@@ -64,11 +67,6 @@ module Solr
           end
           urls
         end
-      end
-
-      def solr_collection_urls
-        urls = node_selection_strategy.call(collection_name)
-        urls&.map { |u| File.join(u, collection_name.to_s) }
       end
 
       def collection_name

@@ -3,7 +3,8 @@ module Solr
     module Cloud
       class LeaderNodeSelectionStrategy < NodeSelectionStrategy
         def call
-          [leader_replica_node_for(collection: collection_name)]
+          urls = [leader_replica_node_for(collection: collection_name)]
+          map_urls_to_collections(urls)
         end
 
         private

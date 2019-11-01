@@ -5,7 +5,8 @@ module Solr
         def call
           leader = first_shard_leader_replica_node_for(collection: collection_name)
           replicas = solr_cloud_active_nodes_urls.shuffle
-          ([leader] + replicas).flatten.uniq
+          urls = ([leader] + replicas).flatten.uniq
+          map_urls_to_collections(urls)
         end
 
         private

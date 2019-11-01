@@ -2,6 +2,7 @@ require 'solr/core_configuration/dynamic_field'
 require 'solr/core_configuration/field'
 require 'solr/core_configuration/core_config'
 require 'solr/core_configuration/core_config_builder'
+require 'solr/nodes_gray_list/configuration'
 require 'solr/errors/solr_url_not_defined_error'
 require 'solr/errors/ambiguous_core_error'
 require 'solr/errors/could_not_infer_implicit_core_name'
@@ -11,13 +12,15 @@ module Solr
     extend Forwardable
 
     delegate [:zookeeper_url, :zookeeper_url=, :zookeeper_auth_user=, :zookeeper_auth_password=] => :@cloud_configuration
-    delegate [:master_url, :master_url=, :slave_url, :slave_url=, :disable_read_from_master, :disable_read_from_master=] => :@master_slave_configuration
+    delegate [:master_url, :master_url=, :slave_url, :slave_url=, :disable_read_from_master,
+      :disable_read_from_master=, :nodes_gray_list_policy, :nodes_gray_list_policy=] => :@master_slave_configuration
 
     SOLRB_USER_AGENT_HEADER = { user_agent: "Solrb v#{Solr::VERSION}" }.freeze
 
     attr_accessor :cores, :test_connection, :auth_user, :auth_password
 
-    attr_reader :url, :faraday_options, :faraday_configuration, :cloud_configuration, :master_slave_configuration
+    attr_reader :url, :faraday_options, :faraday_configuration, :cloud_configuration,
+      :master_slave_configuration
 
     def initialize
       @faraday_options = {

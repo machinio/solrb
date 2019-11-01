@@ -3,7 +3,9 @@ module Solr
     module MasterSlave
       class MasterNodeSelectionStrategy < NodeSelectionStrategy
         def call
-          [Solr.configuration.master_url]
+          urls = [Solr.configuration.master_url]
+          node_urls = map_urls_to_collections(urls)
+          Solr.configuration.nodes_gray_list_policy.filter_active(node_urls)
         end
       end
     end
