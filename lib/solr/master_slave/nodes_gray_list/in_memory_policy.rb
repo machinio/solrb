@@ -32,6 +32,7 @@ module Solr
         end
 
         def filter_active(urls)
+          urls = Array(urls)
           active_urls = urls.select(&method(:active?))
           active_urls.any? ? active_urls : urls
         end
