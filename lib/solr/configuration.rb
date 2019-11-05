@@ -21,6 +21,8 @@ module Solr
     attr_reader :url, :faraday_options, :faraday_configuration, :cloud_configuration,
       :master_slave_configuration
 
+    attr_writer :url, :logger
+
     def initialize
       @faraday_options = {
         request: { timeout: 2, open_timeout: 8 },
@@ -40,10 +42,6 @@ module Solr
 
     def faraday_configure(&block)
       @faraday_configuration = block
-    end
-
-    def url=(value)
-      @url = value
     end
 
     def core_config_by_name(core)
@@ -102,6 +100,16 @@ module Solr
            ENV['SOLR_URL'])
         raise Solr::Errors::SolrUrlNotDefinedError
       end
+    end
+
+    def logger
+      @logger || null_logger
+    end
+
+    private
+
+    def null_logger
+      @null_logger ||= Logger.new(IO::NULL)
     end
   end
 end

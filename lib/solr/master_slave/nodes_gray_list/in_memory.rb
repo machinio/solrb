@@ -12,7 +12,9 @@ module Solr
         end
         
         def add(url)
-          gray_list[url] ||= Time.now.utc
+          return if gray_list.has_key?(url)
+          ::Solr.configuration.logger.info("#{url} added to a gray list")
+          gray_list[url] = Time.now.utc
         end
 
         def remove(url)
