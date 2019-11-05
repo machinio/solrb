@@ -66,7 +66,7 @@ module Solr
 
       def default_runner_options
         if Solr.master_slave_enabled?
-          { node_selection_strategy: Solr::Request::MasterSlave::MasterSlaveNodeSelectionStrategy }
+          { node_selection_strategy: Solr::Request::MasterSlave::DefaultNodeSelectionStrategy }
         else
           {}
         end

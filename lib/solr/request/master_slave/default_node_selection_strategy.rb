@@ -1,7 +1,7 @@
 module Solr
   module Request
     module MasterSlave
-      class MasterSlaveNodeSelectionStrategy < NodeSelectionStrategy
+      class DefaultNodeSelectionStrategy < NodeSelectionStrategy
         def call
           urls = Solr.active_nodes_for(collection: collection_name)
           node_urls = map_urls_to_collections(urls).shuffle
