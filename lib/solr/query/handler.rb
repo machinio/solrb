@@ -20,7 +20,7 @@ module Solr
 
       def call
         http_request = Solr::Query::HttpRequestBuilder.call(query: query, start: start, rows: rows)
-        solr_response = Solr::Request::Runner.call(request: http_request, **runner_options))
+        solr_response = Solr::Request::Runner.call(request: http_request, **runner_options)
         Solr::Query::Response::Parser.new(request: query, solr_response: solr_response.body).to_response
       end
     end
