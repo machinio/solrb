@@ -32,7 +32,7 @@ module Solr
 
       def run(page: nil, start: nil, rows: nil, page_size: nil, runner_options: nil)
         rows ||= page_size
-        runner_options = default_runner_options.merge(runner_options)
+        runner_options = default_runner_options.merge(runner_options || {})
         return run_paged(page: page, page_size: rows, runner_options: runner_options) if page && rows
         return run_start(start: start, rows: rows, runner_options: runner_options) if start && rows
         raise ArgumentError, 'You must specify either page/rows or start/rows arguments'
