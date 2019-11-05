@@ -30,10 +30,11 @@ module Solr
         @filters = filters
       end
 
-      def run(page: nil, start: nil, rows: nil, page_size: nil)
+      def run(page: nil, start: nil, rows: nil, page_size: nil, runner_options: nil)
         rows ||= page_size
-        return run_paged(page: page, page_size: rows) if page && rows
-        return run_start(start: start, rows: rows) if start && rows
+        runner_options = default_runner_options.merge(runner_options)
+        return run_paged(page: page, page_size: rows, runner_options: runner_options) if page && rows
+        return run_start(start: start, rows: rows, runner_options: runner_options) if start && rows
         raise ArgumentError, 'You must specify either page/rows or start/rows arguments'
       end
 
@@ -51,16 +52,24 @@ module Solr
 
       private
 
-      def run_paged(page: 1, page_size: 10)
+      def run_paged(page: 1, page_size: 10, runner_options:)
         start_page = page.to_i - 1
         start_page = start_page < 1 ? 0 : start_page
         start = start_page * page_size
 
-        Solr::Query::Handler.call(query: self, start: start, rows: page_size)
+        Solr::Query::Handler.call(query: self, start: start, rows: page_size, runner_options: runner_options)
       end
 
-      def run_start(rows: 10, start: 0)
-        Solr::Query::Handler.call(query: self, start: start, rows: rows)
+      def run_start(rows: 10, start: 0, runner_options:)
+        Solr::Query::Handler.call(query: self, start: start, rows: rows, runner_options: runner_options)
+      end
+
+      def default_runner_options
+        if Solr.master_slave_enabled?
+          { node_selection_strategy: Solr::Request::MasterSlave::MasterSlaveNodeSelectionStrategy }
+        else
+          {}
+        end
       end
     end
   end
