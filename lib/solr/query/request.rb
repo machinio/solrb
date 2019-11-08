@@ -30,9 +30,8 @@ module Solr
         @filters = filters
       end
 
-      def run(page: nil, start: nil, rows: nil, page_size: nil, runner_options: nil)
+      def run(page: nil, start: nil, rows: nil, page_size: nil, runner_options: {})
         rows ||= page_size
-        runner_options = default_runner_options.merge(runner_options || {})
         return run_paged(page: page, page_size: rows, runner_options: runner_options) if page && rows
         return run_start(start: start, rows: rows, runner_options: runner_options) if start && rows
         raise ArgumentError, 'You must specify either page/rows or start/rows arguments'
@@ -62,14 +61,6 @@ module Solr
 
       def run_start(rows: 10, start: 0, runner_options:)
         Solr::Query::Handler.call(query: self, start: start, rows: rows, runner_options: runner_options)
-      end
-
-      def default_runner_options
-        if Solr.master_slave_enabled?
-          { node_selection_strategy: Solr::Request::MasterSlave::DefaultNodeSelectionStrategy }
-        else
-          {}
-        end
       end
     end
   end

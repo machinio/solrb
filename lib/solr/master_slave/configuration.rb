@@ -17,11 +17,11 @@ module Solr
         @master_slave_enabled
       end
 
-      def active_nodes_for(**_options)
-        nodes = []
-        nodes.push(master_url) unless disable_read_from_master
-        nodes.push(*slave_url) if slave_url
-        nodes
+      def active_nodes_for(collection:)
+        urls = []
+        urls.push(master_url) unless disable_read_from_master
+        urls.push(*slave_url) if slave_url
+        nodes_gray_list.select_active(urls, collection_name: collection)
       end
 
       def nodes_gray_list

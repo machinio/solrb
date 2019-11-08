@@ -12,7 +12,7 @@ module Solr
           true
         end
 
-        def select_active(urls)
+        def select_active(urls, collection_name:)
           urls
         end
       end

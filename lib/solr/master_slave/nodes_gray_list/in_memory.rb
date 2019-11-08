@@ -33,9 +33,12 @@ module Solr
           end
         end
 
-        def select_active(urls)
+        def select_active(urls, collection_name:)
           urls = Array(urls)
-          active_urls = urls.reject(&method(:added?))
+          active_urls = urls.reject do |url|
+            collection_url = File.join(url, collection_name.to_s)
+            added?(collection_url)
+          end
           active_urls.any? ? active_urls : urls
         end
       end
