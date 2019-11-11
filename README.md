@@ -15,6 +15,8 @@ Object-Oriented approach to Solr in Ruby.
   * [Single core configuration](#single-core-configuration)
   * [Multiple core configuration](#multiple-core-configuration)
   * [Solr Cloud](#solr-cloud)
+  * [Master-slave](#master-slave)
+    * [Gray list](#gray-list)
   * [Basic Authentication](#basic-authentication)
 * [Indexing](#indexing)
 * [Querying](#querying)
@@ -192,7 +194,7 @@ end
 
 ### Gray list
 
-Solrb will have two built-in services:
+Solrb provides two built-in services:
 - `Solr::MasterSlave::NodesGrayList::Disabled` — Disabled service (default). Just does nothing.
 - `Solr::MasterSlave::NodesGrayList::InMemory` — In memory service. It stores failed URLs in an instance variable, so it's not shared across threads/servers. URLs will be marked as "gray" for 5 minutes, but if all URLs are gray, the policy will try to send requests to these URLs earlier.
 
