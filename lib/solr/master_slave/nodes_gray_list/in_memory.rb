@@ -25,7 +25,7 @@ module Solr
           added_at = gray_list[url]
           return false unless added_at
 
-          if added_at + removal_period < Time.now.utc
+          if added_at + removal_period > Time.now.utc
             true
           else
             remove(url)

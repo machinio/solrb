@@ -1,3 +1,4 @@
+require 'logger'
 require 'solr/core_configuration/dynamic_field'
 require 'solr/core_configuration/field'
 require 'solr/core_configuration/core_config'
@@ -109,7 +110,7 @@ module Solr
     private
 
     def null_logger
-      @null_logger ||= Logger.new(IO::NULL)
+      @null_logger ||= ::Logger.new(IO::NULL)
     end
   end
 end
