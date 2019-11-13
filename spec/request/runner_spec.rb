@@ -25,7 +25,7 @@ RSpec.describe Solr::Request::Runner do
     end
 
     context 'multiple urls' do
-      let(:node_selection_strategy) { double(:node_selection_strategy, call: ['http://node1:8983', 'http://node2:8983']) }
+      let(:node_selection_strategy) { double(:node_selection_strategy, call: ['http://node1:8983/test-core', 'http://node2:8983/test-core']) }
 
       before do
         allow(Solr).to receive(:cloud_enabled?).and_return(true)

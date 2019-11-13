@@ -15,6 +15,8 @@ Object-Oriented approach to Solr in Ruby.
   * [Single core configuration](#single-core-configuration)
   * [Multiple core configuration](#multiple-core-configuration)
   * [Solr Cloud](#solr-cloud)
+  * [Master-slave](#master-slave)
+    * [Gray list](#gray-list)
   * [Basic Authentication](#basic-authentication)
 * [Indexing](#indexing)
 * [Querying](#querying)
@@ -175,6 +177,8 @@ Solr.configure do |config|
   config.slave_url = 'localhost:8984'
   # Disable select queries from master:
   config.disable_read_from_master = true
+  # Specify Gray-list service
+  config.nodes_gray_list = Solr::MasterSlave::NodesGrayList::InMemory.new
 end
 ```
 
@@ -187,6 +191,14 @@ on_worker_boot do
   Solr.enable_master_slave!
 end
 ```
+
+### Gray list
+
+Solrb provides two built-in services:
+- `Solr::MasterSlave::NodesGrayList::Disabled` — Disabled service (default). Just does nothing.
+- `Solr::MasterSlave::NodesGrayList::InMemory` — In memory service. It stores failed URLs in an instance variable, so it's not shared across threads/servers. URLs will be marked as "gray" for 5 minutes, but if all URLs are gray, the policy will try to send requests to these URLs earlier.
+
+You are able to implement your own services with corresponding API.
 
 ## Force node URL
 

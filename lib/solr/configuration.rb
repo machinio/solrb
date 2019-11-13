@@ -1,3 +1,4 @@
+require 'logger'
 require 'solr/core_configuration/dynamic_field'
 require 'solr/core_configuration/field'
 require 'solr/core_configuration/core_config'
@@ -11,13 +12,17 @@ module Solr
     extend Forwardable
 
     delegate [:zookeeper_url, :zookeeper_url=, :zookeeper_auth_user=, :zookeeper_auth_password=] => :@cloud_configuration
-    delegate [:master_url, :master_url=, :slave_url, :slave_url=, :disable_read_from_master, :disable_read_from_master=] => :@master_slave_configuration
+    delegate [:master_url, :master_url=, :slave_url, :slave_url=, :disable_read_from_master,
+      :disable_read_from_master=, :nodes_gray_list, :nodes_gray_list=] => :@master_slave_configuration
 
     SOLRB_USER_AGENT_HEADER = { user_agent: "Solrb v#{Solr::VERSION}" }.freeze
 
     attr_accessor :cores, :test_connection, :auth_user, :auth_password
 
-    attr_reader :url, :faraday_options, :faraday_configuration, :cloud_configuration, :master_slave_configuration
+    attr_reader :url, :faraday_options, :faraday_configuration, :cloud_configuration,
+      :master_slave_configuration
+
+    attr_writer :url, :logger
 
     def initialize
       @faraday_options = {
@@ -38,10 +43,6 @@ module Solr
 
     def faraday_configure(&block)
       @faraday_configuration = block
-    end
-
-    def url=(value)
-      @url = value
     end
 
     def core_config_by_name(core)
@@ -100,6 +101,16 @@ module Solr
            ENV['SOLR_URL'])
         raise Solr::Errors::SolrUrlNotDefinedError
       end
+    end
+
+    def logger
+      @logger || null_logger
+    end
+
+    private
+
+    def null_logger
+      @null_logger ||= ::Logger.new(IO::NULL)
     end
   end
 end
