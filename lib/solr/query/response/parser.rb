@@ -27,6 +27,7 @@ module Solr
           Solr::Query::Response.new(
             documents: document_collection,
             available_facets: field_facet_collection,
+            expanded_results: expanded_results,
             spellcheck: spellcheck
           )
         end
@@ -149,6 +150,24 @@ module Solr
         def spellcheck
           return Solr::Query::Response::Spellcheck.empty unless solr_response['spellcheck']
           Solr::Query::Response::Spellcheck.new(solr_response['spellcheck'])
+        end
+
+        def expanded_results
+          return [] unless solr_response['expanded']
+
+          solr_response['expanded'].map do |field_value, response_group|
+            parse_expanded_result_set(field_value: field_value, response_group: response_group)
+          end
+        end
+
+        def parse_expanded_result_set(field_value:, response_group: {})
+          total_count = response_group['numFound'].to_i
+          documents = response_group['docs'].map do |d|
+            fields = d.dup.delete_if { |k, _| %w[id score].include?(k) }
+            Document.new(id: d['id'], score: d['score'], fields: fields)
+          end
+          document_collection = Solr::DocumentCollection.new(documents: documents, total_count: total_count)
+          Solr::Query::Response::ExpandedResultSet.new(field_value: field_value, documents: document_collection)
         end
       end
     end

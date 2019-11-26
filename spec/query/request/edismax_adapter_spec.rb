@@ -145,4 +145,37 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
 
     it { expect(subject.to_h).to eq(solr_params) }
   end
+
+  context 'collapse and expand results' do
+    let(:request) { Solr::Query::Request.new(search_term: search_term) }
+    let(:solr_params) do
+      {
+        debug: nil,
+        defType: :edismax,
+        fl: 'id',
+        fq: ['{!collapse field=seller_id}'],
+        q: 'Search Term',
+        qf: [],
+        expand: true,
+        'expand.rows': 3
+      }
+    end
+
+    let(:filters) do
+      [
+        Solr::Query::Request::CollapseFilter.new(field: :seller_id)
+      ]
+    end
+
+    let(:expand) { Solr::Query::Request::Expand.new(rows: 3) }
+
+    let(:request) do
+      request = Solr::Query::Request.new(search_term: search_term)
+      request.filters = filters
+      request.expand = expand
+      request
+    end
+
+    it { expect(subject.to_h).to eq(solr_params) }
+  end
 end

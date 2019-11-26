@@ -36,6 +36,7 @@ module Solr
           solr_params = add_rerank_query(solr_params)
           solr_params = add_phrase_slop(solr_params)
           solr_params = add_query_operator(solr_params)
+          solr_params = add_expand(solr_params)
           solr_params
         end
 
@@ -155,6 +156,10 @@ module Solr
           return solr_params unless request.query_operator
           solr_params[QUERY_OPERATOR] = request.query_operator
           solr_params
+        end
+
+        def add_expand(solr_params)
+          solr_params.merge(request.expand.to_h)
         end
       end
     end

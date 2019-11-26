@@ -2,6 +2,8 @@ require 'solr/query/request/facet'
 require 'solr/query/request/filter'
 require 'solr/query/request/boost_magnitude'
 require 'solr/query/request/geo_filter'
+require 'solr/query/request/collapse_filter'
+require 'solr/query/request/expand'
 require 'solr/query/request/sorting'
 require 'solr/query/request/edismax_adapter'
 require 'solr/query/request/grouping'
@@ -20,7 +22,7 @@ module Solr
     class Request
       attr_reader :search_term
       attr_accessor :filters, :query_fields, :field_list, :facets, :boosting, :debug_mode, :spellcheck,
-                    :limit_docs_by_field, :phrase_slop, :query_operator
+                    :limit_docs_by_field, :phrase_slop, :query_operator, :expand
       attr_writer :grouping, :sorting
 
       def initialize(search_term:, query_fields: [], field_list: Solr::Query::Request::FieldList.new, filters: [])

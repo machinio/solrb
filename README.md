@@ -26,6 +26,7 @@ Object-Oriented approach to Solr in Ruby.
   * [Query with filtering](#query-with-filtering)
   * [Query with sorting](#query-with-sorting)
   * [Query with grouping](#query-with-grouping)
+  * [Query with collapse and expand](#query-with-collapse-and-expand)
   * [Query with facets](#query-with-facets)
   * [Query with boosting functions](#query-with-boosting-functions)
     * [Dictionary boosting function](#dictionary-boosting-function)
@@ -343,6 +344,19 @@ Default sorting logic is following: nulls last, not-nulls first.
   ]
   request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.grouping = Solr::Query::Request::Grouping.new(field: :category, limit: 10)
+  request.run(page: 1, page_size: 10)
+```
+
+## Query with collapse and expand
+
+```ruby
+  query_fields = [
+    Solr::Query::Request::FieldWithBoost.new(field: :name),
+    Solr::Query::Request::FieldWithBoost.new(field: :category)
+  ]
+  request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
+  request.filters = [Solr::Query::Request::CollapseFilter.new(field: :seller)]
+  request.expand = Solr::Query::Request::Expand.new(rows: 3)
   request.run(page: 1, page_size: 10)
 ```
 
