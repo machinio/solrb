@@ -12,7 +12,7 @@ module Solr
       def call
         # 404 is a special case, it didn't hit Solr (more likely than not)
         return not_found_response if @raw_response.status == 404
-        parsed_body = JSON.parse(@raw_response.body).freeze
+        parsed_body = @raw_response.body ? JSON.parse(@raw_response.body).freeze : {}
         http_status = parse_http_status
         header = parse_header(parsed_body)
         solr_error = parse_solr_error(parsed_body)
