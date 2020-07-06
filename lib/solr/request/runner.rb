@@ -39,7 +39,7 @@ module Solr
             solr_response = Solr::Response::Parser.call(raw_response)
             raise Solr::Errors::SolrQueryError, solr_response.error_message unless solr_response.ok?
             return solr_response
-          rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Errno::EADDRNOTAVAIL => e
+          rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Errno::EADDRNOTAVAIL, Net::ReadTimeout => e
             if Solr.master_slave_enabled?
               Solr.configuration.nodes_gray_list.add(node_url)
             end
