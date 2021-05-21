@@ -1,9 +1,8 @@
 AllCops:
   Exclude:
-    - db/schema.rb
-    - node_modules/**/*
     - bin/*
     - vendor/**/*
+    - pkg/**/*
   TargetRubyVersion: '2.5'
 Metrics/LineLength:
   Max: 120
