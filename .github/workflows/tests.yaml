@@ -1,0 +1,34 @@
+---
+name: Tests
+'on': [push]
+
+env:
+  SOLR_URL: http://localhost:8983/solr/test-core
+
+jobs:
+  rspec:
+    name: Rspec
+    runs-on: ubuntu-latest
+    services:
+      solr:
+        image: solr:7.4.0
+        ports:
+          - 8983:8983
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.5.1
+          bundler-cache: true
+
+      - name: Create a test core
+        run: |
+          curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+      - name: Disable field type guessing
+        run: |
+          curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
+
+      - name: Rspec
+        run: bundle exec rspec --format progress
