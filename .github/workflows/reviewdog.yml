@@ -8,8 +8,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: ruby/setup-ruby@v1
-      - name: rubocop
-        uses: reviewdog/action-rubocop@v1
+        with:
+          ruby-version: 2.5.1
+          bundler: 1.16
+          bundler-cache: true
+      - uses: reviewdog/action-rubocop@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           rubocop_version: gemfile
