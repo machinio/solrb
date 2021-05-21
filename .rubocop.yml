@@ -28,3 +28,6 @@ Metrics/BlockLength:
     - '**/*.rake'
     - 'spec/**/*'
     - 'config/environments/**/*'
+Layout/SpaceInsideHashLiteralBraces:
+  Exclude:
+    - 'spec/**/*'

@@ -58,12 +58,14 @@ RSpec.describe Solr::Cloud::CollectionsStateManager do
     end
 
     it 'return all shards' do
-      expect(subject.shards_for(collection: :en)).to eq(['shard1', 'shard2'])
+      expect(subject.shards_for(collection: :en)).to eq(%w(shard1 shard2))
     end
   end
 
   describe '.active_nodes_for' do
-    let(:expected_urls) { ['http://192.168.1.193:8983/solr', 'http://192.168.1.193:7574/solr', 'http://192.168.1.193:7575/solr'] }
+    let(:expected_urls) do
+      ['http://192.168.1.193:8983/solr', 'http://192.168.1.193:7574/solr', 'http://192.168.1.193:7575/solr']
+    end
 
     subject { described_class.new(zookeeper: zookeeper, collections: [:en]) }
 
