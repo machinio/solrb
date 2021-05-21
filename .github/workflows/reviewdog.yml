@@ -10,7 +10,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.5.1
-          bundler: 1.16
           bundler-cache: true
       - uses: reviewdog/action-rubocop@v1
         with:
