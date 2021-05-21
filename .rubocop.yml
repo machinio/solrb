@@ -3,6 +3,7 @@ AllCops:
     - db/schema.rb
     - node_modules/**/*
     - bin/*
+    - vendor/**/*
   TargetRubyVersion: '2.5'
 Metrics/LineLength:
   Max: 120
