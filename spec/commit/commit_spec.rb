@@ -9,7 +9,7 @@ RSpec.describe Solr::Commit::Request do
     query_request = Solr::Query::Request.new(search_term: '*:*', filters: [filter])
     query_response = query_request.run(page: 1, rows: 0)
     expect(query_response).to be_empty
-    commit_response = Solr.commit
+    Solr.commit
     query_response = query_request.run(page: 1, rows: 0)
     expect(query_response.total_count).to eq 1
   end

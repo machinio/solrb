@@ -1,0 +1,20 @@
+---
+name: reviewdog
+'on': [push]
+jobs:
+  rubocop:
+    name: runner / rubocop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.5.1
+          bundler-cache: true
+      - uses: reviewdog/action-rubocop@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          rubocop_version: '0.80.1'
+          rubocop_extensions: ''
+          reporter: github-check
+          fail_on_error: true

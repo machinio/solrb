@@ -1,19 +1,20 @@
 AllCops:
   Exclude:
-    - db/schema.rb
-    - node_modules/**/*
     - bin/*
+    - vendor/**/*
+    - pkg/**/*
   TargetRubyVersion: '2.5'
-Metrics/LineLength:
+  DisabledByDefault: true
+Layout/LineLength:
   Max: 120
-Documentation:
+Style/Documentation:
   Enabled: false
-FrozenStringLiteralComment:
+Style/FrozenStringLiteralComment:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
 Metrics/AbcSize:
-  Max: 20
+  Enabled: false
  # Removing Blocks Cop for RSpec
 Style/BlockDelimiters:
   Exclude:
@@ -28,3 +29,6 @@ Metrics/BlockLength:
     - '**/*.rake'
     - 'spec/**/*'
     - 'config/environments/**/*'
+Layout/SpaceInsideHashLiteralBraces:
+  Exclude:
+    - 'spec/**/*'

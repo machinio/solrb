@@ -3,9 +3,11 @@ module Solr
   class Connection
     INSTRUMENT_KEY = 'request.solrb'.freeze
 
-    def initialize(url, faraday_options: Solr.configuration.faraday_options, faraday_configuration: Solr.configuration.faraday_configuration)
+    def initialize(url, faraday_options: Solr.configuration.faraday_options,
+        faraday_configuration: Solr.configuration.faraday_configuration)
       # Allow mock the connection for testing
-      @raw_connection = Solr.configuration.test_connection || build_faraday_connection(url, faraday_options, faraday_configuration)
+      @raw_connection = Solr.configuration.test_connection
+      @raw_connection ||= build_faraday_connection(url, faraday_options, faraday_configuration)
       freeze
     end
 
