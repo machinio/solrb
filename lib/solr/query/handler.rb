@@ -8,7 +8,7 @@ module Solr
       attr_reader :query, :rows, :start, :runner_options
 
       def self.call(opts)
-        new(opts).call
+        new(**opts).call
       end
 
       def initialize(query:, rows:, start:, runner_options: {})

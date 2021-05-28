@@ -16,7 +16,7 @@ module Solr
       attr_reader :request, :response_parser, :node_selection_strategy
 
       def self.call(opts)
-        new(opts).call
+        new(**opts).call
       end
 
       def initialize(request:,
