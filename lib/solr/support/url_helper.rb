@@ -33,6 +33,27 @@ module Solr
       def current_core
         Solr.current_core_config
       end
+
+      def core_name_from_url(url)
+        full_solr_core_uri = URI.parse(url)
+        core_name = full_solr_core_uri.path.gsub('/solr', '').delete('/')
+
+        if !core_name || core_name == ''
+          raise Solr::Errors::CouldNotInferImplicitCoreName
+        end
+
+        core_name
+      end
+
+      def solr_endpoint_from_url(url)
+        solr_endpoint = url[/(\A.+\/solr)/]
+
+        if !solr_endpoint || solr_endpoint == ''
+          raise Solr::Errors::CouldNotDetectEndpointInUrl
+        end
+
+        solr_endpoint
+      end
     end
   end
 end

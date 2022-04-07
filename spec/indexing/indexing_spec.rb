@@ -39,7 +39,7 @@ RSpec.describe Solr::Indexing do
       context 'without default core' do
         before do
           Solr.configure do |config|
-            config.url = 'http://localhost:8983/solr'
+            config.url = Solr::Support::UrlHelper.solr_endpoint_from_url(ENV['SOLR_URL'])
 
             config.define_core(name: :'test-core') do |f|
               f.field :name, dynamic_field: :txt_en
@@ -72,7 +72,7 @@ RSpec.describe Solr::Indexing do
       context 'with default core' do
         before do
           Solr.configure do |config|
-            config.url = 'http://localhost:8983/solr'
+            config.url = Solr::Support::UrlHelper.solr_endpoint_from_url(ENV['SOLR_URL'])
 
             config.define_core(name: :'test-core', default: true) do |f|
               f.field :name, dynamic_field: :txt_en

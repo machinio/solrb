@@ -11,7 +11,7 @@ RSpec.describe Solr::Request::Runner do
 
   describe '.call' do
     it 'calls solr connection' do
-      expect(solr_connection).to receive(:call).with(url: 'http://localhost:8983/solr/test-core/select',
+      expect(solr_connection).to receive(:call).with(url: "#{ENV['SOLR_URL']}/select",
                                                      method: :get,
                                                      body: '{ "some_json_key": "some_json_value" }')
       subject.call

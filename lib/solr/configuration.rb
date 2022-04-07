@@ -73,14 +73,7 @@ module Solr
     end
 
     def core_name_from_solr_url_env
-      full_solr_core_uri = URI.parse(ENV['SOLR_URL'])
-      core_name = full_solr_core_uri.path.gsub('/solr', '').delete('/')
-
-      if !core_name || core_name == ''
-        raise Solr::Errors::CouldNotInferImplicitCoreName
-      end
-
-      core_name
+      Solr::Support::UrlHelper.core_name_from_url(ENV['SOLR_URL'])
     end
 
     def build_env_url_core_config(name: nil)
