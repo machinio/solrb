@@ -408,7 +408,6 @@ Example of usage:
     ]
   )
   request = Solr::Query::Request.new(search_term: 'term', shards_preference: shards_preference)
-  request.facets = [Solr::Query::Request::Facet.new(type: :terms, field: :category, options: { limit: 10 })]
   request.run(page: 1, page_size: 10)
 ```
 
