@@ -1,3 +1,5 @@
+require 'solr/query/request/shards_preferences/property'
+
 module Solr
   module Query
     class Request

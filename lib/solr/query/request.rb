@@ -13,6 +13,7 @@ require 'solr/query/request/sorting/function'
 require 'solr/query/request/field_with_boost'
 require 'solr/query/request/or_filter'
 require 'solr/query/request/and_filter'
+require 'solr/query/request/shards_preference'
 require 'solr/query/handler'
 
 module Solr
