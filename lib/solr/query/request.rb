@@ -1,4 +1,3 @@
-require 'solr/query/request/facet'
 require 'solr/query/request/filter'
 require 'solr/query/request/boost_magnitude'
 require 'solr/query/request/geo_filter'
@@ -21,7 +20,7 @@ module Solr
       attr_reader :search_term
       attr_accessor :filters, :query_fields, :field_list, :facets, :boosting, :debug_mode, :spellcheck,
                     :limit_docs_by_field, :phrase_slop, :query_operator
-      attr_writer :grouping, :sorting
+      attr_writer :grouping, :sorting, :shards_preference
 
       def initialize(search_term:, query_fields: [], field_list: Solr::Query::Request::FieldList.new, filters: [])
         @search_term = search_term
@@ -43,6 +42,10 @@ module Solr
 
       def sorting
         @sorting ||= Solr::Query::Request::Sorting.none
+      end
+
+      def shards_preference
+        @shards_preference ||= Solr::Query::Request::ShardsPreference.none
       end
 
       def to_h

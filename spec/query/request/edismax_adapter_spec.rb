@@ -72,6 +72,14 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
       [Solr::Query::Request::Facet.new(type: :terms, field: :field_1, options: { limit: 10 })]
     end
 
+    let(:shards_preference) do
+      Solr::Query::Request::ShardsPreference.new(
+        properties: [
+          Solr::Query::Request::ShardsPreferences::Property.new(name: 'replica.type', value: 'PULL')
+        ]
+      end
+    end
+
     let(:request) do
       request = Solr::Query::Request.new(search_term: search_term)
       request.query_fields = query_fields
@@ -83,6 +91,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
       request.sorting = sorting
       request.phrase_slop = 5
       request.query_operator = :AND
+      request.shards_preference = shards_preference
       request
     end
 

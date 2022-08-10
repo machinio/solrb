@@ -15,6 +15,7 @@ module Solr
         RERANK_QUERY = :rq
         QUERY_OPERATOR = :'q.op'
         JSON_FACET = :'json.facet'
+        SHARDS_PREFERENCE = :'shards.preference'
 
         attr_reader :request
 
@@ -36,6 +37,7 @@ module Solr
           solr_params = add_rerank_query(solr_params)
           solr_params = add_phrase_slop(solr_params)
           solr_params = add_query_operator(solr_params)
+          solr_params = add_shards_preference(solr_params)
           solr_params
         end
 
@@ -52,7 +54,7 @@ module Solr
           solr_params[FILTER_QUERY] = filters
           solr_params
         end
-        
+
         def add_facets(solr_params)
           return solr_params if Array(request.facets).empty?
           solr_params[JSON_FACET] = request.facets.map(&:to_solr_h).reduce(&:merge).to_json
@@ -154,6 +156,12 @@ module Solr
         def add_query_operator(solr_params)
           return solr_params unless request.query_operator
           solr_params[QUERY_OPERATOR] = request.query_operator
+          solr_params
+        end
+
+        def add_shards_preference(solr_params)
+          return solr_params unless request.shards_preference
+          solr_params[SHARDS_PREFERENCE] = request.shards_preference.to_solr_s
           solr_params
         end
       end
