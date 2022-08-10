@@ -77,7 +77,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
         properties: [
           Solr::Query::Request::ShardsPreferences::Property.new(name: 'replica.type', value: 'PULL')
         ]
-      end
+      )
     end
 
     let(:request) do
