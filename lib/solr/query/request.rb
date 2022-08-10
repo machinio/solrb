@@ -1,3 +1,4 @@
+require 'solr/query/request/facet'
 require 'solr/query/request/filter'
 require 'solr/query/request/boost_magnitude'
 require 'solr/query/request/geo_filter'
