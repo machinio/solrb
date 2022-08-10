@@ -160,7 +160,7 @@ module Solr
         end
 
         def add_shards_preference(solr_params)
-          return solr_params unless request.shards_preference.empty?
+          return solr_params if request.shards_preference.empty?
           solr_params[SHARDS_PREFERENCE] = request.shards_preference.to_solr_s
           solr_params
         end
