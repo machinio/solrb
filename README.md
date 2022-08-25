@@ -456,7 +456,7 @@ end
 
 It's possible to inspect the parameters for each solr query request done using Solrb by requiring
 `solr/testing` file in your test suite. The query parameters will be accessible by reading
-`Solr::Testing.last_solr_request_params` after each request.
+`Solr::Testing.last_solr_request` after each request.
 
 ```ruby
 require 'solr/testing'
@@ -465,7 +465,7 @@ RSpec.describe MyTest do
   let(:query) { Solr::Query::Request.new(search_term: 'Solrb') }
   it 'returns the last solr request params' do
     query.run(page: 1, page_size: 10)
-    expect(Solr::Testing.last_solr_request_params).to eq({ ... })
+    expect(Solr::Testing.last_solr_request.body[:params]).to eq({ ... })
   end
 end
 ```
