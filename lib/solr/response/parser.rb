@@ -30,10 +30,14 @@ module Solr
       end
 
       def parse_header(parsed_body)
-        parsed_header = parsed_body['responseHeader']
-        status = parsed_header['status'].to_i
-        time = parsed_header['QTime'].to_i
-        Solr::Response::Header.new(status: status, time: time)
+        if response_header = parsed_body['responseHeader']
+          status = response_header['status'].to_i
+          time = response_header['QTime'].to_i
+          Solr::Response::Header.new(status: status, time: time)
+        elsif response_header = parsed_body['error']
+          status = response_header['code'].to_i
+          Solr::Response::Header.new(status: status)
+        end
       end
 
       def parse_http_status
