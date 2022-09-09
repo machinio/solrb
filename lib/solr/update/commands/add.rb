@@ -6,15 +6,14 @@ module Solr
 
         COMMAND_KEY = 'add'.freeze
 
-        attr_reader :doc, :options
+        attr_reader :doc
 
         def self.unnest(array)
           array
         end
 
-        def initialize(doc: {}, **options)
+        def initialize(doc: {})
           @doc = doc
-          @options = options
         end
 
         def add_field(name, value)
@@ -23,11 +22,7 @@ module Solr
 
         # TODO: refactor & optimize this
         def to_json(_json_context)
-          JSON.generate(
-            options.merge({
-              doc: solarized_doc
-            })
-          )
+          JSON.generate(solarized_doc)
         end
 
         private
