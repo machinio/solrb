@@ -17,8 +17,12 @@ module Solr
           @options = options
         end
 
+        def as_json
+          options
+        end
+
         def to_json(_json_context)
-          JSON.generate(options)
+          JSON.generate(as_json)
         end
 
         private

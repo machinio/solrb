@@ -21,8 +21,12 @@ module Solr
         end
 
         # TODO: refactor & optimize this
+        def as_json
+          solarized_doc
+        end
+
         def to_json(_json_context)
-          JSON.generate(solarized_doc)
+          JSON.generate(as_json)
         end
 
         private
