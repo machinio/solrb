@@ -36,6 +36,23 @@ module Solr
         Solr::Request::HttpRequest.new(path: PATH, body: body, url_params: {}, method: :post)
       end
 
+      # Solr supports two body formats:
+      # 1) Group "add" operations into an array (currently we use this way):
+      # {
+      #   "add": [
+      #     { "id": "1", "name": "sun" },
+      #     { "id": "2", "name": "moon" }
+      #   ],
+      #   "commit": {}
+      # }
+      #
+      # 2) Use duplicate "add" keys, but ruby doesn't allow to do it
+      #    (we can build this string manually, but that may create issues)
+      # {
+      #   "add": { "doc": { "id": "1", "name": "sun"  } },
+      #   "add": { "doc": { "id": "2", "name": "moon" } },
+      #   "commit": {}
+      # }
       def body
         commands.group_by(&:class).reduce({}) do |acc, (command_class, commands_group)|
           acc[command_class::COMMAND_KEY] = command_class.unnest(commands_group)
