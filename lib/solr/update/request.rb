@@ -1,8 +1,12 @@
+require 'solr/update/commands/add'
+require 'solr/update/commands/delete'
+require 'solr/update/commands/commit'
+require 'solr/update/commands/optimize'
+
 module Solr
-  module Indexing
+  module Update
     class Request
-      COMMANDS_PATH = '/update/json'.freeze
-      # DOCUMENTS_PATH = '/update/json/docs'.freeze
+      PATH = '/update/json'.freeze
 
       attr_reader :commands
 
@@ -29,12 +33,14 @@ module Solr
       end
 
       def build_http_request(commit)
-        Solr::Request::HttpRequest.new(path: path, body: body, url_params: { commit: commit }, method: :post)
+        Solr::Request::HttpRequest.new(path: PATH, body: body, url_params: { commit: commit }, method: :post)
       end
 
-      def path
-        # body.is_a?(Array) ? DOCUMENTS_PATH : COMMANDS_PATH
-        COMMANDS_PATH
+      def body
+        commands.group_by(&:class).reduce({}) do |acc, (command_class, commands_group)|
+          acc[command_class::COMMAND_KEY] = commands_group.count > 1 ? commands_group : commands_group.first
+          acc
+        end
       end
     end
   end

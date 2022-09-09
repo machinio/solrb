@@ -1,8 +1,10 @@
 module Solr
-  module Updating
+  module Update
     module Commands
       class Delete
-        KEY = :delete
+        using Solr::Support::HashExtensions
+
+        COMMAND_KEY = 'delete'.freeze
 
         attr_reader :options
 

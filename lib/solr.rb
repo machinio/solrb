@@ -14,6 +14,7 @@ require 'solr/request/runner'
 require 'solr/query/request'
 require 'solr/indexing/document'
 require 'solr/indexing/request'
+require 'solr/update/request'
 
 require 'solr/cloud/helper_methods'
 require 'solr/master_slave/helper_methods'
