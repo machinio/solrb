@@ -4,7 +4,7 @@ RSpec.describe Solr::Update::Request do
       command = Solr::Update::Commands::Add.new(doc: { id: '1' })
 
       expect(Solr::Request::HttpRequest).to receive(:new).
-        with(hash_including(body: { 'add' => command })).
+        with(hash_including(body: { 'add' => [command] })).
         and_call_original
 
       req = Solr::Update::Request.new([command])
@@ -32,7 +32,7 @@ RSpec.describe Solr::Update::Request do
       delete_command = Solr::Update::Commands::Delete.new(id: '2')
 
       expect(Solr::Request::HttpRequest).to receive(:new).
-        with(hash_including(body: { 'add' => add_command, 'delete' => delete_command })).
+        with(hash_including(body: { 'add' => [add_command], 'delete' => [delete_command] })).
         and_call_original
 
       req = Solr::Update::Request.new([add_command, delete_command])

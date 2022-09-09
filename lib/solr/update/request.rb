@@ -38,7 +38,7 @@ module Solr
 
       def body
         commands.group_by(&:class).reduce({}) do |acc, (command_class, commands_group)|
-          acc[command_class::COMMAND_KEY] = commands_group.count > 1 ? commands_group : commands_group.first
+          acc[command_class::COMMAND_KEY] = command_class.unnest(commands_group)
           acc
         end
       end

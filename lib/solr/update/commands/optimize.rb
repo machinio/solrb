@@ -4,6 +4,10 @@ module Solr
       class Optimize
         COMMAND_KEY = 'optimize'.freeze
 
+        def self.unnest(array)
+          array
+        end
+
         attr_reader :options
 
         def initialize(options = {})

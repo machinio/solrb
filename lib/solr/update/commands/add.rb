@@ -8,6 +8,10 @@ module Solr
 
         attr_reader :doc, :options
 
+        def self.unnest(array)
+          array
+        end
+
         def initialize(doc: {}, **options)
           @doc = doc
           @options = options

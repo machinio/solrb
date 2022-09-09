@@ -6,6 +6,10 @@ module Solr
 
         COMMAND_KEY = 'delete'.freeze
 
+        def self.unnest(array)
+          array
+        end
+
         attr_reader :options
 
         def initialize(options = {})
