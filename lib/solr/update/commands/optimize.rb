@@ -5,7 +5,7 @@ module Solr
         COMMAND_KEY = 'optimize'.freeze
 
         def self.unnest(array)
-          array
+          array.first
         end
 
         attr_reader :options
