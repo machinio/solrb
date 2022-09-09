@@ -16,6 +16,11 @@ module Solr
       request.run(commit: commit, runner_options: runner_options)
     end
 
+    def update(commands, commit: false, runner_options: nil)
+      request = Solr::Update::Request.new(commands)
+      request.run(commit: commit, runner_options: runner_options)
+    end
+
     def delete_by_query(query, commit: false, runner_options: nil)
       request = Solr::Delete::Request.new(query: query)
       request.run(commit: commit, runner_options: runner_options)
