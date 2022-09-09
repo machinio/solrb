@@ -1,29 +1,34 @@
-require 'solr/delete/request'
-require 'solr/commit/request'
 require 'solr/query/request'
 require 'solr/data_import/request'
 
 module Solr
   module Commands
-    def commit(open_searcher: true, optimize: false, runner_options: nil)
-      Solr::Commit::Request.new.run(optimize: optimize,
-                                    open_searcher: open_searcher,
-                                    runner_options: runner_options)
+    def update(commands, runner_options: nil)
+      request = Solr::Update::Request.new(commands)
+      request.run(runner_options: runner_options)
+    end
+
+    def commit(wait_searcher: true, optimize: false, runner_options: nil)
+      options = { 'waitSearcher' => wait_searcher }
+
+      commands = [Solr::Update::Commands::Commit.new(options)]
+      commands << Solr::Update::Commands::Optimize.new(options) if optimize
+
+      update(commands, runner_options: runner_options)
     end
 
     def delete_by_id(id, commit: false, runner_options: nil)
-      request = Solr::Delete::Request.new(id: id)
-      request.run(commit: commit, runner_options: runner_options)
-    end
+      commands = [Solr::Update::Commands::Delete.new(id: id)]
+      commands << Solr::Update::Commands::Commit.new if commit
 
-    def update(commands, commit: false, runner_options: nil)
-      request = Solr::Update::Request.new(commands)
-      request.run(commit: commit, runner_options: runner_options)
+      update(commands, runner_options: runner_options)
     end
 
     def delete_by_query(query, commit: false, runner_options: nil)
-      request = Solr::Delete::Request.new(query: query)
-      request.run(commit: commit, runner_options: runner_options)
+      commands = [Solr::Update::Commands::Delete.new(query: query)]
+      commands << Solr::Update::Commands::Commit.new if commit
+
+      update(commands, runner_options: runner_options)
     end
 
     def data_import(params, runner_options: nil)

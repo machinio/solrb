@@ -8,7 +8,7 @@ RSpec.describe Solr::Update::Request do
         and_call_original
 
       req = Solr::Update::Request.new([command])
-      resp = req.run(commit: true)
+      resp = req.run
       expect(resp.status).to eq 'OK'
     end
 
@@ -23,7 +23,7 @@ RSpec.describe Solr::Update::Request do
         and_call_original
 
       req = Solr::Update::Request.new(commands)
-      resp = req.run(commit: true)
+      resp = req.run
       expect(resp.status).to eq 'OK'
     end
 
@@ -36,7 +36,7 @@ RSpec.describe Solr::Update::Request do
         and_call_original
 
       req = Solr::Update::Request.new([add_command, delete_command])
-      resp = req.run(commit: true)
+      resp = req.run
       expect(resp.status).to eq 'OK'
     end
   end

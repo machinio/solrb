@@ -14,8 +14,8 @@ module Solr
         @commands = commands
       end
 
-      def run(commit: false, runner_options: nil)
-        http_request = build_http_request(commit)
+      def run(runner_options: nil)
+        http_request = build_http_request
         options = default_runner_options.merge(runner_options || {})
         Solr::Request::Runner.call(request: http_request, **options)
       end
@@ -32,8 +32,8 @@ module Solr
         end
       end
 
-      def build_http_request(commit)
-        Solr::Request::HttpRequest.new(path: PATH, body: body, url_params: { commit: commit }, method: :post)
+      def build_http_request
+        Solr::Request::HttpRequest.new(path: PATH, body: body, url_params: {}, method: :post)
       end
 
       def body

@@ -227,18 +227,20 @@ end
 
 ```ruby
 # creates a single document and commits it to index
-doc = Solr::Indexing::Document.new
+doc = Solr::Update::Commands::Add.new
 doc.add_field(:id, 1)
 doc.add_field(:name, 'Solrb!!!')
 
-request = Solr::Indexing::Request.new(documents: [doc])
-request.run(commit: true)
+commit = Solr::Update::Commands::Commit.new
+
+request = Solr::Update::Request.new([doc, commit])
+request.run
 ```
 
 You can also create indexing document directly from attributes:
 
 ```ruby
-doc = Solr::Indexing::Document.new(id: 5, name: 'John')
+doc = Solr::Update::Commands::Add.new(doc: { id: 5, name: 'John' })
 ```
 
 # Querying
@@ -259,7 +261,7 @@ For multi-core configuration use `Solr.with_core` block:
 Solr.with_core(:models) do
   Solr.delete_by_id(3242343)
   Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
-  Solr::Indexing::Request.new(documents: [doc])
+  Solr::Update::Request.new([doc])
 end
 ```
 
