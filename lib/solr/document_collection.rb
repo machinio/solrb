@@ -3,8 +3,8 @@ module Solr
     include Enumerable
     attr_reader :documents, :total_count
 
-    def self.from_ids(ids, model_name:)
-      documents = ids.map { |id| Solr::Document.new(id: id, model_name: model_name) }
+    def self.from_ids(ids)
+      documents = ids.map { |id| Solr::Document.new(id: id) }
       new(documents: documents, total_count: documents.count)
     end
 
