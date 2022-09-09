@@ -12,12 +12,10 @@ module Solr
       end
     end
 
-    attr_reader :id, :model_name, :score, :debug_info, :group, :fields
+    attr_reader :id, :score, :debug_info, :group, :fields
 
-    # TODO: model_name is specific for machinio
-    def initialize(id:, model_name: nil, score: nil, debug_info: nil, group: GroupInformation.empty, fields: {})
+    def initialize(id:, score: nil, debug_info: nil, group: GroupInformation.empty, fields: {})
       @id = id
-      @model_name = model_name
       @score = score
       @debug_info = debug_info
       @group = group
