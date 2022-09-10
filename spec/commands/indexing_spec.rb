@@ -1,17 +1,19 @@
-RSpec.describe Solr::Indexing do
+RSpec.describe 'Solr::Commands - Indexing' do
   context 'without configuration' do
     it 'indexes a single document' do
-      doc = Solr::Indexing::Document.new(id: 994, name_txt_en: 'Solrb')
-      req = Solr::Indexing::Request.new([doc])
-      resp = req.run(commit: true)
+      doc = Solr::Update::Commands::Add.new(doc: { id: 994, name_txt_en: 'Solrb' })
+      commit = Solr::Update::Commands::Commit.new
+      req = Solr::Update::Request.new([doc, commit])
+      resp = req.run
       expect(resp.status).to eq 'OK'
     end
 
     it 'indexes multiple documents' do
-      doc1 = Solr::Indexing::Document.new(id: 995, name_txt_en: 'Curitiba')
-      doc2 = Solr::Indexing::Document.new(id: 996, name_txt_en: 'Kislovodsk')
-      req = Solr::Indexing::Request.new([doc1, doc2])
-      resp = req.run(commit: true)
+      doc1 = Solr::Update::Commands::Add.new(doc: { id: 995, name_txt_en: 'Curitiba' })
+      doc2 = Solr::Update::Commands::Add.new(doc: { id: 996, name_txt_en: 'Kislovodsk' })
+      commit = Solr::Update::Commands::Commit.new
+      req = Solr::Update::Request.new([doc1, doc2, commit])
+      resp = req.run
       expect(resp.status).to eq 'OK'
     end
   end
@@ -28,9 +30,10 @@ RSpec.describe Solr::Indexing do
       end
 
       it 'indexes with dynamic field configuration' do
-        doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-        req = Solr::Indexing::Request.new([doc1])
-        resp = req.run(commit: true)
+        doc1 = Solr::Update::Commands::Add.new(doc: { id: 10, name: 'iPhone X' })
+        commit = Solr::Update::Commands::Commit.new
+        req = Solr::Update::Request.new([doc1, commit])
+        resp = req.run
         expect(resp.status).to eq 'OK'
       end
     end
@@ -54,16 +57,18 @@ RSpec.describe Solr::Indexing do
         end
 
         it 'raises an error on multiple indices without explicit core param' do
-          doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-          req = Solr::Indexing::Request.new([doc1])
-          expect { req.run(commit: true) }.to raise_error(Solr::Errors::AmbiguousCoreError)
+          doc1 = Solr::Update::Commands::Add.new(doc: { id: 10, name: 'iPhone X' })
+          commit = Solr::Update::Commands::Commit.new
+          req = Solr::Update::Request.new([doc1, commit])
+          expect { req.run }.to raise_error(Solr::Errors::AmbiguousCoreError)
         end
 
         it 'accepts explicit core param' do
-          doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-          req = Solr::Indexing::Request.new([doc1])
+          doc1 = Solr::Update::Commands::Add.new(doc: { id: 10, name: 'iPhone X' })
+          commit = Solr::Update::Commands::Commit.new
+          req = Solr::Update::Request.new([doc1, commit])
           resp = Solr.with_core(:'test-core') do
-            req.run(commit: true)
+            req.run
           end
           expect(resp.status).to eq 'OK'
         end
@@ -87,15 +92,17 @@ RSpec.describe Solr::Indexing do
         end
 
         it 'doesn\'t rais an error on multiple indices without explicit core param' do
-          doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-          req = Solr::Indexing::Request.new([doc1])
-          expect { req.run(commit: true) }.not_to raise_error
+          doc1 = Solr::Update::Commands::Add.new(doc: { id: 10, name: 'iPhone X' })
+          commit = Solr::Update::Commands::Commit.new
+          req = Solr::Update::Request.new([doc1, commit])
+          expect { req.run }.not_to raise_error
         end
 
         it 'accepts explicit core param' do
-          doc1 = Solr::Indexing::Document.new(id: 10, name: 'iPhone X')
-          req = Solr::Indexing::Request.new([doc1])
-          resp = req.run(commit: true)
+          doc1 = Solr::Update::Commands::Add.new(doc: { id: 10, name: 'iPhone X' })
+          commit = Solr::Update::Commands::Commit.new
+          req = Solr::Update::Request.new([doc1, commit])
+          resp = req.run
           expect(resp.status).to eq 'OK'
         end
       end
