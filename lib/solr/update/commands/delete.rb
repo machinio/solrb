@@ -7,7 +7,7 @@ module Solr
         COMMAND_KEY = 'delete'.freeze
 
         def self.unnest(array)
-          array
+          array.first
         end
 
         attr_reader :options
@@ -18,7 +18,11 @@ module Solr
         end
 
         def as_json
-          options
+          if options.key?(:filters)
+            { query: options[:filters].map(&:to_solr_s).join(' AND ') }
+          else
+            options
+          end
         end
 
         def to_json(_json_context)
@@ -29,10 +33,9 @@ module Solr
 
         def validate_delete_options!(options)
           options = options.deep_symbolize_keys
-          id, query = options.values_at(:id, :query)
-          error_message = 'options must contain either id or query, but not both'
-          raise ArgumentError, error_message if id.nil? && query.nil?
-          raise ArgumentError, error_message if id && query
+          id, query, filters = options.values_at(:id, :query, :filters)
+          error_message = 'options must contain either id, query or filters'
+          raise ArgumentError, error_message if [id, query, filters].compact.count != 1
           options
         end
       end
