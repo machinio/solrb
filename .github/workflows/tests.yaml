@@ -7,14 +7,15 @@ env:
 
 jobs:
   rspec:
-    name: Rspec on Ruby ${{ matrix.ruby }}
+    name: Rspec on Ruby ${{ matrix.ruby }} with Solr ${{ matrix.solr }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.5', '2.6', '2.7', '3.0']
+        ruby: ['2.7', '3.0', '3.2']
+        solr: ['7.4.0', '8.11.2']
     services:
       solr:
-        image: solr:7.4.0
+        image: solr:${{ matrix.solr }}
         ports:
           - 8983:8983
     steps:

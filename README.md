@@ -431,10 +431,21 @@ Example of usage:
 # Deleting documents
 
 ```ruby
+# Delete by document ID
 Solr.delete_by_id(3242343)
 Solr.delete_by_id(3242343, commit: true)
+
+# Delete by query
 Solr.delete_by_query('*:*')
 Solr.delete_by_query('*:*', commit: true)
+
+# Delete by filters
+filters = [Solr::Query::Request::Filter.new(type: :equal, field: :contry, value: 'Canada')]
+commands = [Solr::Update::Commands::Delete.new(filters: filters)]
+commands << Solr::Update::Commands::Commit.new if commit?
+request = Solr::Update::Request.new(commands)
+request.run
+
 ```
 
 # Active Support instrumentation
