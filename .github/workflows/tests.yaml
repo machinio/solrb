@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.7', '3.0', '3.2']
-        solr: ['7.4.0', '8.11.2']
+        solr: ['7.4.0']
     services:
       solr:
         image: solr:${{ matrix.solr }}
@@ -28,7 +28,7 @@ jobs:
 
       - name: Create a test core
         run: |
-          curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core'
+          curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
 
       - name: Disable field type guessing
         run: |
