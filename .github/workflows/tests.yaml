@@ -28,7 +28,7 @@ jobs:
 
       - name: Create a test core
         run: |
-          curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+          curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core'
 
       - name: Disable field type guessing
         run: |
