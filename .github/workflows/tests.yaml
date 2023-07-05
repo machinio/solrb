@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.7', '3.0', '3.2']
-        solr: ['7.4.0']
+        solr: ['8.11.2']
     services:
       solr:
         image: solr:${{ matrix.solr }}
@@ -25,6 +25,13 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+
+      - name: Prepare default configset
+        run: |
+          container_id=$(docker ps -q)
+          docker exec -u 0 $container_id sh -c "mkdir /var/solr/data/configsets \
+            && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ \
+            && chown -R solr:solr /var/solr/data/configsets"
 
       - name: Create a test core
         run: |
