@@ -493,10 +493,16 @@ If you want to run it locally, you can either use  [CircleCI CLI](https://circle
 or do a completely manual setup (for up-to-date steps see circleci config)
 
 ```sh
-docker pull solr:7.7.1
-docker run -it --name test-solr -p 8983:8983/tcp -t solr:7.7.1
+docker run -it --name test-solr -p 8983:8983/tcp -t solr:8.11.2-slim
+
+# Copy default configset
+docker exec -u 0 $(docker ps | grep test-solr | cut -d ' ' -f 1) sh -c "mkdir /var/solr/data/configsets \
+  && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ \
+  && chown -R solr:solr /var/solr/data/configsets"
+
 # create a core
 curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
 # disable field guessing
 curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
 SOLR_URL=http://localhost:8983/solr/test-core rspec
