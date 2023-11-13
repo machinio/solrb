@@ -248,7 +248,7 @@ doc = Solr::Update::Commands::Add.new(doc: { id: 5, name: 'John' })
 ## Simple Query
 
 ```ruby
-  query_field = Solr::Query::Request::FieldWithBoost.new(field: :name)
+  query_field = Solr::Query::Request::QueryField.new(field: :name)
 
   request = Solr::Query::Request.new(search_term: 'term', query_fields: [query_field])
   request.run(page: 1, page_size: 10)
@@ -270,8 +270,8 @@ end
 ```ruby
   query_fields = [
     # Use boost_magnitude argument to apply boost to a specific field that you query
-    Solr::Query::Request::FieldWithBoost.new(field: :name, boost_magnitude: 16),
-    Solr::Query::Request::FieldWithBoost.new(field: :title)
+    Solr::Query::Request::QueryField.new(field: :name, boost_magnitude: 16),
+    Solr::Query::Request::QueryField.new(field: :title)
   ]
   request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.run(page: 1, page_size: 10)
@@ -281,8 +281,8 @@ end
 
 ```ruby
   query_fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name),
-    Solr::Query::Request::FieldWithBoost.new(field: :title)
+    Solr::Query::Request::QueryField.new(field: :name),
+    Solr::Query::Request::QueryField.new(field: :title)
   ]
   filters = [Solr::Query::Request::Filter.new(type: :equal, field: :title, value: 'A title')]
   request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields, filters: filters)
@@ -312,8 +312,8 @@ end
 
 ```ruby
   query_fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name),
-    Solr::Query::Request::FieldWithBoost.new(field: :title)
+    Solr::Query::Request::QueryField.new(field: :name),
+    Solr::Query::Request::QueryField.new(field: :title)
   ]
   sort_fields = [Solr::Query::Request::Sorting::Field.new(name: :name, direction: :asc)]
   request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
@@ -325,7 +325,7 @@ Default sorting logic is following: nulls last, not-nulls first.
 
 ```ruby
   query_fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name)
+    Solr::Query::Request::QueryField.new(field: :name)
   ]
   sort_fields = [
     Solr::Query::Request::Sorting::Field.new(name: :is_featured, direction: :desc),
@@ -340,8 +340,8 @@ Default sorting logic is following: nulls last, not-nulls first.
 
 ```ruby
   query_fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name),
-    Solr::Query::Request::FieldWithBoost.new(field: :category)
+    Solr::Query::Request::QueryField.new(field: :name),
+    Solr::Query::Request::QueryField.new(field: :category)
   ]
   request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.grouping = Solr::Query::Request::Grouping.new(field: :category, limit: 10)
@@ -352,8 +352,8 @@ Default sorting logic is following: nulls last, not-nulls first.
 
 ```ruby
   query_fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name),
-    Solr::Query::Request::FieldWithBoost.new(field: :category)
+    Solr::Query::Request::QueryField.new(field: :name),
+    Solr::Query::Request::QueryField.new(field: :category)
   ]
   request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.facets = [Solr::Query::Request::Facet.new(type: :terms, field: :category, options: { limit: 10 })]
@@ -364,8 +364,8 @@ Default sorting logic is following: nulls last, not-nulls first.
 
 ```ruby
   query_fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name),
-    Solr::Query::Request::FieldWithBoost.new(field: :category)
+    Solr::Query::Request::QueryField.new(field: :name),
+    Solr::Query::Request::QueryField.new(field: :category)
   ]
   request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   request.boosting = Solr::Query::Request::Boosting.new(
@@ -415,11 +415,10 @@ Example of usage:
 
 ## Field list
 
-
 ```ruby
   query_fields = [
-    Solr::Query::Request::FieldWithBoost.new(field: :name),
-    Solr::Query::Request::FieldWithBoost.new(field: :category)
+    Solr::Query::Request::QueryField.new(field: :name),
+    Solr::Query::Request::QueryField.new(field: :category)
   ]
   request = Solr::Query::Request.new(search_term: 'term', query_fields: query_fields)
   # Solr::Query::Request will return only :id field by default.
