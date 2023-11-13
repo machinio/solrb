@@ -31,8 +31,8 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
   context 'complex query' do
     let(:query_fields) do
       [
-        Solr::Query::Request::FieldWithBoost.new(field: :field_1),
-        Solr::Query::Request::FieldWithBoost.new(field: :field_2, boost_magnitude: 16)
+        Solr::Query::Request::QueryField.new(field: :field_1),
+        Solr::Query::Request::QueryField.new(field: :field_2, boost_magnitude: 16)
       ]
     end
 

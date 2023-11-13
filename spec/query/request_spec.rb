@@ -12,7 +12,7 @@ RSpec.describe Solr::Query::Request do
 
   let(:search_term) { 'solrb' }
   let(:query_fields) do
-    [Solr::Query::Request::FieldWithBoost.new(field: :name_txt_en)]
+    [Solr::Query::Request::QueryField.new(field: :name_txt_en)]
   end
 
   subject do

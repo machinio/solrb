@@ -1,7 +1,9 @@
 module Solr
   module Query
     class Request
-      class FieldWithBoost
+      class QueryField
+        include Solr::Support::SchemaHelper
+
         attr_reader :field, :boost_magnitude
 
         def initialize(field:, boost_magnitude: Solr::Query::Request::BoostMagnitude::DEFAULT)
@@ -10,7 +12,15 @@ module Solr
         end
 
         def to_solr_s
-          "#{field}^#{boost_magnitude}"
+          if boost_magnitude == Solr::Query::Request::BoostMagnitude::DEFAULT
+            solr_field
+          else
+            "#{solr_field}^#{boost_magnitude}"
+          end
+        end
+
+        def solr_field
+          solarize_field(@field)
         end
       end
     end
