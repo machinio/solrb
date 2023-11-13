@@ -3,7 +3,7 @@ RSpec.describe Solr::Query::Request::QueryField do
     context 'when boost magnitude is not specified' do
       subject { described_class.new(field: :field).to_solr_s }
 
-      it { is_expected.to eq('field^1') }
+      it { is_expected.to eq('field') }
     end
 
     context 'when boost magnitude is specified' do
@@ -24,7 +24,7 @@ RSpec.describe Solr::Query::Request::QueryField do
 
       subject { described_class.new(field: :title).to_solr_s }
 
-      it { is_expected.to eq('title_text^1') }
+      it { is_expected.to eq('title_text') }
     end
   end
 end

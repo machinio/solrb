@@ -111,7 +111,7 @@ RSpec.describe Solr::Query::Request::EdismaxAdapter do
         ps: 5,
         q: 'Search Term',
         'q.op': :AND,
-        qf: ['field_1^1', 'field_2^16'],
+        qf: ['field_1', 'field_2^16'],
         sort: 'exists(field_1) desc, field_1 asc, exists(field_2) desc, field_2 desc, score desc',
         :'shards.preference' => 'replica.type:PULL'
       }
