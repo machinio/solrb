@@ -7,7 +7,7 @@ module Solr
         COMMAND_KEY = 'delete'.freeze
 
         def self.unnest(array)
-          array.first
+          array.size > 1 ? array : array.first
         end
 
         attr_reader :options

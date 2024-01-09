@@ -39,5 +39,39 @@ RSpec.describe Solr::Update::Request do
       resp = req.run
       expect(resp.status).to eq 'OK'
     end
+
+    it 'deletes multiple documents by id' do
+      delete_commands = [
+        Solr::Update::Commands::Delete.new(id: '1'),
+        Solr::Update::Commands::Delete.new(id: '2')
+      ]
+
+      expect(Solr::Request::HttpRequest).to receive(:new).
+        with(hash_including(body: { 'delete' => delete_commands })).
+        and_call_original
+
+      req = Solr::Update::Request.new(delete_commands)
+      resp = req.run
+      expect(resp.status).to eq 'OK'
+    end
+
+    it 'deletes multiple documents by id and filters' do
+      filters = [
+        Solr::Query::Request::Filter.new(type: :equal, field: :name_txt_en, value: 'Solrb')
+      ]
+
+      delete_commands = [
+        Solr::Update::Commands::Delete.new(id: '1'),
+        Solr::Update::Commands::Delete.new(filters: filters)
+      ]
+
+      expect(Solr::Request::HttpRequest).to receive(:new).
+        with(hash_including(body: { 'delete' => delete_commands })).
+        and_call_original
+
+      req = Solr::Update::Request.new(delete_commands)
+      resp = req.run
+      expect(resp.status).to eq 'OK'
+    end
   end
 end
