@@ -308,6 +308,35 @@ end
   request.run(page: 1, page_size: 10)
 ```
 
+### Filtering by a Geofilt
+
+```ruby
+  spatial_point = Solr::SpatialPoint.new(lat: 40.0, lon: -120.0)
+
+  filters = [
+    Solr::Query::Request::Geofilt.new(field: :location, spatial_point: spatial_point, spatial_radius: 100)
+  ]
+
+  request = Solr::Query::Request.new(search_term: 'term', filters: filters)
+  request.run(page: 1, page_size: 10)
+```
+
+### Filtering by an Arbitrary Rectangle
+
+```ruby
+  spatial_rectangle = Solr::SpatialRectangle.new(
+    top_left: Solr::SpatialPoint.new(lat: 40.0, lon: -120.0),
+    bottom_right: Solr::SpatialPoint.new(lat: 30.0, lon: -110.0)
+  )
+
+  filters = [
+    Solr::Query::Request::Filter.new(type: :equal, field: :location, value: spatial_rectangle)
+  ]
+
+  request = Solr::Query::Request.new(search_term: 'term', filters: filters)
+  request.run(page: 1, page_size: 10)
+```
+
 ## Query with sorting
 
 ```ruby
@@ -374,7 +403,9 @@ Default sorting logic is following: nulls last, not-nulls first.
   )
   request.run(page: 1, page_size: 10)
 ```
+
 ### Dictionary boosting function
+
 Sometimes you want to do a dictionary-style boosting
 example: given a hash (dictionary)
 

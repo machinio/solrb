@@ -1,7 +1,7 @@
 require 'solr/query/request/facet'
 require 'solr/query/request/filter'
 require 'solr/query/request/boost_magnitude'
-require 'solr/query/request/geo_filter'
+require 'solr/query/request/geofilt'
 require 'solr/query/request/sorting'
 require 'solr/query/request/edismax_adapter'
 require 'solr/query/request/grouping'
