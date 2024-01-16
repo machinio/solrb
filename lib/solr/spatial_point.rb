@@ -1,14 +1,14 @@
 module Solr
   class SpatialPoint
-    attr_reader :lat, :long
+    attr_reader :lat, :lon
 
-    def initialize(lat:, long:)
+    def initialize(lat:, lon:)
       @lat = lat
-      @long = long
+      @lon = lon
     end
 
     def to_solr_s
-      "#{lat},#{long}"
+      "#{lat},#{lon}"
     end
   end
 end
