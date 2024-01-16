@@ -26,8 +26,8 @@ RSpec.describe Solr::Query::Request::Filter do
     end
 
     context 'when value is spatial rectangle' do
-      let(:upper_right) { Solr::SpatialPoint.new(lat: 1.0, lng: 2.0) }
-      let(:lower_left) { Solr::SpatialPoint.new(lat: 3.0, lng: 4.0) }
+      let(:upper_right) { Solr::SpatialPoint.new(lat: 1.0, lon: 2.0) }
+      let(:lower_left) { Solr::SpatialPoint.new(lat: 3.0, lon: 4.0) }
       let(:spatial_rectangle) { Solr::SpatialRectangle.new(upper_right: upper_right, lower_left: lower_left) }
 
       subject { described_class.new(type: :equal, field: :field, value: spatial_rectangle).to_solr_s }
