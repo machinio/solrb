@@ -25,6 +25,15 @@ RSpec.describe Solr::Query::Request::Filter do
       end
     end
 
+    context 'when value is spatial rectangle' do
+      let(:top_right) { Solr::SpatialPoint.new(lat: 1.0, lon: 2.0) }
+      let(:bottom_left) { Solr::SpatialPoint.new(lat: 3.0, lon: 4.0) }
+      let(:spatial_rectangle) { Solr::SpatialRectangle.new(top_right: top_right, bottom_left: bottom_left) }
+
+      subject { described_class.new(type: :equal, field: :field, value: spatial_rectangle).to_solr_s }
+      it { is_expected.to eq('field:([3.0,4.0 TO 1.0,2.0])') }
+    end
+
     context 'when value is date' do
       subject { described_class.new(type: :equal, field: :field, value: Date.parse('2018-08-01')).to_solr_s }
       it { is_expected.to eq('field:(2018-08-01T00:00:00Z)') }

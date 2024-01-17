@@ -6,7 +6,7 @@ AllCops:
   TargetRubyVersion: '2.5'
   DisabledByDefault: true
 Layout/LineLength:
-  Max: 120
+  Max: 160
 Style/Documentation:
   Enabled: false
 Style/FrozenStringLiteralComment:

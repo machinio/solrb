@@ -30,6 +30,8 @@ module Solr
             value.map { |v| to_primitive_solr_value(v) }.join(' OR ')
           elsif value.is_a?(::Range)
             to_interval_solr_value(value)
+          elsif value.is_a?(Solr::SpatialRectangle)
+            value.to_solr_s
           else
             to_primitive_solr_value(value)
           end
