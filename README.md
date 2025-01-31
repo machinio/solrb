@@ -523,7 +523,7 @@ If you want to run it locally, you can either use  [CircleCI CLI](https://circle
 or do a completely manual setup (for up-to-date steps see circleci config)
 
 ```sh
-docker run -it --name test-solr -p 8983:8983/tcp -t solr:8.11.2-slim
+docker run -it --name test-solr -p 8983:8983/tcp -t solr:9.7.0-slim
 
 # Copy default configset
 docker exec -u 0 $(docker ps | grep test-solr | cut -d ' ' -f 1) sh -c "mkdir /var/solr/data/configsets \
