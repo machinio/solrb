@@ -3,8 +3,9 @@ AllCops:
     - bin/*
     - vendor/**/*
     - pkg/**/*
-  TargetRubyVersion: '2.5'
+  TargetRubyVersion: '3.2'
   DisabledByDefault: true
+  SuggestExtensions: false
 Layout/LineLength:
   Max: 160
 Style/Documentation:

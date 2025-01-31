@@ -11,10 +11,9 @@ jobs:
         with:
           ruby-version: 3.2.2
           bundler-cache: true
-      - uses: reviewdog/action-rubocop@v1
+      - name: rubocop
+        uses: reviewdog/action-rubocop@v2
         with:
+          rubocop_version: gemfile
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          rubocop_version: '0.80.1'
-          rubocop_extensions: ''
           reporter: github-check
-          fail_on_error: true
