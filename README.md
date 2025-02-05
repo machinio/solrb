@@ -18,6 +18,9 @@ Object-Oriented approach to Solr in Ruby.
   * [Master-slave](#master-slave)
     * [Gray list](#gray-list)
   * [Basic Authentication](#basic-authentication)
+* [Core Management](#core-management)
+  * [Creating a Core](#creating-a-core)
+  * [Managing Cores](#managing-cores)
 * [Indexing](#indexing)
 * [Querying](#querying)
   * [Simple Query](#simple-query)
@@ -221,6 +224,54 @@ Solr.configure do |config|
   config.auth_user = 'user'
   config.auth_password = 'password'
 end
+```
+
+# Core Management
+
+Solrb provides a comprehensive API for managing Solr cores through the `Solr.cores` interface. Here are the available operations:
+
+## Creating a Core
+
+```ruby
+# Create a core with default configuration
+Solr.cores.create(name: 'my-core')
+
+# Create a core with custom configuration
+Solr.cores.create(
+  name: 'my-core',
+  config_set: '_default',  # Optional, defaults to '_default'
+  config_dir: 'path/to/config',  # Optional
+  schema_file: 'path/to/schema.xml',  # Optional
+  data_dir: 'path/to/data'  # Optional
+)
+```
+
+## Managing Cores
+
+```ruby
+# Check if a core exists
+Solr.cores.exists?(name: 'my-core')
+
+# Get status of all cores or a specific core
+Solr.cores.status  # All cores
+Solr.cores.status(name: 'my-core')  # Specific core
+
+# Reload a core
+Solr.cores.reload(name: 'my-core')
+
+# Rename a core
+Solr.cores.rename(name: 'old-name', new_name: 'new-name')
+
+# Unload a core
+Solr.cores.unload(name: 'my-core')
+
+# Unload and delete a core completely
+Solr.cores.unload(
+  name: 'my-core',
+  delete_index: true,  # Remove the index
+  delete_data_dir: true,  # Remove the data directory
+  delete_instance_dir: true  # Remove everything related to the core
+)
 ```
 
 # Indexing
