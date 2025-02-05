@@ -519,21 +519,59 @@ end
 
 This project is setup to use CI to run all specs agains a real solr.
 
-If you want to run it locally, you can either use  [CircleCI CLI](https://circleci.com/docs/2.0/local-cli/)
-or do a completely manual setup (for up-to-date steps see circleci config)
+If you want to run it locally, you have several options:
+
+1. Use [CircleCI CLI](https://circleci.com/docs/2.0/local-cli/)
+2. Use Docker Compose (recommended)
+3. Manual setup with Docker commands
+
+## Running with Docker Compose
+
+### Single Node Solr
 
 ```sh
-docker run -it --name test-solr -p 8983:8983/tcp -t solr:9.7.0-slim
+# Start Solr
+docker-compose -f docker-compose.single.yml up -d
 
-# Copy default configset
-docker exec -u 0 $(docker ps | grep test-solr | cut -d ' ' -f 1) sh -c "mkdir /var/solr/data/configsets \
-  && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ \
-  && chown -R solr:solr /var/solr/data/configsets"
+# Wait for Solr to be healthy
+docker-compose -f docker-compose.single.yml ps
 
-# create a core
+# Create test core
+# First copy the default configset to the correct location
+docker exec -u 0 solrb-solr-1 sh -c "mkdir -p /var/solr/data/configsets && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ && chown -R solr:solr /var/solr/data/configsets"
+
+# Then create the core
 curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
 
-# disable field guessing
+# Disable field guessing
 curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
+
+# Run specs
+SOLR_URL=http://localhost:8983/solr/test-core rspec
+
+# Clean up
+docker-compose -f docker-compose.single.yml down -v
+```
+
+## Manual Setup with Docker Commands
+
+If you prefer more control or need to debug the setup, you can use the manual Docker commands:
+
+### Single Node Setup
+
+```sh
+# Start Solr
+docker run -it --name test-solr -p 8983:8983/tcp -t solr:9.7.0-slim
+
+# Copy default configset to the correct location
+docker exec -u 0 test-solr sh -c "mkdir -p /var/solr/data/configsets && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ && chown -R solr:solr /var/solr/data/configsets"
+
+# Create a core
+curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+# Disable field guessing
+curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
+
+# Run specs
 SOLR_URL=http://localhost:8983/solr/test-core rspec
 ```
