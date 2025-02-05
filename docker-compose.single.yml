@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   solr:
-    image: solr:9.7.0-slim
+    image: solr:${SOLR_VERSION:-9.7.0}-slim
     ports:
       - "8983:8983"
     volumes:
