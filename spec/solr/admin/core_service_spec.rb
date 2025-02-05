@@ -1,4 +1,4 @@
-RSpec.describe Solr::Admin::CoreService do
+RSpec.describe Solr::Admin::CoreService, installation: :single do
   let(:service) { described_class.new }
   let(:core_name) { SecureRandom.uuid }
   let(:config_set) { '_default' }
