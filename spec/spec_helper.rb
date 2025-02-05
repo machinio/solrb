@@ -9,6 +9,7 @@ end
 
 require 'bundler/setup'
 require 'pry'
+require 'securerandom'
 require 'solr'
 
 RSpec.configure do |config|
