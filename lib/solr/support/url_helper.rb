@@ -37,12 +37,7 @@ module Solr
       def core_name_from_url(url)
         full_solr_core_uri = URI.parse(url)
         core_name = full_solr_core_uri.path.gsub('/solr', '').delete('/')
-
-        if !core_name || core_name == ''
-          raise Solr::Errors::CouldNotInferImplicitCoreName
-        end
-
-        core_name
+        core_name if core_name && core_name != ''
       end
 
       def solr_endpoint_from_url(url)
@@ -53,6 +48,26 @@ module Solr
         end
 
         solr_endpoint
+      end
+
+      def admin_base_url_for_cores
+        if Solr.cloud_enabled?
+          raise Solr::Errors::SolrQueryError, 'Core management is not supported in SolrCloud mode. Use collections API instead.'
+        elsif Solr.master_slave_enabled?
+          Solr.configuration.master_url
+        else
+          solr_endpoint_from_url(Solr.configuration.url || ENV['SOLR_URL'])
+        end
+      end
+
+      def admin_base_url_for_collections
+        if !Solr.cloud_enabled?
+          raise Solr::Errors::SolrQueryError, 'Collection management is only supported in SolrCloud mode. Use cores API instead.'
+        end
+
+        # In SolrCloud mode, we can use any active node
+        base_url = Solr.active_nodes_for(collection: nil).first
+        base_url.chomp('/')
       end
     end
   end

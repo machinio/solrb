@@ -1,0 +1,47 @@
+name: solrb-master-replica
+
+services:
+  solr-master:
+    image: solr:9.7.0-slim
+    ports:
+      - "8983:8983"
+    volumes:
+      - solr_master_data:/var/solr
+    environment:
+      - SOLR_OPTS=-Denable.master=true
+    networks:
+      - solr_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8983/solr/"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  solr-replica:
+    image: solr:9.7.0-slim
+    ports:
+      - "8984:8983"
+    volumes:
+      - solr_replica_data:/var/solr
+    environment:
+      - SOLR_OPTS=-Denable.replica=true -Dmaster.url=http://solr-master:8983/solr/test-core
+    networks:
+      - solr_network
+    depends_on:
+      solr-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8983/solr/"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  solr_network:
+    driver: bridge
+
+volumes:
+  solr_master_data:
+  solr_replica_data:

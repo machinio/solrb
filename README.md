@@ -173,8 +173,8 @@ In solr master-slave mode you don't need to provide a solr url (`config.url` or 
 
 ```ruby
 Solr.configure do |config|
-  config.master_url = 'localhost:8983'
-  config.slave_url = 'localhost:8984'
+  config.master_url = 'localhost:8983' # or ENV['SOLR_MASTER_URL']
+  config.slave_url = 'localhost:8984' # or ENV['SOLR_SLAVE_URL']
   # Disable select queries from master:
   config.disable_read_from_master = true
   # Specify Gray-list service
@@ -551,6 +551,52 @@ SOLR_URL=http://localhost:8983/solr/test-core rspec
 
 # Clean up
 docker-compose -f docker-compose.single.yml down -v
+```
+
+### Master-Replica Setup
+
+```sh
+# Start Solr master and replica nodes
+docker-compose -f docker-compose.master-replica.yml up -d
+
+# Wait for both nodes to be healthy
+docker-compose -f docker-compose.master-replica.yml ps
+
+# Setup master node
+# First copy the default configset to the correct location on master
+docker exec -u 0 solrb-master-replica-solr-master-1 sh -c "mkdir -p /var/solr/data/configsets && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ && chown -R solr:solr /var/solr/data/configsets"
+
+# Create test core on master
+curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+# Setup replica node
+# Copy the default configset to the correct location on replica
+docker exec -u 0 solrb-master-replica-solr-replica-1 sh -c "mkdir -p /var/solr/data/configsets && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ && chown -R solr:solr /var/solr/data/configsets"
+
+# Create test core on replica
+curl 'http://localhost:8984/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+# Enable replication on master
+curl 'http://localhost:8983/solr/test-core/replication?command=enablereplication&master=true'
+
+# Enable replication on replica
+curl 'http://localhost:8984/solr/test-core/replication?command=enablereplication&slave=true&masterUrl=http://solr-master:8983/solr/test-core'
+
+# Verify replication status on master
+curl 'http://localhost:8983/solr/test-core/replication?command=details'
+
+# Verify replication status on replica
+curl 'http://localhost:8984/solr/test-core/replication?command=details'
+
+# Disable field guessing on both nodes
+curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
+curl http://localhost:8984/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
+
+# Run specs with master-slave configuration
+SOLR_MASTER_URL=http://localhost:8983/solr/test-core SOLR_SLAVE_URL=http://localhost:8984/solr/test-core rspec
+
+# Clean up
+docker-compose -f docker-compose.master-replica.yml down -v
 ```
 
 ## Manual Setup with Docker Commands

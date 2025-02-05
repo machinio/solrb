@@ -5,7 +5,7 @@ RSpec.describe Solr do
 
   describe '.current_core_config' do
     it 'uses default url' do
-      expect(Solr.current_core_config.url).to eq(ENV['SOLR_URL'])
+      expect(Solr.current_core_config.url).to eq(File.join(*[ENV['SOLR_URL'], ENV['SOLR_CORE']].compact))
     end
   end
 
