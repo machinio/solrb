@@ -28,15 +28,45 @@ jobs:
         with:
           compose-file: docker-compose.single.yml
 
+      - name: Wait for Solr to be ready
+        timeout-minutes: 2
+        run: |
+          echo "Waiting for Solr to be ready..."
+          while ! curl -s 'http://localhost:8983/solr/admin/info/system' > /dev/null; do
+            sleep 2
+            echo "Still waiting for Solr..."
+          done
+          echo "Solr is up!"
+
       - name: Prepare default configset
         run: |
           docker exec -u 0 solrb-solr-1 sh -c \
           "mkdir -p /var/solr/data/configsets && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ \
           && chown -R solr:solr /var/solr/data/configsets"
 
+      - name: Wait for configset to be available
+        timeout-minutes: 1
+        run: |
+          echo "Waiting for configset to be ready..."
+          while ! curl -s 'http://localhost:8983/solr/admin/configs?action=LIST' | grep -q '_default'; do
+            sleep 2
+            echo "Still waiting for configset..."
+          done
+          echo "Configset is ready!"
+
       - name: Create a test core
         run: |
-          curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+          curl --retry 5 --retry-delay 2 -sS 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+      - name: Verify core creation
+        timeout-minutes: 1
+        run: |
+          echo "Verifying core creation..."
+          while ! curl -s 'http://localhost:8983/solr/admin/cores?action=STATUS' | grep -q '"test-core":'; do
+            sleep 2
+            echo "Waiting for core to be ready..."
+          done
+          echo "Core is ready!"
 
       - name: Disable field type guessing
         run: |

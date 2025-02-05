@@ -8,10 +8,7 @@ services:
     volumes:
       - solr_single_data:/var/solr
     healthcheck:
-      test: |
-        curl -sf 'http://localhost:8983/solr/admin/cores?action=STATUS' | grep -q '"status":{' \
-        && curl -sf 'http://localhost:8983/solr/admin/info/system' | grep -q '"status":"ok"' \
-        && curl -sf 'http://localhost:8983/solr/admin/ping?wt=json' | grep -q '"status":"OK"'
+      test: curl --fail http://localhost:8983/solr/admin/info/system
       interval: 10s
       timeout: 5s
       retries: 5
