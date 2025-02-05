@@ -40,19 +40,13 @@ jobs:
 
       - name: Prepare default configset
         run: |
-          docker exec -u 0 solrb-solr-1 sh -c \
-          "mkdir -p /var/solr/data/configsets && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ \
-          && chown -R solr:solr /var/solr/data/configsets"
-
-      - name: Wait for configset to be available
-        timeout-minutes: 1
-        run: |
-          echo "Waiting for configset to be ready..."
-          while ! curl -s 'http://localhost:8983/solr/admin/configs?action=LIST' | grep -q '_default'; do
-            sleep 2
-            echo "Still waiting for configset..."
-          done
-          echo "Configset is ready!"
+          container_id=$(docker ps -q --filter name=solrb-solr)
+          echo "Using container: $container_id"
+          docker exec -u 0 $container_id sh -c \
+          "mkdir -p /var/solr/data/configsets/_default && \
+          cp -R /opt/solr/server/solr/configsets/_default/* /var/solr/data/configsets/_default/ && \
+          chown -R solr:solr /var/solr/data/configsets && \
+          ls -la /var/solr/data/configsets/_default/"
 
       - name: Create a test core
         run: |
