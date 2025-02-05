@@ -30,10 +30,9 @@ jobs:
 
       - name: Prepare default configset
         run: |
-          container_id=$(docker ps -q)
-          docker exec -u 0 $container_id sh -c "mkdir /var/solr/data/configsets \
-            && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ \
-            && chown -R solr:solr /var/solr/data/configsets"
+          docker exec -u 0 solrb-solr-1 sh -c \
+          "mkdir -p /var/solr/data/configsets && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ \
+          && chown -R solr:solr /var/solr/data/configsets"
 
       - name: Create a test core
         run: |
