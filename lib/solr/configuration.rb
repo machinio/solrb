@@ -20,10 +20,10 @@ module Solr
 
     attr_accessor :cores, :test_connection, :auth_user, :auth_password
 
-    attr_reader :url, :faraday_options, :faraday_configuration, :cloud_configuration,
+    attr_reader :url, :core, :faraday_options, :faraday_configuration, :cloud_configuration,
       :master_slave_configuration
 
-    attr_writer :url, :logger
+    attr_writer :url, :core, :logger
 
     def initialize
       @faraday_options = {
@@ -72,12 +72,25 @@ module Solr
       end
     end
 
+    def core_name_from_solr_core_env
+      ENV['SOLR_CORE']
+    end
+
     def core_name_from_solr_url_env
-      Solr::Support::UrlHelper.core_name_from_url(ENV['SOLR_URL'])
+      if master_slave_configuration.master_slave_enabled?
+        Solr::Support::UrlHelper.core_name_from_url(master_slave_configuration.master_url)
+      elsif cloud_configuration.cloud_enabled?
+        raise 'Cloud is enabled, but no cloud configuration is set'
+      else
+        Solr::Support::UrlHelper.core_name_from_url(ENV['SOLR_URL'])
+      end
     end
 
     def build_env_url_core_config(name: nil)
+      name ||= core_name_from_solr_core_env
       name ||= core_name_from_solr_url_env
+      raise Solr::Errors::CouldNotInferImplicitCoreName if name.nil? || name == ''
+
       Solr::CoreConfiguration::EnvUrlCoreConfig.new(name: name)
     end
 
@@ -89,10 +102,7 @@ module Solr
     end
 
     def validate!
-      if !(url ||
-           @cloud_configuration.zookeeper_url ||
-           (@master_slave_configuration.master_url && @master_slave_configuration.slave_url) ||
-           ENV['SOLR_URL'])
+      if !(url || ((@master_slave_configuration.master_url || ENV['SOLR_MASTER_URL']) && (@master_slave_configuration.slave_url || ENV['SOLR_SLAVE_URL'])) || ENV['SOLR_URL'])
         raise Solr::Errors::SolrUrlNotDefinedError
       end
     end

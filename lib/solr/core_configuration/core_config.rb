@@ -4,7 +4,7 @@ module Solr
       attr_reader :name, :fields
 
       def initialize(name:, fields:, default:)
-        @name = name
+        @name = name.nil? ? ENV['SOLR_CORE'] : name
         @fields = fields
         @default = default
       end
@@ -18,7 +18,10 @@ module Solr
       end
 
       def url
-        @url ||= File.join(Solr.configuration.url || ENV['SOLR_URL'], name.to_s).chomp('/')
+        @url ||= begin
+          url = Solr.configuration.url || ENV['SOLR_URL'] || ENV['SOLR_MASTER_URL']
+          File.join(url, name.to_s).chomp('/')
+        end
       end
 
       def uri
@@ -36,8 +39,15 @@ module Solr
       end
 
       def url
-        raise ArgumentError, "Solr URL can't be nil" if ENV['SOLR_URL'].nil?
-        ENV['SOLR_URL']
+        raise ArgumentError, "SOLR_URL can't be nil" if ENV['SOLR_URL'].nil? && ENV['SOLR_MASTER_URL'].nil?
+
+        url = ENV['SOLR_URL'] || ENV['SOLR_MASTER_URL']
+
+        if ENV['SOLR_CORE'] && ENV['SOLR_CORE'] != ''
+          File.join(*[url, name.to_s].compact)
+        else
+          url
+        end
       end
     end
   end
