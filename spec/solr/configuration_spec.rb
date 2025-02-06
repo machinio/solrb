@@ -72,7 +72,7 @@ RSpec.describe Solr::Configuration do
       Solr.configure do |config|
         config.faraday_configure do |f|
           f.adapter :net_http do |http|
-            http.idle_timeout = 150
+            http.read_timeout = 150
           end
         end
       end

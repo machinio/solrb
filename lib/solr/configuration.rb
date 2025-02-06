@@ -77,7 +77,13 @@ module Solr
     end
 
     def core_name_from_solr_url_env
-      Solr::Support::UrlHelper.core_name_from_url(ENV['SOLR_URL'])
+      if master_slave_configuration.master_slave_enabled?
+        Solr::Support::UrlHelper.core_name_from_url(master_slave_configuration.master_url)
+      elsif cloud_configuration.cloud_enabled?
+        raise 'Cloud is enabled, but no cloud configuration is set'
+      else
+        Solr::Support::UrlHelper.core_name_from_url(ENV['SOLR_URL'])
+      end
     end
 
     def build_env_url_core_config(name: nil)

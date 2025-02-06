@@ -54,7 +54,7 @@ module Solr
         if Solr.cloud_enabled?
           raise Solr::Errors::SolrQueryError, 'Core management is not supported in SolrCloud mode. Use collections API instead.'
         elsif Solr.master_slave_enabled?
-          Solr.configuration.master_url
+          solr_endpoint_from_url(Solr.configuration.master_url)
         else
           solr_endpoint_from_url(Solr.configuration.url || ENV['SOLR_URL'])
         end

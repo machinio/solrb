@@ -23,7 +23,25 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.after(:each) do
-    Solr.configuration = Solr::Configuration.new
+  config.before(:each) do
+    # if ENV['SOLR_MASTER_URL'] && ENV['SOLR_SLAVE_URL']
+    #   Solr.conS
+    #   Solr.configuration = Solr::Configuration.new
+    #   Solr.enable_master_slave!
+    # end
+    Solr.configure do |config|
+      if ENV['SOLR_MASTER_URL'] && ENV['SOLR_SLAVE_URL']
+        config.master_url = ENV['SOLR_MASTER_URL']
+        config.slave_url = ENV['SOLR_SLAVE_URL']
+      end
+
+      if ENV['SOLR_URL']
+        config.url = ENV['SOLR_URL']
+      end
+    end
   end
+
+  # config.after(:each) do
+  #   Solr.configuration = Solr::Configuration.new
+  # end
 end

@@ -167,4 +167,4 @@ jobs:
           curl http://localhost:8984/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
 
       - name: Rspec
-        run: bundle exec rspec --format progress --tag installation:master-replica --tag ~installation:cloud --tag ~installation:single
+        run: bundle exec rspec --format progress --tag installation:master_replica --tag ~installation:cloud --tag ~installation:single

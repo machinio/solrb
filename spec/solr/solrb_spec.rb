@@ -4,8 +4,12 @@ RSpec.describe Solr do
   end
 
   describe '.current_core_config' do
-    it 'uses default url' do
+    it 'uses default url', installation: :single do
       expect(Solr.current_core_config.url).to eq(File.join(*[ENV['SOLR_URL'], ENV['SOLR_CORE']].compact))
+    end
+
+    it 'uses default url', installation: :master_replica do
+      expect(Solr.current_core_config.url).to eq(File.join(*[ENV['SOLR_MASTER_URL'], ENV['SOLR_CORE']].compact))
     end
   end
 
