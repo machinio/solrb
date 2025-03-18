@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'addressable'
-  spec.add_runtime_dependency 'faraday'
+  spec.add_runtime_dependency 'faraday', '~> 2'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'pry'

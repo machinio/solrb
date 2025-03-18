@@ -34,7 +34,7 @@ module Solr
     def build_faraday_connection(url, faraday_options, faraday_configuration)
       connection = Faraday.new(url, faraday_options, &faraday_configuration)
       if Solr.configuration.auth_user && Solr.configuration.auth_password
-        connection.basic_auth(Solr.configuration.auth_user, Solr.configuration.auth_password)
+        connection.request :authorization, :basic, Solr.configuration.auth_user, Solr.configuration.auth_password
       end
       connection
     end
