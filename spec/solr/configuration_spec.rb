@@ -13,6 +13,18 @@ RSpec.describe Solr::Configuration do
     end
   end
 
+  context 'set core variable' do
+    before do
+      Solr.configure do |config|
+        config.core = '123-core'
+      end
+    end
+
+    it 'uses the set url and core name' do
+      expect(Solr.configuration.core).to eq('123-core')
+    end
+  end
+
   context 'specify nil url' do
     it 'raises exception' do
       expect do
@@ -51,7 +63,7 @@ RSpec.describe Solr::Configuration do
     it 'users the set faraday_options' do
       expect(Solr.configuration.faraday_options).to eq(expected_config)
       core = Solr.configuration.default_core_config
-      expect(core.url).to eq(ENV['SOLR_URL'])
+      expect(core.url).to eq(File.join(*[ENV['SOLR_URL'], ENV['SOLR_CORE']].compact))
     end
   end
 
@@ -60,7 +72,7 @@ RSpec.describe Solr::Configuration do
       Solr.configure do |config|
         config.faraday_configure do |f|
           f.adapter :net_http do |http|
-            http.idle_timeout = 150
+            http.read_timeout = 150
           end
         end
       end
@@ -81,9 +93,9 @@ RSpec.describe Solr::Configuration do
     end
 
     it 'gets the core name from ENV config' do
-      expect(Solr.configuration.cores.keys).to eq([nil])
+      expect(Solr.configuration.cores.keys).to eq([ENV['SOLR_CORE']])
       core = Solr.configuration.default_core_config
-      expect(core.url).to eq(ENV['SOLR_URL'])
+      expect(core.url).to eq(File.join(*[ENV['SOLR_URL'], ENV['SOLR_CORE']].compact))
     end
   end
 
@@ -186,7 +198,7 @@ RSpec.describe Solr::Configuration do
               f.field :model
             end
           end
-        end.to raise_error("A core with name '' has been already defined")
+        end.to raise_error("A core with name '#{ENV['SOLR_CORE']}' has been already defined")
       end
     end
   end

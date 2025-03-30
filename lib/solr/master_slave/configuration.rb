@@ -4,9 +4,10 @@ require 'solr/master_slave/nodes_gray_list/in_memory'
 module Solr
   module MasterSlave
     class Configuration
-      attr_accessor :master_url, :slave_url, :disable_read_from_master
+      attr_accessor :disable_read_from_master
 
       attr_reader :master_slave_enabled
+      attr_writer :master_url, :slave_url
       attr_writer :nodes_gray_list
 
       def enable_master_slave!(_)
@@ -15,6 +16,14 @@ module Solr
 
       def master_slave_enabled?
         @master_slave_enabled
+      end
+
+      def master_url
+        @master_url || ENV['SOLR_MASTER_URL']
+      end
+
+      def slave_url
+        @slave_url || ENV['SOLR_SLAVE_URL']
       end
 
       def active_nodes_for(collection:)

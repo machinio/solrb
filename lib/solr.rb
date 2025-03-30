@@ -20,6 +20,8 @@ require 'solr/cloud/helper_methods'
 require 'solr/master_slave/helper_methods'
 require 'solr/helper_methods'
 require 'solr/commands'
+require 'solr/admin/core_service'
+require 'solr/admin/collection_service'
 
 module Solr
   class << self
@@ -27,6 +29,14 @@ module Solr
     include Solr::Cloud::HelperMethods
     include Solr::MasterSlave::HelperMethods
     include Solr::HelperMethods
+
+    def cores
+      @cores ||= Solr::Admin::CoreService.new
+    end
+
+    def collections
+      @collections ||= Solr::Admin::CollectionService.new
+    end
 
     CURRENT_CORE_CONFIG_VARIABLE_NAME = :solrb_current_core_config
     SOLR_NODE_URL_OVERRIDE_CONFIG = :solrb_node_url_override_config
