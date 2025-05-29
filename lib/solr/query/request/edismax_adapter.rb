@@ -24,7 +24,8 @@ module Solr
         end
 
         def to_h
-          solr_params = { q: request.search_term, defType: :edismax }
+          solr_params = { defType: :edismax }
+          solr_params = add_search_term(solr_params)
           solr_params = add_query_fields(solr_params)
           solr_params = add_field_list(solr_params)
           solr_params = add_filters(solr_params)
@@ -42,6 +43,14 @@ module Solr
         end
 
         private
+
+        def add_search_term(solr_params)
+          if request.search_term.to_s == ''
+            solr_params.merge(q: '*')
+          else
+            solr_params.merge(q: request.search_term)
+          end
+        end
 
         def add_query_fields(solr_params)
           query_fields = request.query_fields.map(&:to_solr_s)
