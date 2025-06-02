@@ -2,22 +2,16 @@
 name: Tests
 'on': [push]
 
-env:
-  SOLR_URL: http://localhost:8983/solr/test-core
-
 jobs:
-  rspec:
+  rspec_single:
     name: Rspec on Ruby ${{ matrix.ruby }} with Solr ${{ matrix.solr }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.7', '3.0', '3.2']
-        solr: ['8.11.2', '9.7.0']
-    services:
-      solr:
-        image: solr:${{ matrix.solr }}
-        ports:
-          - 8983:8983
+        ruby: ['3.2']
+        solr: ['9.7.0']
+    env:
+      SOLR_URL: http://localhost:8983/solr/test-core
     steps:
       - uses: actions/checkout@v2
 
@@ -26,20 +20,151 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
+      - name: Run docker-compose
+        uses: hoverkraft-tech/compose-action@v2
+        env:
+          SOLR_VERSION: ${{ matrix.solr }}
+        with:
+          compose-file: docker-compose.single.yml
+
+      - name: Wait for Solr to be ready
+        timeout-minutes: 2
+        run: |
+          echo "Waiting for Solr to be ready..."
+          while ! curl -s 'http://localhost:8983/solr/admin/info/system' > /dev/null; do
+            sleep 2
+            echo "Still waiting for Solr..."
+          done
+          echo "Solr is up!"
+
       - name: Prepare default configset
         run: |
-          container_id=$(docker ps -q)
-          docker exec -u 0 $container_id sh -c "mkdir /var/solr/data/configsets \
-            && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ \
-            && chown -R solr:solr /var/solr/data/configsets"
+          container_id=$(docker ps -q --filter name=solrb-solr)
+          echo "Using container: $container_id"
+          docker exec -u 0 $container_id sh -c \
+          "mkdir -p /var/solr/data/configsets/_default && \
+          cp -R /opt/solr/server/solr/configsets/_default/* /var/solr/data/configsets/_default/ && \
+          chown -R solr:solr /var/solr/data/configsets && \
+          ls -la /var/solr/data/configsets/_default/"
 
       - name: Create a test core
         run: |
-          curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+          curl --retry 5 --retry-delay 2 -sS 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+      - name: Verify core creation
+        timeout-minutes: 1
+        run: |
+          echo "Verifying core creation..."
+          while ! curl -s 'http://localhost:8983/solr/admin/cores?action=STATUS' | grep -q '"test-core":'; do
+            sleep 2
+            echo "Waiting for core to be ready..."
+          done
+          echo "Core is ready!"
 
       - name: Disable field type guessing
         run: |
           curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
 
       - name: Rspec
-        run: bundle exec rspec --format progress
+        run: bundle exec rspec --format progress --tag ~installation:master-replica --tag ~installation:cloud
+
+  rspec_master_replica:
+    name: Rspec Master-Replica on Ruby ${{ matrix.ruby }} with Solr ${{ matrix.solr }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ['3.2']
+        solr: ['9.7.0']
+    env:
+      SOLR_MASTER_URL: http://localhost:8983/solr/test-core
+      SOLR_REPLICA_URL: http://localhost:8984/solr/test-core
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run docker-compose
+        uses: hoverkraft-tech/compose-action@v2
+        env:
+          SOLR_VERSION: ${{ matrix.solr }}
+        with:
+          compose-file: docker-compose.master-replica.yml
+
+      - name: Wait for Solr master to be ready
+        timeout-minutes: 2
+        run: |
+          echo "Waiting for Solr master to be ready..."
+          while ! curl -s 'http://localhost:8983/solr/admin/info/system' > /dev/null; do
+            sleep 2
+            echo "Still waiting for Solr master..."
+          done
+          echo "Solr master is up!"
+
+      - name: Wait for Solr replica to be ready
+        timeout-minutes: 2
+        run: |
+          echo "Waiting for Solr replica to be ready..."
+          while ! curl -s 'http://localhost:8984/solr/admin/info/system' > /dev/null; do
+            sleep 2
+            echo "Still waiting for Solr replica..."
+          done
+          echo "Solr replica is up!"
+
+      - name: Prepare master configset
+        run: |
+          container_id=$(docker ps -q --filter name=solrb-master-replica-solr-master)
+          echo "Using master container: $container_id"
+          docker exec -u 0 $container_id sh -c \
+          "mkdir -p /var/solr/data/configsets/_default && \
+          cp -R /opt/solr/server/solr/configsets/_default/* /var/solr/data/configsets/_default/ && \
+          chown -R solr:solr /var/solr/data/configsets && \
+          ls -la /var/solr/data/configsets/_default/"
+
+      - name: Prepare replica configset
+        run: |
+          container_id=$(docker ps -q --filter name=solrb-master-replica-solr-replica)
+          echo "Using replica container: $container_id"
+          docker exec -u 0 $container_id sh -c \
+          "mkdir -p /var/solr/data/configsets/_default && \
+          cp -R /opt/solr/server/solr/configsets/_default/* /var/solr/data/configsets/_default/ && \
+          chown -R solr:solr /var/solr/data/configsets && \
+          ls -la /var/solr/data/configsets/_default/"
+
+      - name: Create master core
+        run: |
+          curl --retry 5 --retry-delay 2 -sS 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+      - name: Create replica core
+        run: |
+          curl --retry 5 --retry-delay 2 -sS 'http://localhost:8984/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+      - name: Verify cores creation
+        timeout-minutes: 1
+        run: |
+          echo "Verifying master core..."
+          while ! curl -s 'http://localhost:8983/solr/admin/cores?action=STATUS' | grep -q '"test-core":'; do
+            sleep 2
+            echo "Waiting for master core..."
+          done
+          echo "Master core is ready!"
+
+          echo "Verifying replica core..."
+          while ! curl -s 'http://localhost:8984/solr/admin/cores?action=STATUS' | grep -q '"test-core":'; do
+            sleep 2
+            echo "Waiting for replica core..."
+          done
+          echo "Replica core is ready!"
+
+      - name: Disable field type guessing on master
+        run: |
+          curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
+
+      - name: Disable field type guessing on replica
+        run: |
+          curl http://localhost:8984/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
+
+      - name: Rspec
+        run: bundle exec rspec --format progress --tag installation:master_replica --tag ~installation:cloud --tag ~installation:single

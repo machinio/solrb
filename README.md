@@ -18,6 +18,9 @@ Object-Oriented approach to Solr in Ruby.
   * [Master-slave](#master-slave)
     * [Gray list](#gray-list)
   * [Basic Authentication](#basic-authentication)
+* [Core Management](#core-management)
+  * [Creating a Core](#creating-a-core)
+  * [Managing Cores](#managing-cores)
 * [Indexing](#indexing)
 * [Querying](#querying)
   * [Simple Query](#simple-query)
@@ -173,8 +176,8 @@ In solr master-slave mode you don't need to provide a solr url (`config.url` or 
 
 ```ruby
 Solr.configure do |config|
-  config.master_url = 'localhost:8983'
-  config.slave_url = 'localhost:8984'
+  config.master_url = 'localhost:8983' # or ENV['SOLR_MASTER_URL']
+  config.slave_url = 'localhost:8984' # or ENV['SOLR_SLAVE_URL']
   # Disable select queries from master:
   config.disable_read_from_master = true
   # Specify Gray-list service
@@ -221,6 +224,54 @@ Solr.configure do |config|
   config.auth_user = 'user'
   config.auth_password = 'password'
 end
+```
+
+# Core Management
+
+Solrb provides a comprehensive API for managing Solr cores through the `Solr.cores` interface. Here are the available operations:
+
+## Creating a Core
+
+```ruby
+# Create a core with default configuration
+Solr.cores.create(name: 'my-core')
+
+# Create a core with custom configuration
+Solr.cores.create(
+  name: 'my-core',
+  config_set: '_default',  # Optional, defaults to '_default'
+  config_dir: 'path/to/config',  # Optional
+  schema_file: 'path/to/schema.xml',  # Optional
+  data_dir: 'path/to/data'  # Optional
+)
+```
+
+## Managing Cores
+
+```ruby
+# Check if a core exists
+Solr.cores.exists?(name: 'my-core')
+
+# Get status of all cores or a specific core
+Solr.cores.status  # All cores
+Solr.cores.status(name: 'my-core')  # Specific core
+
+# Reload a core
+Solr.cores.reload(name: 'my-core')
+
+# Rename a core
+Solr.cores.rename(name: 'old-name', new_name: 'new-name')
+
+# Unload a core
+Solr.cores.unload(name: 'my-core')
+
+# Unload and delete a core completely
+Solr.cores.unload(
+  name: 'my-core',
+  delete_index: true,  # Remove the index
+  delete_data_dir: true,  # Remove the data directory
+  delete_instance_dir: true  # Remove everything related to the core
+)
 ```
 
 # Indexing
@@ -551,6 +602,52 @@ SOLR_URL=http://localhost:8983/solr/test-core rspec
 
 # Clean up
 docker-compose -f docker-compose.single.yml down -v
+```
+
+### Master-Replica Setup
+
+```sh
+# Start Solr master and replica nodes
+docker-compose -f docker-compose.master-replica.yml up -d
+
+# Wait for both nodes to be healthy
+docker-compose -f docker-compose.master-replica.yml ps
+
+# Setup master node
+# First copy the default configset to the correct location on master
+docker exec -u 0 solrb-master-replica-solr-master-1 sh -c "mkdir -p /var/solr/data/configsets && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ && chown -R solr:solr /var/solr/data/configsets"
+
+# Create test core on master
+curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+# Setup replica node
+# Copy the default configset to the correct location on replica
+docker exec -u 0 solrb-master-replica-solr-replica-1 sh -c "mkdir -p /var/solr/data/configsets && cp -R /opt/solr/server/solr/configsets/_default /var/solr/data/configsets/ && chown -R solr:solr /var/solr/data/configsets"
+
+# Create test core on replica
+curl 'http://localhost:8984/solr/admin/cores?action=CREATE&name=test-core&configSet=_default'
+
+# Enable replication on master
+curl 'http://localhost:8983/solr/test-core/replication?command=enablereplication&master=true'
+
+# Enable replication on replica
+curl 'http://localhost:8984/solr/test-core/replication?command=enablereplication&slave=true&masterUrl=http://solr-master:8983/solr/test-core'
+
+# Verify replication status on master
+curl 'http://localhost:8983/solr/test-core/replication?command=details'
+
+# Verify replication status on replica
+curl 'http://localhost:8984/solr/test-core/replication?command=details'
+
+# Disable field guessing on both nodes
+curl http://localhost:8983/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
+curl http://localhost:8984/solr/test-core/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
+
+# Run specs with master-slave configuration
+SOLR_MASTER_URL=http://localhost:8983/solr/test-core SOLR_SLAVE_URL=http://localhost:8984/solr/test-core rspec
+
+# Clean up
+docker-compose -f docker-compose.master-replica.yml down -v
 ```
 
 ## Manual Setup with Docker Commands
