@@ -9,6 +9,6 @@ RSpec.describe Solr::Query::Request::AndFilter do
 
     subject { described_class.new(*filters).to_solr_s }
 
-    it { is_expected.to eq('(-field:("value") AND field:(["1" TO "100"]))') }
+    it { is_expected.to eq('(-field:("value") AND field:(["1" TO "100"}))') }
   end
 end

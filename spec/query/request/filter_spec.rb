@@ -12,16 +12,16 @@ RSpec.describe Solr::Query::Request::Filter do
 
     context 'when value is range' do
       subject { described_class.new(type: :equal, field: :field, value: 1..100).to_solr_s }
-      it { is_expected.to eq('field:(["1" TO "100"])') }
+      it { is_expected.to eq('field:(["1" TO "100"})') }
 
       context 'when max is infinity' do
         subject { described_class.new(type: :equal, field: :field, value: 1..Float::INFINITY).to_solr_s }
-        it { is_expected.to eq('field:(["1" TO *])') }
+        it { is_expected.to eq('field:(["1" TO *})') }
       end
 
       context 'when min is infinity' do
         subject { described_class.new(type: :equal, field: :field, value: -Float::INFINITY..1).to_solr_s }
-        it { is_expected.to eq('field:([* TO "1"])') }
+        it { is_expected.to eq('field:([* TO "1"})') }
       end
     end
 

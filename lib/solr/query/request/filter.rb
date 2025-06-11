@@ -46,7 +46,7 @@ module Solr
         def to_interval_solr_value(range)
           solr_min = to_primitive_solr_value(range.first)
           solr_max = to_primitive_solr_value(range.last)
-          "[#{solr_min} TO #{solr_max}]"
+          "[#{solr_min} TO #{solr_max}}"
         end
 
         def to_primitive_solr_value(value)
